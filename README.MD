@@ -1,6 +1,6 @@
 # TrailCurrent Waveshare ESP32-S3 Remote
 
-Touchscreen remote monitor for the [TrailCurrent](https://trailcurrent.com) modular vehicle system, built on the Waveshare ESP32-S3 4.3" touch display with LVGL GUI. Connects to the TrailCurrent server over WiFi using WebSocket for real-time data and REST API for control commands.
+Touchscreen remote monitor for the [TrailCurrent](https://trailcurrent.com) modular vehicle system, built on the Waveshare ESP32-S3 4.3" touch display with LVGL GUI. Connects directly to the local MQTT broker over WiFi for real-time data and control.
 
 ## Hardware Overview
 
@@ -8,11 +8,11 @@ Touchscreen remote monitor for the [TrailCurrent](https://trailcurrent.com) modu
 - **Microcontroller:** ESP32-S3 with 8MB flash, PSRAM (QIO OPI)
 - **IO Expander:** CH422G I2C IO expander for display control
 - **SD Card:** MicroSD slot (SPI on GPIO 11/12/13, CS via CH422G IO expander)
-- **Communication:** WiFi (connects to local TrailCurrent server via WebSocket and REST API)
+- **Communication:** WiFi — connects directly to the local Mosquitto MQTT broker (TLS on port 8883)
 - **Key Features:**
   - Multi-page touch interface with bottom navigation bar
-  - Real-time vehicle status monitoring via WebSocket
-  - Light and accessory control via REST API
+  - Real-time vehicle status via MQTT subscriptions
+  - Light and accessory control via MQTT publish
   - SD card configuration — no on-screen credential entry needed
   - Configurable themes and screen timeout
   - Timezone-aware date/time display
@@ -34,7 +34,7 @@ The GUI is designed with [EEZ Studio](https://www.envox.hr/eez/studio/studio-int
 
 ## Device Configuration
 
-Configuration is loaded from a `config.env` file on a MicroSD card. This avoids typing long credentials on the small touch keyboard.
+Configuration is loaded from a `config.env` file and optional `ca.crt` on a MicroSD card. This avoids typing long credentials on the small touch keyboard.
 
 **Setup steps:**
 
@@ -44,45 +44,46 @@ Configuration is loaded from a `config.env` file on a MicroSD card. This avoids 
 ```
 WIFI_SSID=YourNetworkName
 WIFI_PWD=YourWiFiPassword
-SERVER_NAME=trailcurrent01.local
-API_KEY=your-api-key-here
+MQTT_HOST=192.168.1.100
+MQTT_PORT=8883
+MQTT_USER=mqttuser
+MQTT_PASS=mqttpassword
 ```
 
-3. Insert the SD card into the device and power on (or restart)
-4. The device reads the config, saves it to NVS, and connects automatically
-5. The SD card can be removed after the first boot — settings persist in NVS
+3. Optionally copy the Mosquitto CA certificate as `ca.crt` to the SD card root for TLS server verification
+4. Insert the SD card into the device and power on (or restart)
+5. The device reads the config and CA cert, saves both to NVS, and connects automatically
+6. The SD card can be removed after the first boot — settings persist in NVS
 
 **Notes:**
-- `SERVER_NAME` can be a hostname or IP address; `https://` is prepended automatically
-- If no configuration exists (no SD card and no saved NVS values), the device shows "Configuration Required — Insert SD card with config.env and restart"
-- WiFi and server settings can also be changed manually via the Settings screen
-- Re-inserting an SD card with updated values will overwrite the saved NVS settings on next boot
+- `MQTT_HOST` should be an IP address (ESP32 does not resolve `.local` mDNS hostnames)
+- `MQTT_PORT` defaults to 8883 if omitted
+- TLS encryption is always used; if no `ca.crt` is provided, certificate verification is skipped but the connection remains encrypted
+- If no configuration exists (no SD card and no saved NVS values), the device shows "Configuration Required — Insert SD card with config.env and ca.crt then restart"
+- Re-inserting an SD card will clear all previous connection settings and replace them with the new values on next boot
 
 ## Communication Protocol
 
-The remote connects to the TrailCurrent server over WiFi using WebSocket for real-time data and REST API for control commands.
+The remote connects directly to the Mosquitto MQTT broker over TLS (port 8883). No intermediate server is required for real-time operation.
 
-**WebSocket (Server to Remote) — real-time updates:**
+**Subscribe (status updates from CAN bus devices via MQTT):**
 
-| Message Type | Data Fields |
-|-------------|-------------|
-| `temphumid` | Temperature (F), humidity |
-| `latlon` | Latitude, longitude |
-| `alt` | Altitude (feet) |
-| `gnss_details` | Satellite count, speed, course, GNSS mode |
-| `energy` | Battery percent, battery voltage, solar watts, charge type |
-| `light` | Light ID, state, brightness |
+| Topic | Data Fields |
+|-------|-------------|
+| `local/lights/+/status` | `state` (0/1), `brightness` (0-255) |
+| `local/energy/status` | `battery_percent`, `battery_voltage`, `solar_watts`, `charge_type` |
+| `local/airquality/temphumid` | `temperature` (Celsius — converted to F on device), `humidity` |
+| `local/gps/latlon` | `latitude`, `longitude` |
+| `local/gps/alt` | `altitudeFeet` |
+| `local/gps/details` | `numberOfSatellites`, `speedOverGround`, `courseOverGround`, `gnssMode` |
 
-**REST API (Remote to Server) — control commands:**
+**Publish (commands to devices):**
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/health` | GET | Server health check |
-| `/api/lights/{id}` | PUT | Toggle individual light (state, brightness) |
-| `/api/lights` | PUT | Bulk light update |
-| `/api/thermostat` | PUT | Thermostat control (target temp, mode) |
+| Topic | Payload |
+|-------|---------|
+| `local/lights/{id}/command` | `{"state": 0\|1}` |
 
-All API requests include the API key in the `Authorization` header.
+The MQTT client uses the ESP-IDF native `esp_mqtt_client` for event-driven, non-blocking message delivery.
 
 ## Firmware Setup
 
@@ -98,7 +99,7 @@ pio run
 pio run -t upload
 ```
 
-No secrets files are needed in the source. Device configuration (WiFi credentials, server URL, API key) is loaded at runtime from an SD card — see [Device Configuration](#device-configuration) above.
+No secrets files are needed in the source. Device configuration (WiFi credentials, MQTT broker details) is loaded at runtime from an SD card — see [Device Configuration](#device-configuration) above.
 
 ## Case Design
 
@@ -118,11 +119,11 @@ A 3D-printable enclosure is included in the `CAD/` directory (FreeCAD format). T
 ├── src/                          # Firmware source
 │   ├── main.cpp                  # Application entry, LVGL setup, IO expander init, boot flow
 │   ├── globals.h                 # Version, debug macros
-│   ├── sdConfig.h / sdConfig.cpp # SD card config.env reader
+│   ├── sdConfig.h / sdConfig.cpp # SD card config.env and ca.crt reader
 │   ├── wifiHelper.h / .cpp       # WiFi connection management
-│   ├── apiClient.h / apiClient.cpp # REST API and WebSocket client
+│   ├── mqttClient.h / .cpp       # MQTT client (ESP-IDF native, TLS, pub/sub)
 │   ├── actions.cpp               # UI event handlers (navigation, settings, themes, controls)
-│   ├── vars.cpp                  # State variables, NVS persistence, time conversion
+│   ├── vars.cpp                  # State variables, LVGL widget updates, time conversion
 │   └── ui/                       # Generated LVGL UI code (from EEZ Studio — do not edit)
 │       ├── screens.h / screens.c # Screen and widget object definitions
 │       ├── styles.h / styles.c   # Theme styles
@@ -141,11 +142,11 @@ A 3D-printable enclosure is included in the `CAD/` directory (FreeCAD format). T
 | Library | Source | Purpose |
 |---------|--------|---------|
 | LVGL 8.4.0 | PlatformIO registry | GUI framework |
-| ArduinoJson 7.x | PlatformIO registry | JSON parsing for WebSocket messages and REST API |
-| WebSockets 2.x | PlatformIO registry | WebSocket client for real-time server communication |
+| ArduinoJson 7.x | PlatformIO registry | JSON parsing for MQTT messages |
+| ESP-IDF MQTT | Built-in (ESP-IDF) | Native MQTT client with TLS support |
 | ESP32_Display_Panel | Local (`lib/`) | Waveshare display and touch driver |
-| SD / SPI | ESP32 Arduino built-in | SD card access for config.env |
-| WiFi / HTTPClient | ESP32 Arduino built-in | WiFi connectivity and REST API calls |
+| SD / SPI | ESP32 Arduino built-in | SD card access for config.env and ca.crt |
+| WiFi | ESP32 Arduino built-in | WiFi connectivity |
 
 ## License
 

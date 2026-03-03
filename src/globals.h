@@ -2,4 +2,4 @@
 #include <Arduino.h>
 #include <debug.h>
 
-#define CURRENT_VERSION "0.0.2"
+#define CURRENT_VERSION "0.1.0"
