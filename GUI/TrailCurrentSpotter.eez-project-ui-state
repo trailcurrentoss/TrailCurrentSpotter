@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/-1",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedGlobalVariableObject": "[TrailCurrentSpotter.eez-project]:/variables/globalVariables/30",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/9",
@@ -157,7 +157,8 @@
                       "enableClose": false,
                       "icon": "material:code"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -197,19 +198,21 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 44.78918218167261,
+              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
                 {
                   "type": "tab",
-                  "id": "#67ac8905-f146-405e-8797-174de16b0443",
-                  "name": "Home",
+                  "id": "#e7048bf5-d2b3-43c5-bc1a-45dfec0f6565",
+                  "name": "Settings",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/settings",
+                    "subObjectPath": "[TrailCurrentSpotter.eez-project]:/settings",
                     "permanent": false
                   },
-                  "icon": "svg:page"
+                  "icon": "material:settings"
                 },
                 {
                   "type": "tab",
@@ -235,17 +238,6 @@
                 },
                 {
                   "type": "tab",
-                  "id": "#6d849955-1b45-44f9-8dc0-8e6a53e9d60d",
-                  "name": "WifiSetup",
-                  "component": "editor",
-                  "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/7",
-                    "permanent": true
-                  },
-                  "icon": "svg:page"
-                },
-                {
-                  "type": "tab",
                   "id": "#e4e69049-484d-4bc1-b6bf-8236ce248d57",
                   "name": "Settings",
                   "component": "editor",
@@ -255,8 +247,7 @@
                   },
                   "icon": "svg:page"
                 }
-              ],
-              "active": true
+              ]
             },
             {
               "type": "row",
