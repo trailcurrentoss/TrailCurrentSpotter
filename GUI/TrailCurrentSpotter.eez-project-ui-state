@@ -1,6 +1,5 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/-1",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedGlobalVariableObject": "[TrailCurrentSpotter.eez-project]:/variables/globalVariables/30",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/9",
@@ -157,8 +156,7 @@
                       "enableClose": false,
                       "icon": "material:code"
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -247,7 +245,8 @@
                   },
                   "icon": "svg:page"
                 }
-              ]
+              ],
+              "active": true
             },
             {
               "type": "row",
