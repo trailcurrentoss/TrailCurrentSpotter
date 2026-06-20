@@ -1,5 +1,6 @@
 {
   "navigation": {
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/1",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedGlobalVariableObject": "[TrailCurrentSpotter.eez-project]:/variables/globalVariables/30",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/9",
@@ -28,7 +29,7 @@
           },
           {
             "type": "border",
-            "selected": 0,
+            "selected": 3,
             "size": 240,
             "location": "right",
             "children": [
@@ -130,6 +131,7 @@
                   "type": "tabset",
                   "id": "#07c8e6e0-186f-446c-ba27-7ec519d25f91",
                   "weight": 1,
+                  "selected": 1,
                   "enableClose": false,
                   "children": [
                     {
@@ -196,10 +198,21 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 44.78918218167261,
-              "selected": 1,
+              "selected": 3,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
+                {
+                  "type": "tab",
+                  "id": "#2c4c8c23-38a7-4ea6-b967-44d788b092d2",
+                  "name": "PageLights",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/1",
+                    "permanent": false
+                  },
+                  "icon": "svg:page"
+                },
                 {
                   "type": "tab",
                   "id": "#e7048bf5-d2b3-43c5-bc1a-45dfec0f6565",
@@ -226,27 +239,15 @@
                 {
                   "type": "tab",
                   "id": "#d87571b4-53da-4f98-bc02-818c83f2cff7",
-                  "name": "BottomNavBar",
+                  "name": "TopStatusBar",
                   "component": "editor",
                   "config": {
                     "objectPath": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
                     "permanent": false
                   },
                   "icon": "svg:user_widget"
-                },
-                {
-                  "type": "tab",
-                  "id": "#e4e69049-484d-4bc1-b6bf-8236ce248d57",
-                  "name": "Settings",
-                  "component": "editor",
-                  "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/5",
-                    "permanent": true
-                  },
-                  "icon": "svg:page"
                 }
-              ],
-              "active": true
+              ]
             },
             {
               "type": "row",
@@ -266,7 +267,8 @@
                       "enableClose": false,
                       "icon": "svg:properties"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -862,7 +864,8 @@
                       "component": "themes",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -878,8 +881,7 @@
                       "component": "colors",
                       "enableClose": false
                     }
-                  ],
-                  "active": true
+                  ]
                 }
               ]
             }
@@ -1018,20 +1020,8 @@
       "selection": {
         "0": {
           "0": {},
-          "1": {
-            "$selected": true
-          },
-          "2": {},
-          "3": {},
-          "4": {},
-          "5": {},
-          "6": {
-            "0": {}
-          },
-          "7": {},
-          "8": {},
-          "9": {},
-          "10": {}
+          "1": {},
+          "2": {}
         }
       },
       "transform": {
@@ -1076,10 +1066,10 @@
       "selection": {
         "0": {
           "0": {},
-          "1": {},
-          "2": {},
-          "8": {},
-          "9": {}
+          "1": {
+            "0": {}
+          },
+          "2": {}
         }
       },
       "transform": {
@@ -1102,14 +1092,7 @@
           "0": {},
           "1": {
             "0": {},
-            "1": {},
-            "2": {},
-            "3": {},
-            "4": {},
-            "5": {},
-            "6": {},
-            "7": {},
-            "8": {}
+            "1": {}
           }
         }
       },
@@ -1130,16 +1113,7 @@
     "[TrailCurrentSpotter.eez-project]:/userPages/3[flow-state]": {
       "selection": {
         "0": {
-          "0": {},
-          "4": {
-            "1": {}
-          },
-          "5": {
-            "0": {
-              "$selected": true
-            },
-            "1": {}
-          }
+          "0": {}
         }
       },
       "transform": {
@@ -1213,12 +1187,11 @@
       "selection": {
         "0": {
           "0": {},
-          "1": {
-            "0": {
-              "$selected": true
-            }
-          },
+          "1": {},
           "2": {},
+          "3": {
+            "$selected": true
+          },
           "4": {}
         }
       },
