@@ -8,6 +8,10 @@
 #include "freertos/queue.h"
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
+#include "esp_heap_caps.h"
+#include "esp_system.h"
+#include "pendant_config.h"
 
 /* MQTT variable setters (vars.c) — Spotter uses pdm01_device* naming */
 extern void set_var_pdm01_device01_status(int32_t value);
@@ -34,6 +38,7 @@ extern void set_var_current_temperature_value(float value);
 extern void set_var_number_of_satellites(int32_t value);
 extern void set_var_current_date_time(const char *value);
 extern void set_var_wifi_connected(bool value);
+extern void set_var_power_time_to_go_measurement(float value);
 
 static const char *TAG = "MQTT";
 
@@ -48,6 +53,12 @@ static char *s_ca_cert_pem = NULL;
 
 static esp_mqtt_client_handle_t s_client = NULL;
 static volatile bool s_connected = false;
+static mqtt_client_state_cb_t s_state_cb = NULL;
+
+void mqtt_client_set_state_callback(mqtt_client_state_cb_t cb)
+{
+    s_state_cb = cb;
+}
 
 /* Queue for passing received messages from MQTT task to main loop */
 typedef struct {
@@ -72,6 +83,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "Connected to broker");
         s_connected = true;
+        if (s_state_cb) s_state_cb(true);
 
         /* Subscribe to all data topics */
         esp_mqtt_client_subscribe(s_client, "local/lights/+/status", 0);
@@ -86,8 +98,13 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         break;
 
     case MQTT_EVENT_DISCONNECTED:
-        ESP_LOGW(TAG, "Disconnected from broker");
+        ESP_LOGW(TAG, "Disconnected from broker (was_connected=%d)", (int)s_connected);
         s_connected = false;
+        if (s_state_cb) s_state_cb(false);
+        break;
+
+    case MQTT_EVENT_BEFORE_CONNECT:
+        ESP_LOGI(TAG, "BEFORE_CONNECT — opening socket to broker");
         break;
 
     case MQTT_EVENT_DATA: {
@@ -122,7 +139,28 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
 
     case MQTT_EVENT_ERROR:
         if (event->error_handle) {
-            ESP_LOGE(TAG, "Error type: %d", event->error_handle->error_type);
+            esp_mqtt_error_codes_t *err = event->error_handle;
+            const char *etype = "?";
+            switch (err->error_type) {
+            case MQTT_ERROR_TYPE_NONE:                 etype = "NONE"; break;
+            case MQTT_ERROR_TYPE_TCP_TRANSPORT:        etype = "TCP_TRANSPORT"; break;
+            case MQTT_ERROR_TYPE_CONNECTION_REFUSED:   etype = "CONNECTION_REFUSED"; break;
+            case MQTT_ERROR_TYPE_SUBSCRIBE_FAILED:     etype = "SUBSCRIBE_FAILED"; break;
+            }
+            ESP_LOGE(TAG, "MQTT ERROR: type=%d(%s) tls_last_esp_err=0x%x "
+                          "tls_stack_err=0x%x tls_cert_flags=0x%x "
+                          "transport_sock_errno=%d(%s) connect_return_code=%d",
+                     err->error_type, etype,
+                     err->esp_tls_last_esp_err, err->esp_tls_stack_err,
+                     err->esp_tls_cert_verify_flags,
+                     err->esp_transport_sock_errno,
+                     err->esp_transport_sock_errno
+                         ? strerror(err->esp_transport_sock_errno) : "ok",
+                     err->connect_return_code);
+            ESP_LOGE(TAG, "free heap: total=%u internal=%u largest_internal=%u",
+                     (unsigned)esp_get_free_heap_size(),
+                     (unsigned)heap_caps_get_free_size(MALLOC_CAP_INTERNAL),
+                     (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
         }
         break;
 
@@ -134,57 +172,51 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
 /* --- Public API --- */
 
 bool mqtt_client_load_settings(void) {
+    /* Source of truth: pendant_config (touchscreen-entered, NVS namespace
+     * "spotter"). Fall back to the legacy "sd_config" namespace for setups
+     * that pre-date the in-UI MQTT setup screen. */
+    const pendant_config_t *pc = pendant_config_get();
+    if (pc && pc->mqtt_host[0]) {
+        strlcpy(s_host,     pc->mqtt_host, sizeof(s_host));
+        strlcpy(s_username, pc->mqtt_user, sizeof(s_username));
+        strlcpy(s_password, pc->mqtt_pass, sizeof(s_password));
+        s_port = pc->mqtt_port ? pc->mqtt_port : 8883;
+        ESP_LOGI(TAG, "Loaded from pendant_config: %s:%u user=%s",
+                 s_host, (unsigned)s_port, s_username);
+        return strlen(s_host) > 0 && strlen(s_username) > 0;
+    }
+
+    /* Legacy path — sd_config NVS namespace */
     nvs_handle_t nvs;
     esp_err_t ret = nvs_open(NVS_NAMESPACE, NVS_READONLY, &nvs);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to open NVS: %s", esp_err_to_name(ret));
+        ESP_LOGI(TAG, "No MQTT config in pendant_config or sd_config NVS");
         return false;
     }
 
-    size_t len;
+    size_t len = sizeof(s_host);
+    nvs_get_str(nvs, "mqttHost", s_host, &len);
+    if (nvs_get_u16(nvs, "mqttPort", &s_port) != ESP_OK) s_port = 8883;
+    len = sizeof(s_username);  nvs_get_str(nvs, "mqttUser", s_username, &len);
+    len = sizeof(s_password);  nvs_get_str(nvs, "mqttPass", s_password, &len);
 
-    len = sizeof(s_host);
-    if (nvs_get_str(nvs, "mqttHost", s_host, &len) == ESP_OK) {
-        ESP_LOGI(TAG, "Host: %s", s_host);
-    }
-
-    if (nvs_get_u16(nvs, "mqttPort", &s_port) != ESP_OK) {
-        s_port = 8883;
-    }
-    ESP_LOGI(TAG, "Port: %d", s_port);
-
-    len = sizeof(s_username);
-    if (nvs_get_str(nvs, "mqttUser", s_username, &len) == ESP_OK) {
-        ESP_LOGI(TAG, "User: %s", s_username);
-    }
-
-    len = sizeof(s_password);
-    if (nvs_get_str(nvs, "mqttPass", s_password, &len) == ESP_OK) {
-        ESP_LOGI(TAG, "Password loaded");
-    }
-
-    /* CA certificate */
+    /* CA cert support kept for compat — but we don't need it: insecure TLS
+     * flags in sdkconfig.defaults make mbedtls accept any cert. */
     len = 0;
     if (nvs_get_str(nvs, "mqttCaCert", NULL, &len) == ESP_OK && len > 0) {
-        if (s_ca_cert_pem) {
-            free(s_ca_cert_pem);
-        }
+        if (s_ca_cert_pem) free(s_ca_cert_pem);
         s_ca_cert_pem = malloc(len);
         if (s_ca_cert_pem) {
             nvs_get_str(nvs, "mqttCaCert", s_ca_cert_pem, &len);
-            ESP_LOGI(TAG, "CA cert loaded (%d bytes)", (int)len);
+            ESP_LOGI(TAG, "CA cert loaded from legacy NVS (%d bytes)", (int)len);
         }
     }
-
     nvs_close(nvs);
 
-    bool has_config = strlen(s_host) > 0 && strlen(s_username) > 0 &&
-                      strlen(s_password) > 0;
-    if (!has_config) {
-        ESP_LOGW(TAG, "Missing config - host:%s user:%s pass:%s",
-                 strlen(s_host) > 0 ? "ok" : "MISSING",
-                 strlen(s_username) > 0 ? "ok" : "MISSING",
-                 strlen(s_password) > 0 ? "ok" : "MISSING");
+    bool has_config = strlen(s_host) > 0 && strlen(s_username) > 0;
+    if (has_config) {
+        ESP_LOGI(TAG, "Loaded from legacy sd_config NVS: %s:%u user=%s",
+                 s_host, (unsigned)s_port, s_username);
     }
     return has_config;
 }
@@ -195,6 +227,11 @@ void mqtt_client_connect(void) {
         ESP_LOGW(TAG, "Cannot connect - missing MQTT configuration");
         return;
     }
+
+    /* Insecure TLS — accept any cert (incl. self-signed). The TLS layer skips
+     * verification because CONFIG_ESP_TLS_INSECURE=y and
+     * CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y are set in sdkconfig.defaults.
+     * No CA cert needs to live on the device. */
 
     /* Create incoming message queue */
     if (!s_incoming_queue) {
@@ -211,10 +248,16 @@ void mqtt_client_connect(void) {
     char client_id[32];
     snprintf(client_id, sizeof(client_id), "tc-remote-%02x%02x", mac[4], mac[5]);
 
-    ESP_LOGI(TAG, "Connecting to %s as %s...", uri, s_username);
+    ESP_LOGI(TAG, "Connecting to %s as %s (client_id=%s)", uri, s_username, client_id);
+    ESP_LOGI(TAG, "  heap before connect: free=%u largest=%u",
+             (unsigned)esp_get_free_heap_size(),
+             (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
 
-    /* Destroy previous client if reconnecting */
+    /* Destroy previous client if reconnecting. Important: without this, repeated
+     * mqtt_client_connect() calls would leak the previous esp_mqtt_client and its
+     * TLS socket, which the broker would see as a parade of zombie sessions. */
     if (s_client) {
+        ESP_LOGW(TAG, "  destroying previous esp_mqtt_client first (was non-NULL)");
         esp_mqtt_client_stop(s_client);
         esp_mqtt_client_destroy(s_client);
         s_client = NULL;
@@ -222,6 +265,10 @@ void mqtt_client_connect(void) {
 
     esp_mqtt_client_config_t mqtt_cfg = {
         .broker.address.uri = uri,
+        /* Accept any TLS cert (incl. self-signed). The actual cert-chain
+         * verification is bypassed by CONFIG_ESP_TLS_INSECURE +
+         * CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY in sdkconfig.defaults; this
+         * flag covers the CN match check inside esp-mqtt itself. */
         .broker.verification.skip_cert_common_name_check = true,
         .credentials.client_id = client_id,
         .credentials.username = s_username,
@@ -230,12 +277,15 @@ void mqtt_client_connect(void) {
         .session.keepalive = 30,
         .buffer.size = 1024,
     };
-
+    /* Intentionally NOT setting .broker.verification.certificate — leaving it
+     * NULL combined with the kconfig insecure flags above makes mbedtls accept
+     * whatever the broker presents. If a CA cert ever IS provided via NVS, it
+     * will get wired in here; otherwise we run insecure. */
     if (s_ca_cert_pem) {
         mqtt_cfg.broker.verification.certificate = s_ca_cert_pem;
-        ESP_LOGI(TAG, "Using self-signed CA cert");
+        ESP_LOGI(TAG, "Using saved CA cert from NVS");
     } else {
-        ESP_LOGW(TAG, "No CA cert loaded - TLS connection will likely fail");
+        ESP_LOGI(TAG, "No CA cert — running with insecure TLS (cert verification skipped)");
     }
 
     s_client = esp_mqtt_client_init(&mqtt_cfg);
@@ -329,13 +379,17 @@ static void process_message(const char *topic, const char *payload, int length) 
         default: ESP_LOGW(TAG, "Unknown light id: %d", id); break;
         }
     }
-    /* local/energy/status */
+    /* local/energy/status — emitted by TrailCurrentHeadwaters can-bridge.
+     * Fields per containers/backend/src/services/can-bridge.js:
+     *   battery_percent, battery_voltage, solar_watts, charge_type,
+     *   consumption_watts, time_remaining_minutes (from shunt) */
     else if (strcmp(topic, "local/energy/status") == 0) {
         cJSON *bp = cJSON_GetObjectItem(doc, "battery_percent");
         cJSON *bv = cJSON_GetObjectItem(doc, "battery_voltage");
         cJSON *sw = cJSON_GetObjectItem(doc, "solar_watts");
         cJSON *ct = cJSON_GetObjectItem(doc, "charge_type");
         cJSON *cw = cJSON_GetObjectItem(doc, "consumption_watts");
+        cJSON *trm = cJSON_GetObjectItem(doc, "time_remaining_minutes");
 
         if (bp) set_var_battery_soc_percentage((int32_t)bp->valuedouble);
         if (bv) set_var_battery_voltage((float)bv->valuedouble);
@@ -345,6 +399,11 @@ static void process_message(const char *topic, const char *payload, int length) 
             char buf[32];
             snprintf(buf, sizeof(buf), "%d W", (int)cw->valuedouble);
             set_var_current_power_consumption_in_watts(buf);
+        }
+        /* Shunt time-to-go arrives in MINUTES; vars.c formatter expects hours
+         * by default. Convert here so the rest of the chain stays simple. */
+        if (trm) {
+            set_var_power_time_to_go_measurement((float)(trm->valuedouble / 60.0));
         }
     }
     /* local/airquality/temphumid */
@@ -375,7 +434,12 @@ static void process_message(const char *topic, const char *payload, int length) 
         cJSON *gnss = cJSON_GetObjectItem(doc, "gnssMode");
 
         if (sats) set_var_number_of_satellites(sats->valueint);
-        if (spd) set_var_current_speed_value((int32_t)spd->valuedouble);
+        /* Bearing publishes via CAN as (knots × 100); Headwaters' can-bridge
+         * forwards the raw scaled value to local/gps/details. Convert to MPH
+         * (knots × 1.15078) here so the toolbar speed widget shows MPH
+         * directly. Headwaters' web UI uses the same constant 0.0115078. */
+        if (spd) set_var_current_speed_value(
+                    (int32_t)(spd->valuedouble * 0.0115078 + 0.5));
         if (crs) set_var_current_course_over_ground((float)crs->valuedouble);
         if (gnss) process_gnss_mode(gnss->valueint);
     }

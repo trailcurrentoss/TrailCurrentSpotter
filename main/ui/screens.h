@@ -12,6 +12,10 @@ typedef struct _objects_t {
     lv_obj_t *page_lights;
     lv_obj_t *page_alarms;
     lv_obj_t *page_setup;
+    lv_obj_t *page_wifi_setup;
+    lv_obj_t *page_wifi_connecting;
+    lv_obj_t *page_mqtt_setup;
+    lv_obj_t *page_mqtt_connecting;
     lv_obj_t *drive_status_bar;
     lv_obj_t *drive_status_bar__root;
     lv_obj_t *drive_status_bar__status_brand_icon;
@@ -23,6 +27,7 @@ typedef struct _objects_t {
     lv_obj_t *drive_status_bar__status_speed_value;
     lv_obj_t *drive_status_bar__status_speed_unit;
     lv_obj_t *drive_status_bar__status_time;
+    lv_obj_t *drive_status_bar__status_wifi_icon;
     lv_obj_t *drive_body;
     lv_obj_t *drive_card_bat;
     lv_obj_t *drive_bat_title;
@@ -46,6 +51,12 @@ typedef struct _objects_t {
     lv_obj_t *drive_tire_r2;
     lv_obj_t *drive_tire_r2_psi;
     lv_obj_t *drive_tire_r2_lbl;
+    lv_obj_t *drive_tire_l3;
+    lv_obj_t *drive_tire_l3_psi;
+    lv_obj_t *drive_tire_l3_lbl;
+    lv_obj_t *drive_tire_r3;
+    lv_obj_t *drive_tire_r3_psi;
+    lv_obj_t *drive_tire_r3_lbl;
     lv_obj_t *drive_bsm_warning;
     lv_obj_t *drive_bsm_warn_icon;
     lv_obj_t *drive_bsm_warn_text;
@@ -97,6 +108,7 @@ typedef struct _objects_t {
     lv_obj_t *lights_status_bar__status_speed_value;
     lv_obj_t *lights_status_bar__status_speed_unit;
     lv_obj_t *lights_status_bar__status_time;
+    lv_obj_t *lights_status_bar__status_wifi_icon;
     lv_obj_t *lights_body;
     lv_obj_t *lights_header;
     lv_obj_t *lights_prev_zone;
@@ -169,6 +181,7 @@ typedef struct _objects_t {
     lv_obj_t *alarms_status_bar__status_speed_value;
     lv_obj_t *alarms_status_bar__status_speed_unit;
     lv_obj_t *alarms_status_bar__status_time;
+    lv_obj_t *alarms_status_bar__status_wifi_icon;
     lv_obj_t *alarms_body;
     lv_obj_t *alarms_header;
     lv_obj_t *alarms_title;
@@ -254,6 +267,7 @@ typedef struct _objects_t {
     lv_obj_t *setup_status_bar__status_speed_value;
     lv_obj_t *setup_status_bar__status_speed_unit;
     lv_obj_t *setup_status_bar__status_time;
+    lv_obj_t *setup_status_bar__status_wifi_icon;
     lv_obj_t *setup_body;
     lv_obj_t *setup_axle_title;
     lv_obj_t *setup_axle_single;
@@ -286,6 +300,12 @@ typedef struct _objects_t {
     lv_obj_t *setup_info_banner;
     lv_obj_t *setup_info_icon;
     lv_obj_t *setup_info_text;
+    lv_obj_t *setup_alarm_test_title;
+    lv_obj_t *setup_alarm_test_btn;
+    lv_obj_t *setup_alarm_test_btn_lbl;
+    lv_obj_t *setup_reset_conn_title;
+    lv_obj_t *setup_reset_conn_btn;
+    lv_obj_t *setup_reset_conn_btn_lbl;
     lv_obj_t *setup_dock;
     lv_obj_t *setup_dock__root;
     lv_obj_t *setup_dock__dock_btn_drive;
@@ -300,6 +320,128 @@ typedef struct _objects_t {
     lv_obj_t *setup_dock__dock_btn_setup;
     lv_obj_t *setup_dock__dock_btn_setup_icon;
     lv_obj_t *setup_dock__dock_btn_setup_label;
+    lv_obj_t *wifi_header;
+    lv_obj_t *wifi_brand;
+    lv_obj_t *wifi_brand_sub;
+    lv_obj_t *wifi_title;
+    lv_obj_t *wifi_sub;
+    lv_obj_t *wifi_scan_spinner;
+    lv_obj_t *wifi_scan_status;
+    lv_obj_t *wifi_scan_list;
+    lv_obj_t *wifi_net_0;
+    lv_obj_t *wifi_net_icon_0;
+    lv_obj_t *wifi_net_ssid_0;
+    lv_obj_t *wifi_net_signal_0;
+    lv_obj_t *wifi_net_bar1_0;
+    lv_obj_t *wifi_net_bar2_0;
+    lv_obj_t *wifi_net_bar3_0;
+    lv_obj_t *wifi_net_lock_0;
+    lv_obj_t *wifi_net_act_0;
+    lv_obj_t *wifi_net_1;
+    lv_obj_t *wifi_net_icon_1;
+    lv_obj_t *wifi_net_ssid_1;
+    lv_obj_t *wifi_net_signal_1;
+    lv_obj_t *wifi_net_bar1_1;
+    lv_obj_t *wifi_net_bar2_1;
+    lv_obj_t *wifi_net_bar3_1;
+    lv_obj_t *wifi_net_lock_1;
+    lv_obj_t *wifi_net_act_1;
+    lv_obj_t *wifi_net_2;
+    lv_obj_t *wifi_net_icon_2;
+    lv_obj_t *wifi_net_ssid_2;
+    lv_obj_t *wifi_net_signal_2;
+    lv_obj_t *wifi_net_bar1_2;
+    lv_obj_t *wifi_net_bar2_2;
+    lv_obj_t *wifi_net_bar3_2;
+    lv_obj_t *wifi_net_lock_2;
+    lv_obj_t *wifi_net_act_2;
+    lv_obj_t *wifi_net_3;
+    lv_obj_t *wifi_net_icon_3;
+    lv_obj_t *wifi_net_ssid_3;
+    lv_obj_t *wifi_net_signal_3;
+    lv_obj_t *wifi_net_bar1_3;
+    lv_obj_t *wifi_net_bar2_3;
+    lv_obj_t *wifi_net_bar3_3;
+    lv_obj_t *wifi_net_lock_3;
+    lv_obj_t *wifi_net_act_3;
+    lv_obj_t *wifi_net_4;
+    lv_obj_t *wifi_net_icon_4;
+    lv_obj_t *wifi_net_ssid_4;
+    lv_obj_t *wifi_net_signal_4;
+    lv_obj_t *wifi_net_bar1_4;
+    lv_obj_t *wifi_net_bar2_4;
+    lv_obj_t *wifi_net_bar3_4;
+    lv_obj_t *wifi_net_lock_4;
+    lv_obj_t *wifi_net_act_4;
+    lv_obj_t *wifi_net_5;
+    lv_obj_t *wifi_net_icon_5;
+    lv_obj_t *wifi_net_ssid_5;
+    lv_obj_t *wifi_net_signal_5;
+    lv_obj_t *wifi_net_bar1_5;
+    lv_obj_t *wifi_net_bar2_5;
+    lv_obj_t *wifi_net_bar3_5;
+    lv_obj_t *wifi_net_lock_5;
+    lv_obj_t *wifi_net_act_5;
+    lv_obj_t *wifi_net_6;
+    lv_obj_t *wifi_net_icon_6;
+    lv_obj_t *wifi_net_ssid_6;
+    lv_obj_t *wifi_net_signal_6;
+    lv_obj_t *wifi_net_bar1_6;
+    lv_obj_t *wifi_net_bar2_6;
+    lv_obj_t *wifi_net_bar3_6;
+    lv_obj_t *wifi_net_lock_6;
+    lv_obj_t *wifi_net_act_6;
+    lv_obj_t *wifi_net_7;
+    lv_obj_t *wifi_net_icon_7;
+    lv_obj_t *wifi_net_ssid_7;
+    lv_obj_t *wifi_net_signal_7;
+    lv_obj_t *wifi_net_bar1_7;
+    lv_obj_t *wifi_net_bar2_7;
+    lv_obj_t *wifi_net_bar3_7;
+    lv_obj_t *wifi_net_lock_7;
+    lv_obj_t *wifi_net_act_7;
+    lv_obj_t *wifi_footer;
+    lv_obj_t *wifi_btn_refresh;
+    lv_obj_t *wifi_btn_refresh_icon;
+    lv_obj_t *wifi_btn_refresh_lbl;
+    lv_obj_t *wifi_btn_skip;
+    lv_obj_t *wifi_btn_skip_lbl;
+    lv_obj_t *wifi_password_panel;
+    lv_obj_t *wifi_pwd_caption;
+    lv_obj_t *wifi_pwd_ssid;
+    lv_obj_t *wifi_pwd_input;
+    lv_obj_t *wifi_pwd_reveal;
+    lv_obj_t *wifi_pwd_reveal_icon;
+    lv_obj_t *wifi_pwd_keyboard;
+    lv_obj_t *wifi_pwd_cancel;
+    lv_obj_t *wifi_pwd_cancel_lbl;
+    lv_obj_t *wifi_pwd_connect;
+    lv_obj_t *wifi_pwd_connect_lbl;
+    lv_obj_t *wifi_connecting_panel;
+    lv_obj_t *wifi_conn_brand;
+    lv_obj_t *wifi_conn_brand_sub;
+    lv_obj_t *wifi_connecting_spinner;
+    lv_obj_t *wifi_connecting_caption;
+    lv_obj_t *wifi_connecting_ssid;
+    lv_obj_t *wifi_connecting_hint;
+    lv_obj_t *mqtt_brand;
+    lv_obj_t *mqtt_brand_text;
+    lv_obj_t *mqtt_caption;
+    lv_obj_t *mqtt_step;
+    lv_obj_t *mqtt_input;
+    lv_obj_t *mqtt_keyboard;
+    lv_obj_t *mqtt_footer;
+    lv_obj_t *mqtt_back;
+    lv_obj_t *mqtt_back_lbl;
+    lv_obj_t *mqtt_next;
+    lv_obj_t *mqtt_next_lbl;
+    lv_obj_t *mqtt_connecting_panel;
+    lv_obj_t *mqtt_conn_brand;
+    lv_obj_t *mqtt_conn_brand_sub;
+    lv_obj_t *mqtt_connecting_spinner;
+    lv_obj_t *mqtt_connecting_caption;
+    lv_obj_t *mqtt_connecting_host;
+    lv_obj_t *mqtt_connecting_hint;
 } objects_t;
 
 extern objects_t objects;
@@ -309,6 +451,10 @@ enum ScreensEnum {
     SCREEN_ID_PAGE_LIGHTS = 2,
     SCREEN_ID_PAGE_ALARMS = 3,
     SCREEN_ID_PAGE_SETUP = 4,
+    SCREEN_ID_PAGE_WIFI_SETUP = 5,
+    SCREEN_ID_PAGE_WIFI_CONNECTING = 6,
+    SCREEN_ID_PAGE_MQTT_SETUP = 7,
+    SCREEN_ID_PAGE_MQTT_CONNECTING = 8,
 };
 
 void create_screen_page_drive();
@@ -322,6 +468,18 @@ void tick_screen_page_alarms();
 
 void create_screen_page_setup();
 void tick_screen_page_setup();
+
+void create_screen_page_wifi_setup();
+void tick_screen_page_wifi_setup();
+
+void create_screen_page_wifi_connecting();
+void tick_screen_page_wifi_connecting();
+
+void create_screen_page_mqtt_setup();
+void tick_screen_page_mqtt_setup();
+
+void create_screen_page_mqtt_connecting();
+void tick_screen_page_mqtt_connecting();
 
 void create_user_widget_top_status_bar(lv_obj_t *parent_obj, int startWidgetIndex);
 void tick_user_widget_top_status_bar(int startWidgetIndex);
@@ -346,9 +504,10 @@ enum Colors {
     COLOR_ID_PRIMARY_TEXT_COLOR,
     COLOR_ID_SECONDARY_TEXT_COLOR,
     COLOR_ID_SUCCESS,
+    COLOR_ID_WARNING,
 };
 void change_color_theme(uint32_t themeIndex);
-extern uint32_t theme_colors[2][12];
+extern uint32_t theme_colors[2][13];
 extern uint32_t active_theme_index;
 
 void tick_screen_by_id(enum ScreensEnum screenId);

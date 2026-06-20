@@ -38,13 +38,40 @@ static time_t my_timegm(struct tm *tm)
 
 static int32_t solar_wattage;
 int32_t get_var_solar_wattage(void) { return solar_wattage; }
-void set_var_solar_wattage(int32_t value) { solar_wattage = value; }
+void set_var_solar_wattage(int32_t value) {
+    solar_wattage = value;
+    if (objects.drive_solar_value) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%d", (int)value);
+        lv_label_set_text(objects.drive_solar_value, buf);
+    }
+    /* Drive arc: scale to a 600 W "capacity" reference so the ring fills as
+     * the array approaches full output. If the actual array is smaller/larger
+     * the arc still gives a useful visual without needing the user to enter
+     * an array-spec. */
+    if (objects.drive_solar_arc) {
+        int pct = value < 0 ? 0 : (value > 600 ? 100 : (value * 100) / 600);
+        lv_arc_set_value(objects.drive_solar_arc, (int16_t)pct);
+    }
+}
 
 static char solar_status[100] = {0};
 const char *get_var_solar_status(void) { return solar_status; }
 void set_var_solar_status(const char *value) {
     strncpy(solar_status, value, sizeof(solar_status) - 1);
     solar_status[sizeof(solar_status) - 1] = '\0';
+    /* Map raw status strings to UI-friendly text shown under the solar arc. */
+    if (objects.drive_solar_pct) {
+        const char *display;
+        if      (strcmp(value, "solar") == 0)         display = "Solar charging";
+        else if (strcmp(value, "shore") == 0)         display = "Shore power";
+        else if (strcmp(value, "not_charging") == 0)  display = "Not charging";
+        else if (strcmp(value, "float") == 0)         display = "Float charge";
+        else if (strcmp(value, "absorption") == 0)    display = "Absorption";
+        else if (strcmp(value, "bulk") == 0)          display = "Bulk charge";
+        else                                          display = value;
+        lv_label_set_text(objects.drive_solar_pct, display);
+    }
 }
 
 /* --- Shore power --- */
@@ -62,14 +89,12 @@ static int32_t pdm01_device01_status;
 int32_t get_var_pdm01_device01_status(void) { return pdm01_device01_status; }
 void set_var_pdm01_device01_status(int32_t value) {
     pdm01_device01_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device01_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device01, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device01_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device01, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device01_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device01_label, LV_STATE_CHECKED);
+        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
+     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
+    lv_obj_t *btn = objects.lights_btn_1;
+    if (btn) {
+        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
 }
 
@@ -77,14 +102,12 @@ static int32_t pdm01_device02_status;
 int32_t get_var_pdm01_device02_status(void) { return pdm01_device02_status; }
 void set_var_pdm01_device02_status(int32_t value) {
     pdm01_device02_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device02_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device02, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device02_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device02, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device02_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device02_label, LV_STATE_CHECKED);
+        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
+     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
+    lv_obj_t *btn = objects.lights_btn_2;
+    if (btn) {
+        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
 }
 
@@ -92,14 +115,12 @@ static int32_t pdm01_device03_status;
 int32_t get_var_pdm01_device03_status(void) { return pdm01_device03_status; }
 void set_var_pdm01_device03_status(int32_t value) {
     pdm01_device03_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device03_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device03, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device03_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device03, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device03_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device03_label, LV_STATE_CHECKED);
+        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
+     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
+    lv_obj_t *btn = objects.lights_btn_3;
+    if (btn) {
+        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
 }
 
@@ -107,14 +128,12 @@ static int32_t pdm01_device04_status;
 int32_t get_var_pdm01_device04_status(void) { return pdm01_device04_status; }
 void set_var_pdm01_device04_status(int32_t value) {
     pdm01_device04_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device04_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device04, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device04_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device04, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device04_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device04_label, LV_STATE_CHECKED);
+        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
+     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
+    lv_obj_t *btn = objects.lights_btn_4;
+    if (btn) {
+        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
 }
 
@@ -122,14 +141,12 @@ static int32_t pdm01_device05_status;
 int32_t get_var_pdm01_device05_status(void) { return pdm01_device05_status; }
 void set_var_pdm01_device05_status(int32_t value) {
     pdm01_device05_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device05_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device05, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device05_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device05, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device05_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device05_label, LV_STATE_CHECKED);
+        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
+     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
+    lv_obj_t *btn = objects.lights_btn_5;
+    if (btn) {
+        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
 }
 
@@ -137,14 +154,12 @@ static int32_t pdm01_device06_status;
 int32_t get_var_pdm01_device06_status(void) { return pdm01_device06_status; }
 void set_var_pdm01_device06_status(int32_t value) {
     pdm01_device06_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device06_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device06, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device06_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device06, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device06_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device06_label, LV_STATE_CHECKED);
+        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
+     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
+    lv_obj_t *btn = objects.lights_btn_6;
+    if (btn) {
+        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
     }
 }
 
@@ -152,41 +167,42 @@ static int32_t pdm01_device07_status;
 int32_t get_var_pdm01_device07_status(void) { return pdm01_device07_status; }
 void set_var_pdm01_device07_status(int32_t value) {
     pdm01_device07_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device07_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device07, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device07_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device07, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device07_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device07_label, LV_STATE_CHECKED);
-    }
+        /* device 7 has no widget in the new GUI yet — value stored only. */
 }
 
 static int32_t pdm01_device08_status;
 int32_t get_var_pdm01_device08_status(void) { return pdm01_device08_status; }
 void set_var_pdm01_device08_status(int32_t value) {
     pdm01_device08_status = value;
-    if (value > 0) {
-        lv_obj_add_state(objects.lbl_device08_status_ind, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.btn_device08, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.lbl_device08_label, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.btn_device08, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device08_status_ind, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.lbl_device08_label, LV_STATE_CHECKED);
-    }
+        /* device 8 has no widget in the new GUI yet — value stored only. */
 }
 
 /* --- Battery --- */
 
 static float battery_voltage;
 float get_var_battery_voltage(void) { return battery_voltage; }
-void set_var_battery_voltage(float value) { battery_voltage = value; }
+void set_var_battery_voltage(float value) {
+    battery_voltage = value;
+    if (objects.drive_bat_volts) {
+        char buf[16];
+        snprintf(buf, sizeof(buf), "%.1f V", value);
+        lv_label_set_text(objects.drive_bat_volts, buf);
+    }
+}
 
 static int32_t battery_soc_percentage;
 int32_t get_var_battery_soc_percentage(void) { return battery_soc_percentage; }
-void set_var_battery_soc_percentage(int32_t value) { battery_soc_percentage = value; }
+void set_var_battery_soc_percentage(int32_t value) {
+    battery_soc_percentage = value;
+    if (objects.drive_bat_value) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%d", (int)value);
+        lv_label_set_text(objects.drive_bat_value, buf);
+    }
+    if (objects.drive_bat_arc) {
+        lv_arc_set_value(objects.drive_bat_arc, (int16_t)value);
+    }
+}
 
 /* --- Power consumption --- */
 
@@ -195,7 +211,7 @@ const char *get_var_current_power_consumption_in_watts(void) { return current_po
 void set_var_current_power_consumption_in_watts(const char *value) {
     strncpy(current_power_consumption_in_watts, value, sizeof(current_power_consumption_in_watts) - 1);
     current_power_consumption_in_watts[sizeof(current_power_consumption_in_watts) - 1] = '\0';
-    lv_label_set_text(objects.label_remaining_cacpity_1, current_power_consumption_in_watts);
+    /* widget removed in new GUI */
 }
 
 /* --- Speed --- */
@@ -206,7 +222,16 @@ void set_var_current_speed_value(int32_t value) {
     current_speed_value = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%d", (int)value);
-    lv_label_set_text(objects.label_current_speed_value, buf);
+    /* TopStatusBar is instanced on all 4 pages — push to every per-instance copy */
+    lv_obj_t *speed_widgets[] = {
+        objects.drive_status_bar__status_speed_value,
+        objects.lights_status_bar__status_speed_value,
+        objects.alarms_status_bar__status_speed_value,
+        objects.setup_status_bar__status_speed_value,
+    };
+    for (size_t i = 0; i < sizeof(speed_widgets)/sizeof(*speed_widgets); i++) {
+        if (speed_widgets[i]) lv_label_set_text(speed_widgets[i], buf);
+    }
 }
 
 /* --- MAC address --- */
@@ -216,7 +241,7 @@ const char *get_var_mcu_mac_address(void) { return mcu_mac_address; }
 void set_var_mcu_mac_address(const char *value) {
     strncpy(mcu_mac_address, value, sizeof(mcu_mac_address) - 1);
     mcu_mac_address[sizeof(mcu_mac_address) - 1] = '\0';
-    lv_label_set_text(objects.mcu_mac_address_value, value);
+    /* widget removed in new GUI */
 }
 
 /* --- GPS --- */
@@ -227,7 +252,7 @@ void set_var_number_of_satellites(int32_t value) {
     number_of_satellites = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%d", (int)value);
-    lv_label_set_text(objects.label_number_of_satellite_value, buf);
+    /* widget removed in new GUI */
 }
 
 static float current_course_over_ground;
@@ -239,7 +264,7 @@ const char *get_var_gnss_mode(void) { return gnss_mode; }
 void set_var_gnss_mode(const char *value) {
     strncpy(gnss_mode, value, sizeof(gnss_mode) - 1);
     gnss_mode[sizeof(gnss_mode) - 1] = '\0';
-    lv_label_set_text(objects.gnss_mode_value, value);
+    /* widget removed in new GUI */
 }
 
 static float current_altitude_value;
@@ -248,7 +273,7 @@ void set_var_current_altitude_value(float value) {
     current_altitude_value = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%.0f", value);
-    lv_label_set_text(objects.label_altitude_in_feet_value, buf);
+    /* widget removed in new GUI */
 }
 
 static float current_latitude;
@@ -257,7 +282,7 @@ void set_var_current_latitude(float value) {
     current_latitude = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%10.6f", value);
-    lv_label_set_text(objects.label_current_lat_value, buf);
+    /* widget removed in new GUI */
 }
 
 static float current_longitude;
@@ -266,7 +291,7 @@ void set_var_current_longitude(float value) {
     current_longitude = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%11.6f", value);
-    lv_label_set_text(objects.label_current_long_value, buf);
+    /* widget removed in new GUI */
 }
 
 /* --- Date/Time --- */
@@ -294,20 +319,20 @@ static float current_temperature_value;
 float get_var_current_temperature_value(void) { return current_temperature_value; }
 void set_var_current_temperature_value(float value) {
     current_temperature_value = value;
-    lv_bar_set_value(objects.bar_interior_temperature, (int32_t)value, LV_ANIM_ON);
+    /* widget removed in new GUI */
     char buf[16];
     snprintf(buf, sizeof(buf), "%.0f", value);
-    lv_label_set_text(objects.label_interior_temp_value, buf);
+    /* widget removed in new GUI */
 }
 
 static float current_humidity_value;
 float get_var_current_humidity_value(void) { return current_humidity_value; }
 void set_var_current_humidity_value(float value) {
     current_humidity_value = value;
-    lv_arc_set_value(objects.arc_relative_humidity, (int16_t)value);
+    /* widget removed in new GUI */
     char buf[16];
     snprintf(buf, sizeof(buf), "%.0f", value);
-    lv_label_set_text(objects.label_humidty_level, buf);
+    /* widget removed in new GUI */
 }
 
 /* --- User settings --- */
@@ -320,14 +345,14 @@ static int32_t selected_theme;
 int32_t get_var_selected_theme(void) { return selected_theme; }
 void set_var_selected_theme(int32_t value) {
     selected_theme = value;
-    lv_obj_clear_state(objects.btn_theme_dark, LV_STATE_CHECKED);
-    lv_obj_clear_state(objects.btn_theme_light, LV_STATE_CHECKED);
+    lv_obj_clear_state(objects.setup_theme_dark, LV_STATE_CHECKED);
+    lv_obj_clear_state(objects.setup_theme_light, LV_STATE_CHECKED);
     if (selected_theme == 0) {
         change_color_theme(THEME_ID_DEFAULT);
-        lv_obj_add_state(objects.btn_theme_light, LV_STATE_CHECKED);
+        lv_obj_add_state(objects.setup_theme_light, LV_STATE_CHECKED);
     } else if (selected_theme == 1) {
         change_color_theme(THEME_ID_DARK);
-        lv_obj_add_state(objects.btn_theme_dark, LV_STATE_CHECKED);
+        lv_obj_add_state(objects.setup_theme_dark, LV_STATE_CHECKED);
     }
 }
 
@@ -337,18 +362,14 @@ void set_var_screen_timeout_value(int32_t value) {
     screen_timeout_value = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%d", (int)value);
-    lv_label_set_text(objects.label_screen_timeout_value, buf);
+    /* widget removed in new GUI */
 }
 
 static bool keep_screen_on_while_driving;
 bool get_var_keep_screen_on_while_driving(void) { return keep_screen_on_while_driving; }
 void set_var_keep_screen_on_while_driving(bool value) {
     keep_screen_on_while_driving = value;
-    if (value) {
-        lv_obj_add_state(objects.check_box_keep_screen_on_while_in_motion, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.check_box_keep_screen_on_while_in_motion, LV_STATE_CHECKED);
-    }
+    /* check_box_keep_screen_on_while_in_motion removed in new GUI */
 }
 
 /* --- WiFi / Connection state --- */
@@ -397,11 +418,44 @@ void set_var_current_time_zone_string(const char *value) {
 
 static float power_time_to_go_measurement;
 float get_var_power_time_to_go_measurement(void) { return power_time_to_go_measurement; }
-void set_var_power_time_to_go_measurement(float value) { power_time_to_go_measurement = value; }
+static void refresh_battery_remaining_label(void);  /* fwd */
+void set_var_power_time_to_go_measurement(float value) {
+    power_time_to_go_measurement = value;
+    refresh_battery_remaining_label();
+}
 
 static char power_time_to_go_measurement_type[100] = {0};
 const char *get_var_power_time_to_go_measurement_type(void) { return power_time_to_go_measurement_type; }
 void set_var_power_time_to_go_measurement_type(const char *value) {
     strncpy(power_time_to_go_measurement_type, value, sizeof(power_time_to_go_measurement_type) - 1);
     power_time_to_go_measurement_type[sizeof(power_time_to_go_measurement_type) - 1] = '\0';
+    refresh_battery_remaining_label();
+}
+
+/* drive_bat_remain text — auto-picks the friendliest unit format based on
+ * magnitude. Matches Headwaters' web UI:
+ *   >= 24 h:   "1d 7h"
+ *   >= 1 h:    "13h 40m"
+ *   < 1 h:     "45m"
+ * Input is in HOURS (mqtt_client converts time_remaining_minutes → hours). */
+static void refresh_battery_remaining_label(void)
+{
+    if (!objects.drive_bat_remain) return;
+    if (power_time_to_go_measurement <= 0.0f) {
+        lv_label_set_text(objects.drive_bat_remain, "Calculating...");
+        return;
+    }
+    char buf[32];
+    int total_min = (int)(power_time_to_go_measurement * 60.0f + 0.5f);
+    int days  = total_min / (24 * 60);
+    int hours = (total_min % (24 * 60)) / 60;
+    int mins  = total_min % 60;
+    if (days > 0) {
+        snprintf(buf, sizeof(buf), "%dd %dh left", days, hours);
+    } else if (hours > 0) {
+        snprintf(buf, sizeof(buf), "%dh %02dm left", hours, mins);
+    } else {
+        snprintf(buf, sizeof(buf), "%dm left", mins);
+    }
+    lv_label_set_text(objects.drive_bat_remain, buf);
 }

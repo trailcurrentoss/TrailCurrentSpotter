@@ -4,8 +4,8 @@ CONFIG_IDF_TARGET="esp32s3"
 # CPU
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 
-# Flash (8MB, QIO 120MHz)
-CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+# Flash (16MB on Waveshare ESP32-S3-Touch-LCD-4.3C)
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
 CONFIG_ESPTOOLPY_FLASHFREQ_120M=y
 
@@ -28,6 +28,12 @@ CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 # FreeRTOS
 CONFIG_FREERTOS_HZ=1000
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# System event loop task stack — default 2304 isn't enough for our WiFi event
+# handlers (wifi_setup's on_scan_done has a 960-byte stack-allocated buffer of
+# wifi_ap_record_t, plus the qsort + my app_state callbacks). FluidCNC pendant
+# uses the same value.
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=6144
 
 # WiFi
 CONFIG_ESP_WIFI_IRAM_OPT=n

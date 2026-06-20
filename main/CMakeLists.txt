@@ -3,6 +3,7 @@ idf_component_register(
         "main.c"
         "actions.c"
         "vars.c"
+        "app_state.c"
         "ui/ui.c"
         "ui/screens.c"
         "ui/styles.c"
@@ -24,4 +25,7 @@ idf_component_register(
         esp_event
         mqtt_client
         sd_config
+        wifi_setup
+        pendant_config
+        audio
 )

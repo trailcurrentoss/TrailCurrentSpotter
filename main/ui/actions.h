@@ -32,6 +32,15 @@ extern void action_toggle_breakaway(lv_event_t * e);
 extern void action_acknowledge_alarm(lv_event_t * e);
 extern void action_go_lights(lv_event_t * e);
 extern void action_go_alarms(lv_event_t * e);
+extern void action_wifi_select_network(lv_event_t * e);
+extern void action_wifi_password_submit(lv_event_t * e);
+extern void action_wifi_toggle_password_reveal(lv_event_t * e);
+extern void action_wifi_back(lv_event_t * e);
+extern void action_wifi_skip_to_serial(lv_event_t * e);
+extern void action_mqtt_back(lv_event_t * e);
+extern void action_mqtt_next(lv_event_t * e);
+extern void action_test_alarms(lv_event_t * e);
+extern void action_clear_connection(lv_event_t * e);
 
 
 #ifdef __cplusplus

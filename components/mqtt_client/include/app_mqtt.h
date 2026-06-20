@@ -4,11 +4,19 @@
 #include <stdbool.h>
 
 /**
- * Load MQTT settings from NVS (namespace "sd_config").
- * Must be called after sd_config_read() has populated NVS.
- * Returns true if host, username, and password are all present.
+ * Load MQTT settings from pendant_config first (the UI-driven NVS source),
+ * falling back to the older "sd_config" NVS namespace for backward compat.
+ * Returns true if host + user are present (enough to attempt a connection).
  */
 bool mqtt_client_load_settings(void);
+
+/**
+ * Register a callback invoked when MQTT goes up or down. The callback runs
+ * on the MQTT event task — keep it short and bounce LVGL work onto the
+ * LVGL thread (lv_async_call). Pass NULL to clear. Optional.
+ */
+typedef void (*mqtt_client_state_cb_t)(bool connected);
+void mqtt_client_set_state_callback(mqtt_client_state_cb_t cb);
 
 /**
  * Connect to the MQTT broker using loaded settings.

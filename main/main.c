@@ -7,7 +7,8 @@
 #include "esp_lcd_panel_rgb.h"
 #include "esp_lcd_touch_gt911.h"
 #include "esp_timer.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
+#include "driver/gpio.h"
 #include "nvs_flash.h"
 #include "nvs.h"
 #include "esp_wifi.h"
@@ -21,6 +22,7 @@
 #include "ui/styles.h"
 #include "app_mqtt.h"
 #include "sd_config.h"
+#include "audio.h"
 
 static const char *TAG = "spotter";
 
@@ -31,72 +33,110 @@ static const char *TAG = "spotter";
 #define SCREEN_HEIGHT 480
 
 /* ============================================================================
- * CH422G IO expander
- * Uses different I2C addresses per function (no register addressing).
- *   0x24 = system parameter (write IO_OE=1 to enable push-pull EXIO outputs)
- *   0x38 = IO0-7 output data
- * Pin mapping within the 0x38 output byte:
- *   Bit 1 = EXIO1 = Touch RST
- *   Bit 2 = EXIO2 = Backlight enable
- *   Bit 3 = EXIO3 = LCD RST
- *   Bit 4 = EXIO4 = SD_CS
- *   Bit 5 = EXIO5 = USB_SEL
+ * IO Extension chip (CH422G family) — Waveshare ESP32-S3-Touch-LCD-4.3C
+ *
+ * Per the reference firmware in DOCS/.../examples/esp-idf/12_lvgl_transplant/
+ * components/io_extension/io_extension.c, this chip is addressed at 0x24 with
+ * a register-based protocol (NOT the bit-mapped 0x38 protocol the previous
+ * code used). Each operation is a 2-byte I2C write: [register, value].
+ *
+ *   Register 0x02 → IO mode  (per-pin: 0 input, 1 output). Init to 0xFF.
+ *   Register 0x03 → IO output values (8 bits, one per pin).
+ *   Register 0x04 → IO input values (read).
+ *
+ * Pin assignments (from reference io_extension.h):
+ *   IO0          unused
+ *   IO1 (bit 1)  = touch reset
+ *   IO2 (bit 2)  = LCD backlight enable
+ *   IO3 (bit 3)  = PA (power amp)
+ *   IO4 (bit 4)  = SD card CS
+ *   IO5 (bit 5)  = USB/CAN select (0=USB, 1=CAN)
+ *   IO6, IO7     unused
+ *
+ * Initial output cache 0xF7 matches the reference's Last_io_value default
+ * (all pins HIGH except bit 3 / PA, kept LOW).
  * ============================================================================ */
-#define CH422G_SYS_ADDR   0x24
-#define CH422G_OUT_ADDR   0x38
+#define IO_EXT_ADDR        0x24
+#define IO_EXT_REG_MODE    0x02
+#define IO_EXT_REG_OUTPUT  0x03
 
-#define CH422G_EXIO1_BIT  (1 << 1)   /* Touch RST */
-#define CH422G_EXIO2_BIT  (1 << 2)   /* Backlight enable */
-#define CH422G_EXIO3_BIT  (1 << 3)   /* LCD RST */
-#define CH422G_EXIO4_BIT  (1 << 4)   /* SD_CS */
-#define CH422G_EXIO5_BIT  (1 << 5)   /* USB_SEL */
+#define IO_EXT_TOUCH_RST_BIT  (1 << 1)
+#define IO_EXT_BACKLIGHT_BIT  (1 << 2)
+#define IO_EXT_PA_BIT         (1 << 3)
+#define IO_EXT_SD_CS_BIT      (1 << 4)
+#define IO_EXT_USB_SEL_BIT    (1 << 5)
+
+/* Kept under the old names for back-compat with the touch_init sequence. */
+#define CH422G_EXIO1_BIT  IO_EXT_TOUCH_RST_BIT
+#define CH422G_EXIO2_BIT  IO_EXT_BACKLIGHT_BIT
+#define CH422G_EXIO4_BIT  IO_EXT_SD_CS_BIT
 
 #define I2C_PORT     I2C_NUM_0
 #define I2C_SDA_PIN  8
 #define I2C_SCL_PIN  9
 #define I2C_FREQ_HZ  400000
 
-static uint8_t ch422g_out = 0;
+static uint8_t io_ext_out = 0xF7;   /* Reference's Last_io_value default */
 
-static esp_err_t ch422g_write(uint8_t addr, uint8_t val)
+/* New i2c_master_bus API — shared by IO extension, GT911 touch, and (Stage 2)
+ * the ES8311 audio codec. Created once in ch422g_init and exposed via
+ * spotter_i2c_bus() so the audio component can attach the codec. */
+static i2c_master_bus_handle_t i2c_bus = NULL;
+static i2c_master_dev_handle_t io_ext_dev = NULL;
+
+i2c_master_bus_handle_t spotter_i2c_bus(void) { return i2c_bus; }
+
+static esp_err_t io_ext_write_reg(uint8_t reg, uint8_t val)
 {
-    uint8_t buf = val;
-    return i2c_master_write_to_device(I2C_PORT, addr, &buf, 1, pdMS_TO_TICKS(100));
+    uint8_t buf[2] = { reg, val };
+    return i2c_master_transmit(io_ext_dev, buf, 2, 100);
 }
 
 static void ch422g_set_bit(uint8_t bit, bool high)
 {
-    if (high) ch422g_out |= bit;
-    else      ch422g_out &= ~bit;
-    ch422g_write(CH422G_OUT_ADDR, ch422g_out);
+    if (high) io_ext_out |= bit;
+    else      io_ext_out &= ~bit;
+    io_ext_write_reg(IO_EXT_REG_OUTPUT, io_ext_out);
+}
+
+/* Audio component asks us to flip the PA bit on/off. */
+void spotter_io_ext_set_pa(bool enable)
+{
+    ch422g_set_bit(IO_EXT_PA_BIT, enable);
 }
 
 static void ch422g_init(void)
 {
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = I2C_SDA_PIN,
+    i2c_master_bus_config_t bus_cfg = {
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .i2c_port = I2C_PORT,
         .scl_io_num = I2C_SCL_PIN,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = I2C_FREQ_HZ,
+        .sda_io_num = I2C_SDA_PIN,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
     };
-    i2c_param_config(I2C_PORT, &conf);
-    i2c_driver_install(I2C_PORT, I2C_MODE_MASTER, 0, 0, 0);
+    ESP_ERROR_CHECK(i2c_new_master_bus(&bus_cfg, &i2c_bus));
 
-    /* Enable push-pull output mode for EXIO pins (IO_OE = bit 0) */
-    esp_err_t err = ch422g_write(CH422G_SYS_ADDR, 0x01);
-    ESP_LOGI(TAG, "CH422G init %s", err == ESP_OK ? "OK" : "FAILED");
+    i2c_device_config_t dev_cfg = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = IO_EXT_ADDR,
+        .scl_speed_hz = I2C_FREQ_HZ,
+    };
+    ESP_ERROR_CHECK(i2c_master_bus_add_device(i2c_bus, &dev_cfg, &io_ext_dev));
 
-    /* Backlight on, touch RST high, LCD RST high, SD CS high, USB_SEL low */
-    ch422g_out = CH422G_EXIO1_BIT | CH422G_EXIO2_BIT | CH422G_EXIO3_BIT | CH422G_EXIO4_BIT;
-    ch422g_write(CH422G_OUT_ADDR, ch422g_out);
+    /* All pins as outputs. */
+    esp_err_t e1 = io_ext_write_reg(IO_EXT_REG_MODE, 0xFF);
+    /* Write the initial output state (matches reference: 0xF7). */
+    esp_err_t e2 = io_ext_write_reg(IO_EXT_REG_OUTPUT, io_ext_out);
+    ESP_LOGI(TAG, "IO extension init: mode=%s output=%s (val=0x%02x)",
+             e1 == ESP_OK ? "OK" : "FAIL",
+             e2 == ESP_OK ? "OK" : "FAIL", io_ext_out);
 }
 
 /* SD card CS control — called by sd_config component */
 void sd_cs_set(bool assert_low)
 {
-    ch422g_set_bit(CH422G_EXIO4_BIT, !assert_low);
+    ch422g_set_bit(IO_EXT_SD_CS_BIT, !assert_low);
 }
 
 /* ============================================================================
@@ -222,22 +262,9 @@ static void restore_user_settings(void)
         set_var_current_time_zone_string(tz);
     }
 
-    /* Restore timezone dropdown selection */
-    const char *tz_items[] = {
-        "ASKT9AKDT,M3.2.0/2:00:00,M11.1.0/2:00:00",
-        "CST6CDT,M3.2.0/2:00:00,M11.1.0/2:00:00",
-        "MST7MDT,M3.2.0/2:00:00,M11.1.0/2:00:00",
-        "HST11HDT,M3.2.0/2:00:00,M11.1.0/2:00:00",
-        "PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00",
-        "EST5EDT,M3.2.0/2:00:00,M11.1.0/2:00:00",
-        "MST7"
-    };
-    for (int i = 0; i < 7; i++) {
-        if (strcmp(tz_items[i], tz) == 0) {
-            lv_dropdown_set_selected(objects.drop_down_selected_time_zone, i);
-            break;
-        }
-    }
+    /* Old timezone dropdown widget is gone from the new GUI; the underlying TZ
+     * string is still applied via setenv(). Re-add a dropdown to PageSetup if
+     * the timezone selector is needed in the new UI. */
 
     nvs_close(nvs);
     ESP_LOGI(TAG, "User settings restored (theme=%d, timeout=%d)", (int)theme, (int)timeout);
@@ -280,24 +307,34 @@ static void lcd_init(void)
 {
     vsync_sem = xSemaphoreCreateBinary();
 
+    /* Matches Waveshare ESP32-S3-Touch-LCD-4.3C reference, see
+     * DOCS/.../examples/esp-idf/12_lvgl_transplant/components/rgb_lcd_port/
+     * rgb_lcd_port.c. Key differences from prior config: pclk_active_neg=1
+     * (panel expects active-low PCLK), 4/8/8 sync timings instead of 10/10/20,
+     * 16 MHz PCLK instead of 14, sram_trans_align=4 added. */
     esp_lcd_rgb_panel_config_t panel_config = {
         .clk_src = LCD_CLK_SRC_DEFAULT,
         .timings = {
-            .pclk_hz = 14000000,
+            .pclk_hz = 16 * 1000 * 1000,
             .h_res = SCREEN_WIDTH,
             .v_res = SCREEN_HEIGHT,
-            .hsync_pulse_width = 10,
-            .hsync_back_porch = 10,
-            .hsync_front_porch = 20,
-            .vsync_pulse_width = 10,
-            .vsync_back_porch = 10,
-            .vsync_front_porch = 10,
-            .flags.pclk_active_neg = false,
+            .hsync_pulse_width = 4,
+            .hsync_back_porch = 8,
+            .hsync_front_porch = 8,
+            .vsync_pulse_width = 4,
+            .vsync_back_porch = 8,
+            .vsync_front_porch = 8,
+            .flags.pclk_active_neg = 1,
         },
         .data_width = 16,
         .bits_per_pixel = 16,
         .num_fbs = 2,
+        /* Bumped from SCREEN_WIDTH*10 → *20 to reduce DMA interrupt
+         * frequency. Each bounce now holds ~1ms of pixel data which
+         * gives the PSRAM refill plenty of headroom and noticeably
+         * cuts visible tearing/flicker on this 800x480 panel. */
         .bounce_buffer_size_px = SCREEN_WIDTH * 20,
+        .sram_trans_align = 4,
         .psram_trans_align = 64,
         .de_gpio_num = 5,
         .pclk_gpio_num = 7,
@@ -305,12 +342,9 @@ static void lcd_init(void)
         .hsync_gpio_num = 46,
         .disp_gpio_num = -1,
         .data_gpio_nums = {
-            /* B[0:4] */
-            14, 38, 18, 17, 10,
-            /* G[0:5] */
-            39, 0, 45, 48, 47, 21,
-            /* R[0:4] */
-            1, 2, 42, 41, 40,
+            /* B3..B7 */ 14, 38, 18, 17, 10,
+            /* G2..G7 */ 39,  0, 45, 48, 47, 21,
+            /* R3..R7 */  1,  2, 42, 41, 40,
         },
         .flags.fb_in_psram = true,
     };
@@ -330,22 +364,64 @@ static void lcd_init(void)
  * ============================================================================ */
 static esp_lcd_touch_handle_t touch_handle = NULL;
 
+/* Per the Waveshare ESP32-S3-Touch-LCD-4.3C reference (DOCS/.../examples/esp-idf/
+ * 12_lvgl_transplant/components/touch/gt911.c), the GT911 latches its I2C address
+ * on the rising edge of RST based on the INT pin state:
+ *   INT low  → 0x5D (default)
+ *   INT high → 0x14 (backup)
+ * Touch RST is on the CH422G IO expander (EXIO1); touch INT is GPIO 4. We must
+ * drive INT low ourselves before releasing RST — the driver only handles this
+ * if both RST and INT are real GPIOs it can control, and our RST isn't. */
+#define TOUCH_INT_GPIO  GPIO_NUM_4
+
 static void touch_init(void)
 {
-    /* Pulse touch RST via CH422G EXIO1 */
+    /* 1. Configure INT as output so we can hold it low during reset. */
+    gpio_config_t int_out = {
+        .mode = GPIO_MODE_INPUT_OUTPUT,
+        .pin_bit_mask = BIT64(TOUCH_INT_GPIO),
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&int_out);
+
+    /* 2. RST low (via CH422G EXIO1), wait. */
     ch422g_set_bit(CH422G_EXIO1_BIT, false);
-    vTaskDelay(pdMS_TO_TICKS(10));
-    ch422g_set_bit(CH422G_EXIO1_BIT, true);
     vTaskDelay(pdMS_TO_TICKS(100));
+
+    /* 3. INT low → selects 0x5D after RST release. */
+    gpio_set_level(TOUCH_INT_GPIO, 0);
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    /* 4. Release RST while INT is held low → chip wakes up at 0x5D. */
+    ch422g_set_bit(CH422G_EXIO1_BIT, true);
+    vTaskDelay(pdMS_TO_TICKS(200));
+
+    /* 5. Reconfigure INT as input for normal operation. */
+    gpio_config_t int_in = {
+        .mode = GPIO_MODE_INPUT,
+        .pin_bit_mask = BIT64(TOUCH_INT_GPIO),
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&int_in);
 
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
     esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)I2C_PORT,
-                                              &tp_io_config, &tp_io_handle));
+    /* New i2c_master_bus driver — the touch panel attaches as another device
+     * on the shared bus. scl_speed_hz is honored here (the GT911 happily runs
+     * at 400 kHz alongside the IO expander). */
+    tp_io_config.scl_speed_hz = I2C_FREQ_HZ;
+    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c_v2(i2c_bus, &tp_io_config, &tp_io_handle));
 
     esp_lcd_touch_config_t tp_cfg = {
         .x_max = SCREEN_WIDTH,
         .y_max = SCREEN_HEIGHT,
+        /* rst stays NC because RST is on the CH422G, not a real GPIO; we handled
+         * RST manually above. int_gpio_num=-1 too — we poll via touch_read_data
+         * rather than using interrupt-driven mode. */
         .rst_gpio_num = -1,
         .int_gpio_num = -1,
         .flags = {
@@ -354,8 +430,13 @@ static void touch_init(void)
             .mirror_y = 0,
         },
     };
-    ESP_ERROR_CHECK(esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &touch_handle));
-    ESP_LOGI(TAG, "GT911 touch initialized");
+    esp_err_t r = esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &touch_handle);
+    if (r != ESP_OK) {
+        ESP_LOGE(TAG, "GT911 init failed (0x%x) — continuing without touch", r);
+        touch_handle = NULL;
+        return;
+    }
+    ESP_LOGI(TAG, "GT911 touch initialized at 0x5D");
 }
 
 /* ============================================================================
@@ -373,16 +454,29 @@ static void lvgl_tick_cb(void *arg)
 static void lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area,
                            lv_color_t *color_map)
 {
+    /* Direct mode + 2 framebuffers: panel_draw_bitmap with the just-rendered
+     * buffer queues a tear-free swap at the next vsync. Then wait on the
+     * vsync semaphore so we don't return to LVGL (which would immediately
+     * start rendering into the OTHER buffer) until the swap has been latched
+     * by the panel hardware. Order matters — calling draw_bitmap AFTER
+     * taking the sem queues against a stale vsync and the swap visibly
+     * lags by one frame, which shows up as flicker on rapidly-changing
+     * widgets like the battery arc. Pattern matches the Waveshare
+     * ESP32-S3-Touch-LCD-4.3C lvgl_port reference. */
     if (lv_disp_flush_is_last(drv)) {
-        xSemaphoreTake(vsync_sem, portMAX_DELAY);
         esp_lcd_panel_draw_bitmap(panel_handle, 0, 0,
                                   SCREEN_WIDTH, SCREEN_HEIGHT, color_map);
+        xSemaphoreTake(vsync_sem, portMAX_DELAY);
     }
     lv_disp_flush_ready(drv);
 }
 
 static void lvgl_touch_read_cb(lv_indev_drv_t *drv, lv_indev_data_t *data)
 {
+    if (!touch_handle) {
+        data->state = LV_INDEV_STATE_REL;
+        return;
+    }
     esp_lcd_touch_read_data(touch_handle);
 
     esp_lcd_touch_point_data_t pt;
@@ -438,127 +532,26 @@ static void lvgl_init(void)
 }
 
 /* ============================================================================
- * WiFi
+ * WiFi — now owned by the wifi_setup component + app_state machine. Boot path:
+ *   1. esp_netif + default event loop init (done in app_main before the state
+ *      machine, since wifi_setup_init() assumes both are up).
+ *   2. app_state_init() calls wifi_setup_init() (which installs WIFI/IP event
+ *      handlers and starts the STA driver) and decides the first screen based
+ *      on saved credentials (PageWifiConnecting if creds saved, PageWifiSetup
+ *      otherwise).
+ * Old wifi_init/wifi_auto_connect/wifi_event_handler are replaced by that.
  * ============================================================================ */
-static char wifi_connected_ip[20] = {0};
-static int wifi_retry_count = 0;
-#define WIFI_MAX_RETRIES 5
-
-static void wifi_event_handler(void *arg, esp_event_base_t event_base,
-                                int32_t event_id, void *event_data)
-{
-    if (event_base == WIFI_EVENT) {
-        switch (event_id) {
-        case WIFI_EVENT_STA_CONNECTED:
-            ESP_LOGI(TAG, "WiFi connected to AP");
-            wifi_retry_count = 0;
-            set_var_wifi_connected(true);
-            break;
-        case WIFI_EVENT_STA_DISCONNECTED: {
-            set_var_wifi_connected(false);
-            if (wifi_retry_count < WIFI_MAX_RETRIES) {
-                wifi_retry_count++;
-                ESP_LOGI(TAG, "WiFi retry %d/%d...", wifi_retry_count, WIFI_MAX_RETRIES);
-                esp_wifi_connect();
-            } else {
-                ESP_LOGW(TAG, "WiFi max retries reached");
-            }
-            break;
-        }
-        default:
-            break;
-        }
-    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
-        snprintf(wifi_connected_ip, sizeof(wifi_connected_ip),
-                 IPSTR, IP2STR(&event->ip_info.ip));
-        ESP_LOGI(TAG, "Got IP: %s", wifi_connected_ip);
-        mqtt_client_connect();
-    }
-}
-
-static void wifi_init(void)
-{
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_sta();
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-
-    /* Register event handlers */
-    esp_event_handler_instance_t wifi_handler;
-    esp_event_handler_instance_t ip_handler;
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(
-        WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, &wifi_handler));
-    ESP_ERROR_CHECK(esp_event_handler_instance_register(
-        IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, &ip_handler));
-
-    ESP_ERROR_CHECK(esp_wifi_start());
-    ESP_LOGI(TAG, "WiFi initialized (STA mode)");
-}
-
-static void wifi_auto_connect(void)
-{
-    nvs_handle_t nvs;
-    if (nvs_open("sd_config", NVS_READONLY, &nvs) != ESP_OK) {
-        ESP_LOGW(TAG, "No sd_config NVS namespace");
-        return;
-    }
-
-    char ssid[33] = {0};
-    char pass[65] = {0};
-    size_t len;
-
-    len = sizeof(ssid);
-    if (nvs_get_str(nvs, "wifiSSID", ssid, &len) != ESP_OK || strlen(ssid) == 0) {
-        ESP_LOGW(TAG, "No WiFi SSID in NVS");
-        nvs_close(nvs);
-        return;
-    }
-
-    len = sizeof(pass);
-    nvs_get_str(nvs, "wifiPass", pass, &len);
-    nvs_close(nvs);
-
-    ESP_LOGI(TAG, "Auto-connecting to WiFi: %s", ssid);
-
-    wifi_config_t wifi_cfg = {0};
-    strncpy((char *)wifi_cfg.sta.ssid, ssid, sizeof(wifi_cfg.sta.ssid) - 1);
-    strncpy((char *)wifi_cfg.sta.password, pass, sizeof(wifi_cfg.sta.password) - 1);
-
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_cfg));
-    esp_wifi_connect();
-}
 
 /* ============================================================================
  * Warning indicators (checked periodically in main loop)
  * ============================================================================ */
 static void update_warning_indicators(void)
 {
-    bool any_lights_on = (get_var_pdm01_device01_status() > 0) ||
-                         (get_var_pdm01_device02_status() > 0) ||
-                         (get_var_pdm01_device03_status() > 0) ||
-                         (get_var_pdm01_device04_status() > 0) ||
-                         (get_var_pdm01_device05_status() > 0) ||
-                         (get_var_pdm01_device08_status() > 0);
-
-    if (any_lights_on) {
-        lv_obj_add_state(objects.label_warning_icon_lights, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.label_warning_text_lights, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.label_warning_icon_lights, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.label_warning_text_lights, LV_STATE_CHECKED);
-    }
-
-    if (get_var_pdm01_device07_status() > 0) {
-        lv_obj_add_state(objects.label_warning_icon_water, LV_STATE_CHECKED);
-        lv_obj_add_state(objects.label_warning_text_water, LV_STATE_CHECKED);
-    } else {
-        lv_obj_clear_state(objects.label_warning_icon_water, LV_STATE_CHECKED);
-        lv_obj_clear_state(objects.label_warning_text_water, LV_STATE_CHECKED);
-    }
+    /* The old Home page warning labels (label_warning_icon_lights / _water etc.)
+     * no longer exist in the new 4-screen design. PageDrive surfaces lights state
+     * via the lights tab indicator and the blind-spot pill; water status is not
+     * yet surfaced on the dashboard. Stubbed until equivalent widgets are added
+     * to the new GUI. */
 }
 
 /* ============================================================================
@@ -570,6 +563,36 @@ static void update_warning_indicators(void)
  * app_main
  * ============================================================================ */
 extern void setup_light_buttons(void);
+extern void spotter_set_active_tab(int index);
+extern void spotter_apply_axle_count(int axles);
+extern void spotter_paint_placeholders(void);
+
+#include "app_state.h"
+#include "pendant_config.h"
+
+/* LVGL's keyboard widget defaults to an alignment style that ignores the
+ * left/top fields we author in the .eez-project (the diagnostic probe showed
+ * the keyboard rendered at y=290 instead of the declared y=100, with the
+ * bottom 100 px running off-screen). Force align: TOP_LEFT and re-pin the
+ * position from C, post ui_init, so the JSON x/y is honored. */
+static void fix_keyboard_alignment(lv_obj_t *kb, int x, int y)
+{
+    if (!kb) return;
+    lv_obj_set_align(kb, LV_ALIGN_TOP_LEFT);
+    lv_obj_set_pos(kb, x, y);
+}
+
+/* Heap diagnostic — prints internal-RAM free and largest contiguous block,
+ * which is what mbedTLS needs for a TLS handshake. Drop these around every
+ * init that might consume internal RAM. */
+static void log_heap(const char *where)
+{
+    ESP_LOGI(TAG, "[heap @ %s] internal free=%u largest=%u  total_free=%u",
+             where,
+             (unsigned)heap_caps_get_free_size(MALLOC_CAP_INTERNAL),
+             (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL),
+             (unsigned)esp_get_free_heap_size());
+}
 
 void app_main(void)
 {
@@ -581,8 +604,11 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
+    log_heap("app_main start");
+
     /* Hardware init */
     ch422g_init();
+    log_heap("after ch422g_init");
 
     /* SD card config (reads config.env, stores to NVS) */
     bool sd_config_found = sd_config_read();
@@ -590,34 +616,60 @@ void app_main(void)
 
     /* Display */
     lcd_init();
+    log_heap("after lcd_init");
     touch_init();
+    log_heap("after touch_init");
     lvgl_init();
+    log_heap("after lvgl_init");
+
+    /* Audio — ES8311 codec on the shared I2C bus, I2S TX1. PA enable is
+     * routed through the IO extender's PA bit (CH422G EXIO3). */
+    {
+        esp_err_t are = spotter_audio_init(i2c_bus, spotter_io_ext_set_pa);
+        ESP_LOGI(TAG, "Audio init: %s", are == ESP_OK ? "OK" : esp_err_to_name(are));
+    }
+    log_heap("after audio_init");
 
     /* EEZ Studio UI */
     ui_init();
     create_dimming_overlay();
     setup_light_buttons();
 
+    /* Paint placeholders ("--", "Waiting for data...", etc.) into every
+     * widget that's supposed to show data from TrailCurrent. Replaced by
+     * real values as MQTT messages arrive (set_var_* setters push directly
+     * to widgets). Without this the static placeholder text from the
+     * .eez-project (e.g. "65" PSI) would look like real data. */
+    spotter_paint_placeholders();
+
+    /* Default axle config = single (1). Cascades into top-status text,
+     * tire card subtitle, tire-cell visibility, and setup-button checked
+     * state across all 4 dashboard pages. Persist this in NVS later if we
+     * want the user's chosen axle count to survive reboot. */
+    spotter_apply_axle_count(1);
+
     /* Restore user settings */
     restore_user_settings();
+    ESP_LOGI(TAG, "Spotter firmware version %s", CURRENT_VERSION);
 
-    /* Set version label */
-    lv_label_set_text(objects.label_version_number, CURRENT_VERSION);
-
-    /* WiFi + MQTT */
-    wifi_init();
+    /* MQTT client config (loaded but not connected — happens after WiFi). */
     bool has_mqtt = mqtt_client_load_settings();
 
-    /* Auto-connect WiFi from NVS credentials */
-    wifi_auto_connect();
+    /* Persistent config (WiFi credentials), then the state machine drives
+     * the rest: PageWifiSetup if no creds, PageWifiConnecting otherwise.
+     * Both screens require ui_init() to have run. */
+    ESP_ERROR_CHECK(pendant_config_init());
 
-    /* Set MAC address label */
-    uint8_t mac[6] = {0};
-    esp_wifi_get_mac(WIFI_IF_STA, mac);
-    char mac_str[18];
-    snprintf(mac_str, sizeof(mac_str), "%02X:%02X:%02X:%02X:%02X:%02X",
-             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-    set_var_mcu_mac_address(mac_str);
+    /* LVGL's keyboard widget defaults to its own internal alignment that
+     * overrides the left/top we author in the .eez-project (the keyboard
+     * rendered at y=290 instead of declared y=100, extending 100px off-
+     * screen). Force align: TOP_LEFT and re-pin the positions from C so
+     * the JSON x/y is honored. Has to happen AFTER ui_init() (objects
+     * are created there) but BEFORE app_state_init() loads the screens. */
+    fix_keyboard_alignment(objects.mqtt_keyboard, 8, 100);
+    fix_keyboard_alignment(objects.wifi_pwd_keyboard, 8, 110);
+
+    ESP_ERROR_CHECK(app_state_init());
 
     last_activity_time = (uint32_t)(esp_timer_get_time() / 1000);
 
