@@ -4,6 +4,8 @@ idf_component_register(
         "actions.c"
         "vars.c"
         "app_state.c"
+        "spoor_alarms.c"
+        "lv_mem_psram.c"
         "ui/ui.c"
         "ui/screens.c"
         "ui/styles.c"
@@ -28,4 +30,9 @@ idf_component_register(
         wifi_setup
         pendant_config
         audio
+    # WHOLE_ARCHIVE makes libmain.a fully included in the final link so the
+    # spotter_lv_psram_* allocator symbols (referenced by lvgl__lvgl's
+    # lv_mem.c via the -DLV_MEM_CUSTOM_ALLOC redirects in the top-level
+    # CMakeLists.txt) are resolvable when lvgl's archive is processed.
+    WHOLE_ARCHIVE
 )

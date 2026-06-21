@@ -16,6 +16,7 @@
 #include "app_state.h"
 #include "wifi_setup.h"
 #include "pendant_config.h"
+#include "spoor_alarms.h"
 
 static const char *TAG = "ACTIONS";
 
@@ -591,6 +592,92 @@ void action_test_alarms(lv_event_t *e)
     ESP_LOGI(TAG, "TestAlarms — raising overlay");
     spotter_show_alarm_overlay("TEST ALARM",
         "Diagnostic chime active.\nPress Acknowledge to silence.");
+}
+
+/* ============================================================================
+ * Switchback ("spoor") sensor actions — declared in the EEZ project, wired
+ * by userData encoding addr*8 + sensor_index (0..23). Slider value-changed
+ * events drop into the spoor module so timing config persists immediately.
+ * Logic lives in spoor_alarms.c.
+ * ============================================================================ */
+void action_toggle_spoor_sensor(lv_event_t *e)
+{
+    int idx = (int)(intptr_t)lv_event_get_user_data(e);
+    spoor_alarms_toggle_arm(idx);
+}
+
+void action_open_rename_sensor(lv_event_t *e)
+{
+    int idx = (int)(intptr_t)lv_event_get_user_data(e);
+    spoor_alarms_open_rename(idx);
+}
+
+void action_save_sensor_rename(lv_event_t *e)
+{
+    (void)e;
+    spoor_alarms_save_rename();
+}
+
+void action_cancel_sensor_rename(lv_event_t *e)
+{
+    (void)e;
+    spoor_alarms_cancel_rename();
+}
+
+void action_alarm_show_duration_changed(lv_event_t *e)
+{
+    lv_obj_t *t = (lv_obj_t *)lv_event_get_target(e);
+    if (!t) return;
+    spoor_alarms_set_show_secs((int)lv_slider_get_value(t));
+}
+
+void action_alarm_snooze_duration_changed(lv_event_t *e)
+{
+    lv_obj_t *t = (lv_obj_t *)lv_event_get_target(e);
+    if (!t) return;
+    spoor_alarms_set_snooze_secs((int)lv_slider_get_value(t));
+}
+
+/* ============================================================================
+ * Public alarm façade (spotter_alarm.h) — lets other modules raise the overlay
+ * with an optional auto-dismiss timer. The user-configurable "show duration"
+ * is owned by spoor_alarms; this layer just runs whatever timer it's given.
+ * ============================================================================ */
+static lv_timer_t *s_alarm_auto_dismiss_timer = NULL;
+
+static void alarm_auto_dismiss_cb(lv_timer_t *t)
+{
+    (void)t;
+    s_alarm_auto_dismiss_timer = NULL;
+    if (s_alarm_overlay) {
+        ESP_LOGI(TAG, "Alarm auto-dismiss fired");
+        alarm_dismiss();
+    }
+}
+
+void spotter_alarm_raise(const char *title, const char *body, int auto_dismiss_secs)
+{
+    /* Cancel any pending auto-dismiss from a previous raise. alarm_dismiss
+     * doesn't touch our timer, so we have to clear it here. */
+    if (s_alarm_auto_dismiss_timer) {
+        lv_timer_del(s_alarm_auto_dismiss_timer);
+        s_alarm_auto_dismiss_timer = NULL;
+    }
+    spotter_show_alarm_overlay(title, body);
+    if (auto_dismiss_secs > 0) {
+        s_alarm_auto_dismiss_timer = lv_timer_create(
+            alarm_auto_dismiss_cb, (uint32_t)auto_dismiss_secs * 1000U, NULL);
+        lv_timer_set_repeat_count(s_alarm_auto_dismiss_timer, 1);
+    }
+}
+
+void spotter_alarm_force_dismiss(void)
+{
+    if (s_alarm_auto_dismiss_timer) {
+        lv_timer_del(s_alarm_auto_dismiss_timer);
+        s_alarm_auto_dismiss_timer = NULL;
+    }
+    if (s_alarm_overlay) alarm_dismiss();
 }
 
 /* ============================================================================

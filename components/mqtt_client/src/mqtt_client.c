@@ -13,6 +13,11 @@
 #include "esp_system.h"
 #include "pendant_config.h"
 
+/* Defined in main/spoor_alarms.c. Forward-declared here so this component
+ * doesn't have to REQUIRES-import the main archive (which ESP-IDF doesn't
+ * allow). The symbol resolves at link time. */
+extern void spoor_alarms_handle_inputs(int addr, uint8_t inputs);
+
 /* MQTT variable setters (vars.c) — Spotter uses pdm01_device* naming */
 extern void set_var_pdm01_device01_status(int32_t value);
 extern void set_var_pdm01_device02_status(int32_t value);
@@ -94,6 +99,10 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         esp_mqtt_client_subscribe(s_client, "local/gps/alt", 0);
         esp_mqtt_client_subscribe(s_client, "local/gps/details", 0);
         esp_mqtt_client_subscribe(s_client, "local/gps/time", 0);
+        /* Switchback digital-input broadcasts, one per Switchback address
+         * (0..2). The Headwaters can-bridge republishes CAN 0x12/0x13/0x14
+         * to local/spoor/<addr>/inputs as {"inputs": <0..255>}. */
+        esp_mqtt_client_subscribe(s_client, "local/spoor/+/inputs", 0);
         ESP_LOGI(TAG, "Subscribed to all topics");
         break;
 
@@ -459,6 +468,15 @@ static void process_message(const char *topic, const char *payload, int length) 
                      yr->valueint, mo->valueint, dy->valueint,
                      hr->valueint, mn->valueint, sc->valueint);
             set_var_current_date_time(datetime_str);
+        }
+    }
+    /* local/spoor/<addr>/inputs — Switchback DI bitmask, addr 0..2 */
+    else if (strncmp(topic, "local/spoor/", 12) == 0) {
+        int addr = atoi(topic + 12);
+        cJSON *inputs_j = cJSON_GetObjectItem(doc, "inputs");
+        if (inputs_j) {
+            int bits = inputs_j->valueint & 0xFF;
+            spoor_alarms_handle_inputs(addr, (uint8_t)bits);
         }
     }
     else {

@@ -41,6 +41,12 @@ extern void action_mqtt_back(lv_event_t * e);
 extern void action_mqtt_next(lv_event_t * e);
 extern void action_test_alarms(lv_event_t * e);
 extern void action_clear_connection(lv_event_t * e);
+extern void action_toggle_spoor_sensor(lv_event_t * e);
+extern void action_open_rename_sensor(lv_event_t * e);
+extern void action_save_sensor_rename(lv_event_t * e);
+extern void action_cancel_sensor_rename(lv_event_t * e);
+extern void action_alarm_show_duration_changed(lv_event_t * e);
+extern void action_alarm_snooze_duration_changed(lv_event_t * e);
 
 
 #ifdef __cplusplus

@@ -58,10 +58,6 @@ lv_style_t *get_style_default_button_matrix_ITEMS_CHECKED();
 void add_style_default_button_matrix(lv_obj_t *obj);
 void remove_style_default_button_matrix(lv_obj_t *obj);
 
-// Style: DropdownDefault
-void add_style_dropdown_default(lv_obj_t *obj);
-void remove_style_dropdown_default(lv_obj_t *obj);
-
 // Style: KeyboardDefault
 lv_style_t *get_style_keyboard_default_MAIN_DEFAULT();
 lv_style_t *get_style_keyboard_default_ITEMS_DEFAULT();
@@ -142,10 +138,6 @@ lv_style_t *get_style_nav_bar_icon_MAIN_DEFAULT();
 void add_style_nav_bar_icon(lv_obj_t *obj);
 void remove_style_nav_bar_icon(lv_obj_t *obj);
 
-// Style: PanelNavBar
-void add_style_panel_nav_bar(lv_obj_t *obj);
-void remove_style_panel_nav_bar(lv_obj_t *obj);
-
 // Style: PanelNavBarTop
 lv_style_t *get_style_panel_nav_bar_top_MAIN_DEFAULT();
 void add_style_panel_nav_bar_top(lv_obj_t *obj);
@@ -175,10 +167,6 @@ lv_style_t *get_style_style_button_default_MAIN_DEFAULT();
 lv_style_t *get_style_style_button_default_MAIN_CHECKED();
 void add_style_style_button_default(lv_obj_t *obj);
 void remove_style_style_button_default(lv_obj_t *obj);
-
-// Style: StyleButtonSucces
-void add_style_style_button_succes(lv_obj_t *obj);
-void remove_style_style_button_succes(lv_obj_t *obj);
 
 // Style: StyleContentPanel
 lv_style_t *get_style_style_content_panel_MAIN_DEFAULT();
@@ -238,14 +226,6 @@ void remove_style_style_top_nav_text_normal(lv_obj_t *obj);
 lv_style_t *get_style_switch_default_INDICATOR_CHECKED();
 void add_style_switch_default(lv_obj_t *obj);
 void remove_style_switch_default(lv_obj_t *obj);
-
-// Style: TabDefault
-void add_style_tab_default(lv_obj_t *obj);
-void remove_style_tab_default(lv_obj_t *obj);
-
-// Style: TabViewDefault
-void add_style_tab_view_default(lv_obj_t *obj);
-void remove_style_tab_view_default(lv_obj_t *obj);
 
 
 

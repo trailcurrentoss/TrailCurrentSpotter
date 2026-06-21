@@ -18,6 +18,7 @@ CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
 CONFIG_SPIRAM_RODATA=y
 CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y
 
+
 # Compiler optimization
 CONFIG_COMPILER_OPTIMIZATION_PERF=y
 
@@ -43,12 +44,40 @@ CONFIG_ESP_WIFI_RX_IRAM_OPT=n
 CONFIG_ESP_TLS_INSECURE=y
 CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y
 
+# mbedTLS — defeat heap fragmentation on TLS handshake.
+#
+# Spotter's internal RAM is heavily consumed by LVGL after ui_init() (~250 KB
+# resident, fragmented into many small free blocks; largest contiguous = ~7 KB).
+# mbedTLS's TLS handshake needs several KB contiguous PER allocation; with
+# internal RAM that fragmented it can't even land a 2.7 KB request, so the
+# handshake fails -0x7F00 (ALLOC_FAILED).
+#
+# Two-prong fix:
+#   1. DYNAMIC_BUFFER — allocate only what each step needs, not the full
+#      IN/OUT max-buffer pair, so smaller blocks satisfy more allocations.
+#   2. EXTERNAL_MEM_ALLOC — route mbedTLS's heap to PSRAM (8 MB, contiguous,
+#      barely used). Internal RAM stops being the constraint entirely.
+#
+# Both flags are safe together: dynamic-buffer controls SIZE, external-alloc
+# controls WHERE. The combination is the documented Espressif recommendation
+# for low-internal-RAM TLS scenarios.
+CONFIG_MBEDTLS_DYNAMIC_BUFFER=y
+CONFIG_MBEDTLS_DYNAMIC_FREE_PEER_CERT=y
+CONFIG_MBEDTLS_DYNAMIC_FREE_CONFIG_DATA=y
+CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=4096
+CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN=2048
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+
 # LVGL color settings
 CONFIG_LV_COLOR_DEPTH_16=y
 CONFIG_LV_COLOR_16_SWAP=n
 
-# LVGL memory — use stdlib malloc (PSRAM-aware)
+# LVGL memory — route ALL widget allocations to PSRAM (see main/lv_mem_psram.c
+# and the add_compile_definitions in the project CMakeLists.txt). Without this
+# LVGL eats ~200 KB of internal RAM after ui_init() and fragments it into
+# blocks too small for the mbedTLS handshake.
 CONFIG_LV_MEM_CUSTOM=y
+CONFIG_LV_MEM_CUSTOM_INCLUDE="lv_mem_psram.h"
 CONFIG_LV_MEMCPY_MEMSET_STD=y
 CONFIG_LV_ATTRIBUTE_FAST_MEM=y
 

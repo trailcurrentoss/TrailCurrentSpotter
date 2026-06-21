@@ -1,9 +1,9 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/6",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedGlobalVariableObject": "[TrailCurrentSpotter.eez-project]:/variables/globalVariables/30",
-    "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/9",
+    "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/30",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
     "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
     "selectedFontObject": "[TrailCurrentSpotter.eez-project]:/fonts/1",
@@ -29,7 +29,7 @@
           },
           {
             "type": "border",
-            "selected": 3,
+            "selected": 0,
             "size": 240,
             "location": "right",
             "children": [
@@ -203,10 +203,10 @@
                 {
                   "type": "tab",
                   "id": "#2c4c8c23-38a7-4ea6-b967-44d788b092d2",
-                  "name": "PageDrive",
+                  "name": "PageMqttSetup",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/6",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -1025,7 +1025,7 @@
       "transform": {
         "translate": {
           "x": -189.0546875,
-          "y": -319
+          "y": -199
         },
         "scale": 0.75
       },
@@ -1042,9 +1042,7 @@
       "3": {},
       "6": {},
       "8": {},
-      "9": {
-        "$selected": true
-      },
+      "9": {},
       "10": {},
       "12": {},
       "13": {},
@@ -1054,6 +1052,9 @@
       "27": {},
       "28": {},
       "29": {},
+      "30": {
+        "$selected": true
+      },
       "35": {},
       "39": {},
       "41": {},
@@ -1198,9 +1199,7 @@
     "[TrailCurrentSpotter.eez-project]:/userPages/6[flow-state]": {
       "selection": {
         "0": {
-          "0": {
-            "$selected": true
-          }
+          "0": {}
         }
       },
       "transform": {
@@ -1219,6 +1218,24 @@
     },
     "[TrailCurrentSpotter.eez-project]:/userPages/7[flow-state]": {
       "selection": {},
+      "transform": {
+        "translate": {
+          "x": -400,
+          "y": -240
+        },
+        "scale": 0.75
+      },
+      "timeline": {
+        "isEditorActive": false,
+        "position": 0,
+        "secondToPx": 200,
+        "scrollLeft": 0
+      }
+    },
+    "[TrailCurrentSpotter.eez-project]:/userPages/8[flow-state]": {
+      "selection": {
+        "0": {}
+      },
       "transform": {
         "translate": {
           "x": -400,

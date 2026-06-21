@@ -569,17 +569,28 @@ extern void spotter_paint_placeholders(void);
 
 #include "app_state.h"
 #include "pendant_config.h"
+#include "spoor_alarms.h"
 
 /* LVGL's keyboard widget defaults to an alignment style that ignores the
  * left/top fields we author in the .eez-project (the diagnostic probe showed
  * the keyboard rendered at y=290 instead of the declared y=100, with the
  * bottom 100 px running off-screen). Force align: TOP_LEFT and re-pin the
  * position from C, post ui_init, so the JSON x/y is honored. */
-static void fix_keyboard_alignment(lv_obj_t *kb, int x, int y)
+/* Pin a keyboard's geometry. LVGL's lv_keyboard widget overrides not just
+ * align/position but also size (defaults to "fill parent" + bottom anchor).
+ * If you only set align+pos, the keyboard renders at the right origin but
+ * with LVGL-computed size that often collapses to one visible row when the
+ * parent has other children eating space.
+ *
+ * Pass the SAME width/height authored in the .eez-project for that
+ * keyboard widget. If the two ever disagree, the EEZ Studio canvas shows
+ * one layout and the device shows another — keep them in sync. */
+static void fix_keyboard_alignment(lv_obj_t *kb, int x, int y, int w, int h)
 {
     if (!kb) return;
     lv_obj_set_align(kb, LV_ALIGN_TOP_LEFT);
     lv_obj_set_pos(kb, x, y);
+    lv_obj_set_size(kb, w, h);
 }
 
 /* Heap diagnostic — prints internal-RAM free and largest contiguous block,
@@ -666,10 +677,15 @@ void app_main(void)
      * screen). Force align: TOP_LEFT and re-pin the positions from C so
      * the JSON x/y is honored. Has to happen AFTER ui_init() (objects
      * are created there) but BEFORE app_state_init() loads the screens. */
-    fix_keyboard_alignment(objects.mqtt_keyboard, 8, 100);
-    fix_keyboard_alignment(objects.wifi_pwd_keyboard, 8, 110);
+    /* Authored sizes per GUI/TrailCurrentSpotter.eez-project — if these change
+     * in EEZ Studio, update them here too. The (x, y, w, h) tuples must match
+     * the canvas exactly so device and design agree. */
+    fix_keyboard_alignment(objects.mqtt_keyboard,      8, 100, 784, 290);
+    fix_keyboard_alignment(objects.wifi_pwd_keyboard,  8, 110, 784, 280);
+    fix_keyboard_alignment(objects.sensor_rename_kb,   8, 200, 784, 270);
 
     ESP_ERROR_CHECK(app_state_init());
+    spoor_alarms_init();
 
     last_activity_time = (uint32_t)(esp_timer_get_time() / 1000);
 

@@ -468,18 +468,6 @@ void remove_style_default_button_matrix(lv_obj_t *obj) {
 };
 
 //
-// Style: DropdownDefault
-//
-
-void add_style_dropdown_default(lv_obj_t *obj) {
-    (void)obj;
-};
-
-void remove_style_dropdown_default(lv_obj_t *obj) {
-    (void)obj;
-};
-
-//
 // Style: KeyboardDefault
 //
 
@@ -804,7 +792,7 @@ void remove_style_label_list_menu_item(lv_obj_t *obj) {
 //
 
 void init_style_label_nav_text_MAIN_DEFAULT(lv_style_t *style) {
-    lv_style_set_text_color(style, lv_color_hex(0xffffffff));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][7]));
     lv_style_set_text_opa(style, 255);
     lv_style_set_text_font(style, &lv_font_montserrat_14);
 };
@@ -994,7 +982,7 @@ void remove_style_message_box_default(lv_obj_t *obj) {
 //
 
 void init_style_nav_bar_icon_MAIN_DEFAULT(lv_style_t *style) {
-    lv_style_set_text_color(style, lv_color_hex(0xffffffff));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][7]));
     lv_style_set_text_font(style, &ui_font_fa32);
 };
 
@@ -1019,18 +1007,6 @@ void remove_style_nav_bar_icon(lv_obj_t *obj) {
 };
 
 //
-// Style: PanelNavBar
-//
-
-void add_style_panel_nav_bar(lv_obj_t *obj) {
-    (void)obj;
-};
-
-void remove_style_panel_nav_bar(lv_obj_t *obj) {
-    (void)obj;
-};
-
-//
 // Style: PanelNavBarTop
 //
 
@@ -1042,8 +1018,8 @@ void init_style_panel_nav_bar_top_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_max_height(style, 60);
     lv_style_set_radius(style, 0);
     lv_style_set_border_width(style, 0);
-    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
-    lv_style_set_text_color(style, lv_color_hex(0xff000000));
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][1]));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][7]));
 };
 
 lv_style_t *get_style_panel_nav_bar_top_MAIN_DEFAULT() {
@@ -1115,7 +1091,7 @@ void remove_style_panel_screen_content(lv_obj_t *obj) {
 
 void init_style_roller_default_SELECTED_DEFAULT(lv_style_t *style) {
     lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][5]));
-    lv_style_set_text_color(style, lv_color_hex(0xffffffff));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][7]));
 };
 
 lv_style_t *get_style_roller_default_SELECTED_DEFAULT() {
@@ -1285,18 +1261,6 @@ void remove_style_style_button_default(lv_obj_t *obj) {
 };
 
 //
-// Style: StyleButtonSucces
-//
-
-void add_style_style_button_succes(lv_obj_t *obj) {
-    (void)obj;
-};
-
-void remove_style_style_button_succes(lv_obj_t *obj) {
-    (void)obj;
-};
-
-//
 // Style: StyleContentPanel
 //
 
@@ -1452,7 +1416,7 @@ lv_style_t *get_style_style_device_status_ind_on_MAIN_DEFAULT() {
 };
 
 void init_style_style_device_status_ind_on_MAIN_PRESSED(lv_style_t *style) {
-    lv_style_set_text_color(style, lv_color_hex(0xff3eb117));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][0]));
 };
 
 lv_style_t *get_style_style_device_status_ind_on_MAIN_PRESSED() {
@@ -1600,7 +1564,7 @@ void init_style_style_panel_nav_bar_bottom_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_pad_right(style, 0);
     lv_style_set_radius(style, 0);
     lv_style_set_border_width(style, 0);
-    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][1]));
 };
 
 lv_style_t *get_style_style_panel_nav_bar_bottom_MAIN_DEFAULT() {
@@ -1629,7 +1593,7 @@ void remove_style_style_panel_nav_bar_bottom(lv_obj_t *obj) {
 
 void init_style_style_screen_default_MAIN_DEFAULT(lv_style_t *style) {
     lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][2]));
-    lv_style_set_text_color(style, lv_color_hex(0xff000000));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][9]));
     lv_style_set_text_font(style, &lv_font_montserrat_14);
     lv_style_set_pad_top(style, 0);
     lv_style_set_pad_bottom(style, 0);
@@ -1662,12 +1626,12 @@ void remove_style_style_screen_default(lv_obj_t *obj) {
 //
 
 void init_style_style_top_nav_text_normal_MAIN_DEFAULT(lv_style_t *style) {
-    lv_style_set_text_color(style, lv_color_hex(0xffffffff));
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][7]));
     lv_style_set_text_opa(style, 255);
     lv_style_set_text_font(style, &lv_font_montserrat_32);
     lv_style_set_pad_top(style, 16);
     lv_style_set_bg_opa(style, 0);
-    lv_style_set_bg_color(style, lv_color_hex(0xff000000));
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][1]));
 };
 
 lv_style_t *get_style_style_top_nav_text_normal_MAIN_DEFAULT() {
@@ -1719,30 +1683,6 @@ void remove_style_switch_default(lv_obj_t *obj) {
 };
 
 //
-// Style: TabDefault
-//
-
-void add_style_tab_default(lv_obj_t *obj) {
-    (void)obj;
-};
-
-void remove_style_tab_default(lv_obj_t *obj) {
-    (void)obj;
-};
-
-//
-// Style: TabViewDefault
-//
-
-void add_style_tab_view_default(lv_obj_t *obj) {
-    (void)obj;
-};
-
-void remove_style_tab_view_default(lv_obj_t *obj) {
-    (void)obj;
-};
-
-//
 //
 //
 
@@ -1757,7 +1697,6 @@ void add_style(lv_obj_t *obj, int32_t styleIndex) {
         add_style_button_navbar_in_active,
         add_style_checkbox_default,
         add_style_default_button_matrix,
-        add_style_dropdown_default,
         add_style_keyboard_default,
         add_style_led_default,
         add_style_label_circle_button,
@@ -1773,13 +1712,11 @@ void add_style(lv_obj_t *obj, int32_t styleIndex) {
         add_style_list_menu,
         add_style_message_box_default,
         add_style_nav_bar_icon,
-        add_style_panel_nav_bar,
         add_style_panel_nav_bar_top,
         add_style_panel_screen_content,
         add_style_roller_default,
         add_style_spinner_default,
         add_style_style_button_default,
-        add_style_style_button_succes,
         add_style_style_content_panel,
         add_style_style_default_slider,
         add_style_style_device_status_ind_off,
@@ -1791,8 +1728,6 @@ void add_style(lv_obj_t *obj, int32_t styleIndex) {
         add_style_style_screen_default,
         add_style_style_top_nav_text_normal,
         add_style_switch_default,
-        add_style_tab_default,
-        add_style_tab_view_default,
     };
     add_style_funcs[styleIndex](obj);
 }
@@ -1808,7 +1743,6 @@ void remove_style(lv_obj_t *obj, int32_t styleIndex) {
         remove_style_button_navbar_in_active,
         remove_style_checkbox_default,
         remove_style_default_button_matrix,
-        remove_style_dropdown_default,
         remove_style_keyboard_default,
         remove_style_led_default,
         remove_style_label_circle_button,
@@ -1824,13 +1758,11 @@ void remove_style(lv_obj_t *obj, int32_t styleIndex) {
         remove_style_list_menu,
         remove_style_message_box_default,
         remove_style_nav_bar_icon,
-        remove_style_panel_nav_bar,
         remove_style_panel_nav_bar_top,
         remove_style_panel_screen_content,
         remove_style_roller_default,
         remove_style_spinner_default,
         remove_style_style_button_default,
-        remove_style_style_button_succes,
         remove_style_style_content_panel,
         remove_style_style_default_slider,
         remove_style_style_device_status_ind_off,
@@ -1842,8 +1774,6 @@ void remove_style(lv_obj_t *obj, int32_t styleIndex) {
         remove_style_style_screen_default,
         remove_style_style_top_nav_text_normal,
         remove_style_switch_default,
-        remove_style_tab_default,
-        remove_style_tab_view_default,
     };
     remove_style_funcs[styleIndex](obj);
 }
