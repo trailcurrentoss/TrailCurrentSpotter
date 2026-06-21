@@ -487,6 +487,17 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
         }
     }
 
+    /* Snooze applies only to sensors that stay continuously active after an
+     * acknowledge — not to fresh open→close→open cycles. Clear the snooze
+     * marker on any sensor observed as inactive so the next active edge
+     * fires immediately. Without this, a rapid open/close/open is hidden
+     * until the snooze window expires, while the Headwaters PWA (which has
+     * no snooze) shows it instantly. */
+    for (int bit = 0; bit < SPOOR_SENSORS_PER_ADDR; bit++) {
+        if (inputs & (1u << bit)) continue;
+        s_last_alarm_us[addr * SPOOR_SENSORS_PER_ADDR + bit] = 0;
+    }
+
     /* Level-triggered: any armed sensor that is currently active AND has
      * exited its snooze window will (re)raise the alarm. This means if
      * the underlying condition is still present after the user
