@@ -1,9 +1,9 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/6",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/3",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedGlobalVariableObject": "[TrailCurrentSpotter.eez-project]:/variables/globalVariables/30",
-    "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/30",
+    "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
     "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
     "selectedFontObject": "[TrailCurrentSpotter.eez-project]:/fonts/1",
@@ -203,10 +203,10 @@
                 {
                   "type": "tab",
                   "id": "#2c4c8c23-38a7-4ea6-b967-44d788b092d2",
-                  "name": "PageMqttSetup",
+                  "name": "PageSetup",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/6",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/3",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -1044,6 +1044,7 @@
       "8": {},
       "9": {},
       "10": {},
+      "11": {},
       "12": {},
       "13": {},
       "16": {},
@@ -1052,10 +1053,11 @@
       "27": {},
       "28": {},
       "29": {},
-      "30": {
+      "30": {},
+      "35": {},
+      "38": {
         "$selected": true
       },
-      "35": {},
       "39": {},
       "41": {},
       "42": {},
@@ -1091,7 +1093,15 @@
           "0": {},
           "1": {
             "0": {},
-            "1": {}
+            "1": {
+              "0": {},
+              "2": {
+                "2": {}
+              },
+              "3": {
+                "2": {}
+              }
+            }
           }
         }
       },
@@ -1117,8 +1127,8 @@
       },
       "transform": {
         "translate": {
-          "x": -160.09752358944095,
-          "y": -139.21905100560986
+          "x": -287.0975235894409,
+          "y": -258.21905100560986
         },
         "scale": 0.75
       },
@@ -1199,7 +1209,10 @@
     "[TrailCurrentSpotter.eez-project]:/userPages/6[flow-state]": {
       "selection": {
         "0": {
-          "0": {}
+          "0": {},
+          "6": {
+            "1": {}
+          }
         }
       },
       "transform": {
@@ -1262,8 +1275,8 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "MAIN",
-  "lvglState": "DEFAULT",
+  "lvglPart": "INDICATOR",
+  "lvglState": "CHECKED",
   "lvglExpandedPropertiesGroup": [
     "POSITION AND SIZE",
     "MISCELLANEOUS",

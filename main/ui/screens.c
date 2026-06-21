@@ -1940,6 +1940,7 @@ void create_screen_page_alarms() {
     objects.page_alarms = obj;
     lv_obj_set_pos(obj, 0, 0);
     lv_obj_set_size(obj, 800, 480);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_CHECKABLE);
     add_style_style_screen_default(obj);
     {
         lv_obj_t *parent_obj = obj;
@@ -2079,7 +2080,7 @@ void create_screen_page_alarms() {
                             add_style_label_default(obj);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][0]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "SWITCHBACK ADDR 0");
+                            lv_label_set_text(obj, "SWITCHBACK ADDR 0 (TEST)");
                         }
                         {
                             // alarm_spoor0_grp_desc
@@ -2098,7 +2099,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s1_row = obj;
                             lv_obj_set_pos(obj, 14, 38);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2117,7 +2117,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s1_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 1");
@@ -2144,7 +2144,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s1_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2164,10 +2164,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s1_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s1_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)0);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2178,7 +2177,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s2_row = obj;
                             lv_obj_set_pos(obj, 14, 94);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2197,7 +2195,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s2_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 2");
@@ -2224,7 +2222,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s2_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2244,10 +2242,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s2_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s2_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)1);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2258,7 +2255,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s3_row = obj;
                             lv_obj_set_pos(obj, 14, 150);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2277,7 +2273,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s3_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 3");
@@ -2304,7 +2300,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s3_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2324,10 +2320,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s3_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s3_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)2);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2338,7 +2333,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s4_row = obj;
                             lv_obj_set_pos(obj, 14, 206);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2357,7 +2351,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s4_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 4");
@@ -2384,7 +2378,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s4_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2404,10 +2398,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s4_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s4_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)3);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2418,7 +2411,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s5_row = obj;
                             lv_obj_set_pos(obj, 14, 262);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2437,7 +2429,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s5_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 5");
@@ -2464,7 +2456,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s5_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2484,10 +2476,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s5_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s5_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)4);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2498,7 +2489,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s6_row = obj;
                             lv_obj_set_pos(obj, 14, 318);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2517,7 +2507,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s6_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 6");
@@ -2544,7 +2534,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s6_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2564,10 +2554,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s6_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s6_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)5);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2578,7 +2567,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s7_row = obj;
                             lv_obj_set_pos(obj, 14, 374);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2597,7 +2585,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s7_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 7");
@@ -2624,7 +2612,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s7_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2644,10 +2632,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s7_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s7_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)6);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2658,7 +2645,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor0_s8_row = obj;
                             lv_obj_set_pos(obj, 14, 430);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2677,7 +2663,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor0_s8_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 8");
@@ -2704,7 +2690,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor0_s8_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2724,10 +2710,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor0_s8_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor0_s8_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)7);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2762,7 +2747,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s1_row = obj;
                             lv_obj_set_pos(obj, 14, 524);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2781,7 +2765,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s1_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 1");
@@ -2808,7 +2792,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s1_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2828,10 +2812,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s1_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s1_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)8);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2842,7 +2825,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s2_row = obj;
                             lv_obj_set_pos(obj, 14, 580);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2861,7 +2843,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s2_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 2");
@@ -2888,7 +2870,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s2_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2908,10 +2890,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s2_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s2_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)9);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -2922,7 +2903,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s3_row = obj;
                             lv_obj_set_pos(obj, 14, 636);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2941,7 +2921,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s3_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 3");
@@ -2968,7 +2948,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s3_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2988,10 +2968,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s3_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s3_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)10);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3002,7 +2981,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s4_row = obj;
                             lv_obj_set_pos(obj, 14, 692);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3021,7 +2999,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s4_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 4");
@@ -3048,7 +3026,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s4_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3068,10 +3046,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s4_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s4_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)11);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3082,7 +3059,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s5_row = obj;
                             lv_obj_set_pos(obj, 14, 748);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3101,7 +3077,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s5_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 5");
@@ -3128,7 +3104,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s5_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3148,10 +3124,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s5_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s5_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)12);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3162,7 +3137,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s6_row = obj;
                             lv_obj_set_pos(obj, 14, 804);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3181,7 +3155,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s6_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 6");
@@ -3208,7 +3182,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s6_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3228,10 +3202,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s6_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s6_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)13);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3242,7 +3215,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s7_row = obj;
                             lv_obj_set_pos(obj, 14, 860);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3261,7 +3233,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s7_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 7");
@@ -3288,7 +3260,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s7_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3308,10 +3280,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s7_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s7_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)14);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3322,7 +3293,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor1_s8_row = obj;
                             lv_obj_set_pos(obj, 14, 916);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3341,7 +3311,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor1_s8_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 8");
@@ -3368,7 +3338,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor1_s8_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3388,10 +3358,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s8_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s8_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)15);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3426,7 +3395,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s1_row = obj;
                             lv_obj_set_pos(obj, 14, 1010);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3445,7 +3413,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s1_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 1");
@@ -3472,7 +3440,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s1_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3492,10 +3460,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s1_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s1_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)16);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3506,7 +3473,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s2_row = obj;
                             lv_obj_set_pos(obj, 14, 1066);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3525,7 +3491,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s2_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 2");
@@ -3552,7 +3518,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s2_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3572,10 +3538,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s2_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s2_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)17);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3586,7 +3551,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s3_row = obj;
                             lv_obj_set_pos(obj, 14, 1122);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3605,7 +3569,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s3_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 3");
@@ -3632,7 +3596,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s3_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3652,10 +3616,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s3_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s3_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)18);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3666,7 +3629,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s4_row = obj;
                             lv_obj_set_pos(obj, 14, 1178);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3685,7 +3647,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s4_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 4");
@@ -3712,7 +3674,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s4_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3732,10 +3694,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s4_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s4_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)19);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3746,7 +3707,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s5_row = obj;
                             lv_obj_set_pos(obj, 14, 1234);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3765,7 +3725,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s5_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 5");
@@ -3792,7 +3752,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s5_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3812,10 +3772,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s5_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s5_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)20);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3826,7 +3785,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s6_row = obj;
                             lv_obj_set_pos(obj, 14, 1290);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3845,7 +3803,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s6_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 6");
@@ -3872,7 +3830,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s6_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3892,10 +3850,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s6_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s6_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)21);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3906,7 +3863,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s7_row = obj;
                             lv_obj_set_pos(obj, 14, 1346);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3925,7 +3881,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s7_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 7");
@@ -3952,7 +3908,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s7_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3972,10 +3928,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s7_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s7_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)22);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -3986,7 +3941,6 @@ void create_screen_page_alarms() {
                             objects.alarm_spoor2_s8_row = obj;
                             lv_obj_set_pos(obj, 14, 1402);
                             lv_obj_set_size(obj, 772, 50);
-                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
                             add_style_style_panel_default(obj);
                             lv_obj_set_style_bg_color(obj, lv_color_hex(theme_colors[active_theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -4005,7 +3959,7 @@ void create_screen_page_alarms() {
                                     objects.alarm_spoor2_s8_name = obj;
                                     lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
-                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                     add_style_label_default(obj);
                                     lv_label_set_text(obj, "Sensor 8");
@@ -4032,7 +3986,7 @@ void create_screen_page_alarms() {
                                             objects.alarm_spoor2_s8_pencil_icon = obj;
                                             lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
-                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                                            lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                                             add_style_label_fa16_icon(obj);
                                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -4052,10 +4006,9 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s8_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s8_sw = obj;
-                                    lv_obj_set_pos(obj, 722, 11);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)23);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4128,7 +4081,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)0);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4174,7 +4126,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)1);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4220,7 +4171,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)2);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4266,7 +4216,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)3);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4312,7 +4261,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)4);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4358,7 +4306,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)5);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4431,7 +4378,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)6);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4477,7 +4423,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)7);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4523,7 +4468,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)8);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4596,7 +4540,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)9);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4642,7 +4585,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)10);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4688,7 +4630,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)11);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4734,7 +4675,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)12);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4807,7 +4747,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)13);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -4853,7 +4792,6 @@ void create_screen_page_alarms() {
                                     lv_obj_set_pos(obj, 724, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_alarm, LV_EVENT_VALUE_CHANGED, (void *)14);
-                                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                                     add_style_switch_default(obj);
                                 }
                             }
@@ -5179,7 +5117,6 @@ void create_screen_page_setup() {
                             lv_obj_set_pos(obj, 722, 13);
                             lv_obj_set_size(obj, 50, 28);
                             lv_obj_add_event_cb(obj, action_toggle_brakes, LV_EVENT_VALUE_CHANGED, (void *)0);
-                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                             add_style_switch_default(obj);
                         }
                     }
@@ -5250,7 +5187,6 @@ void create_screen_page_setup() {
                             lv_obj_set_pos(obj, 722, 13);
                             lv_obj_set_size(obj, 50, 28);
                             lv_obj_add_event_cb(obj, action_toggle_breakaway, LV_EVENT_VALUE_CHANGED, (void *)0);
-                            lv_obj_clear_flag(obj, LV_OBJ_FLAG_CHECKABLE);
                             add_style_switch_default(obj);
                         }
                     }

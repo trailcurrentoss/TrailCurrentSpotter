@@ -1660,6 +1660,10 @@ void remove_style_style_top_nav_text_normal(lv_obj_t *obj) {
 
 void init_style_switch_default_INDICATOR_CHECKED(lv_style_t *style) {
     lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][0]));
+    lv_style_set_pad_top(style, 5);
+    lv_style_set_pad_bottom(style, 5);
+    lv_style_set_pad_left(style, 5);
+    lv_style_set_pad_right(style, 5);
 };
 
 lv_style_t *get_style_switch_default_INDICATOR_CHECKED() {
@@ -1672,14 +1676,33 @@ lv_style_t *get_style_switch_default_INDICATOR_CHECKED() {
     return style;
 };
 
+void init_style_switch_default_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_pad_top(style, 5);
+    lv_style_set_pad_bottom(style, 5);
+    lv_style_set_pad_left(style, 5);
+    lv_style_set_pad_right(style, 5);
+};
+
+lv_style_t *get_style_switch_default_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_switch_default_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
 void add_style_switch_default(lv_obj_t *obj) {
     (void)obj;
     lv_obj_add_style(obj, get_style_switch_default_INDICATOR_CHECKED(), LV_PART_INDICATOR | LV_STATE_CHECKED);
+    lv_obj_add_style(obj, get_style_switch_default_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
 };
 
 void remove_style_switch_default(lv_obj_t *obj) {
     (void)obj;
     lv_obj_remove_style(obj, get_style_switch_default_INDICATOR_CHECKED(), LV_PART_INDICATOR | LV_STATE_CHECKED);
+    lv_obj_remove_style(obj, get_style_switch_default_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
 };
 
 //

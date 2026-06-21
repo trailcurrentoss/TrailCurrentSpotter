@@ -28,6 +28,7 @@ static int64_t  s_last_alarm_us[SPOOR_SENSOR_COUNT];             /* snooze track
 static int      s_show_secs   = SPOOR_SHOW_SECS_DEFAULT;
 static int      s_snooze_secs = SPOOR_SNOOZE_SECS_DEFAULT;
 static int      s_rename_target = -1;                            /* sensor being renamed */
+static int      s_active_alarm_idx = -1;                         /* sensor whose alarm overlay is currently showing (-1 = none) */
 
 /* Default label scratch buffer for spoor_alarms_display_label(). */
 static char     s_label_scratch[64];
@@ -216,12 +217,10 @@ static void default_label(int idx, char *out, size_t out_sz)
 
 static void compose_row_text(int idx, char *out, size_t out_sz)
 {
-    char def[24];
-    default_label(idx, def, sizeof(def));
     if (s_custom[idx][0] != '\0') {
-        snprintf(out, out_sz, "%s (%s)", def, s_custom[idx]);
+        snprintf(out, out_sz, "%s", s_custom[idx]);
     } else {
-        snprintf(out, out_sz, "%s", def);
+        default_label(idx, out, out_sz);
     }
 }
 
@@ -263,14 +262,63 @@ static void paint_timing(void)
 /* ============================================================================
  * Public API
  * ============================================================================ */
+/* Expand a widget's touch hit zone without changing its visual size or
+ * the EEZ Studio canvas representation. Authored switches are 50×28 px
+ * and pencil buttons are 32×28 px — both well below the ~8.5 mm Material
+ * Design minimum at this display's pixel density. ext_click_area is a
+ * runtime-only LVGL property (no style-level equivalent in 8.x), so we
+ * call it from here rather than authoring it in the .eez-project. */
+static void expand_hit_area(lv_obj_t *obj, int pad)
+{
+    if (obj) lv_obj_set_ext_click_area(obj, pad);
+}
+
+static lv_obj_t *pencil_btn_for(int idx)
+{
+    switch (idx) {
+    case  0: return objects.alarm_spoor0_s1_pencil_btn;
+    case  1: return objects.alarm_spoor0_s2_pencil_btn;
+    case  2: return objects.alarm_spoor0_s3_pencil_btn;
+    case  3: return objects.alarm_spoor0_s4_pencil_btn;
+    case  4: return objects.alarm_spoor0_s5_pencil_btn;
+    case  5: return objects.alarm_spoor0_s6_pencil_btn;
+    case  6: return objects.alarm_spoor0_s7_pencil_btn;
+    case  7: return objects.alarm_spoor0_s8_pencil_btn;
+    case  8: return objects.alarm_spoor1_s1_pencil_btn;
+    case  9: return objects.alarm_spoor1_s2_pencil_btn;
+    case 10: return objects.alarm_spoor1_s3_pencil_btn;
+    case 11: return objects.alarm_spoor1_s4_pencil_btn;
+    case 12: return objects.alarm_spoor1_s5_pencil_btn;
+    case 13: return objects.alarm_spoor1_s6_pencil_btn;
+    case 14: return objects.alarm_spoor1_s7_pencil_btn;
+    case 15: return objects.alarm_spoor1_s8_pencil_btn;
+    case 16: return objects.alarm_spoor2_s1_pencil_btn;
+    case 17: return objects.alarm_spoor2_s2_pencil_btn;
+    case 18: return objects.alarm_spoor2_s3_pencil_btn;
+    case 19: return objects.alarm_spoor2_s4_pencil_btn;
+    case 20: return objects.alarm_spoor2_s5_pencil_btn;
+    case 21: return objects.alarm_spoor2_s6_pencil_btn;
+    case 22: return objects.alarm_spoor2_s7_pencil_btn;
+    case 23: return objects.alarm_spoor2_s8_pencil_btn;
+    }
+    return NULL;
+}
+
 void spoor_alarms_init(void)
 {
     memset(s_armed,        0, sizeof(s_armed));
     memset(s_custom,       0, sizeof(s_custom));
     memset(s_last_inputs,  0, sizeof(s_last_inputs));
     memset(s_last_alarm_us, 0, sizeof(s_last_alarm_us));
+    s_active_alarm_idx = -1;
     nvs_load_state();
-    for (int i = 0; i < SPOOR_SENSOR_COUNT; i++) paint_row(i);
+    for (int i = 0; i < SPOOR_SENSOR_COUNT; i++) {
+        paint_row(i);
+        /* Switch: 50x28 visual -> 80x58 hit area (+15 px each side). */
+        expand_hit_area(sw_for(i), 15);
+        /* Pencil: 32x28 visual -> 62x58 hit area (+15 px each side). */
+        expand_hit_area(pencil_btn_for(i), 15);
+    }
     paint_timing();
     ESP_LOGI(TAG, "init: armed=[0x%02x 0x%02x 0x%02x] show=%ds snooze=%ds",
              s_armed[0], s_armed[1], s_armed[2], s_show_secs, s_snooze_secs);
@@ -291,12 +339,10 @@ const char *spoor_alarms_display_label(int idx)
         snprintf(s_label_scratch, sizeof(s_label_scratch), "Unknown");
         return s_label_scratch;
     }
-    char def[24];
-    default_label(idx, def, sizeof(def));
     if (s_custom[idx][0] != '\0') {
-        snprintf(s_label_scratch, sizeof(s_label_scratch), "%s (%s)", def, s_custom[idx]);
+        snprintf(s_label_scratch, sizeof(s_label_scratch), "%s", s_custom[idx]);
     } else {
-        snprintf(s_label_scratch, sizeof(s_label_scratch), "%s", def);
+        default_label(idx, s_label_scratch, sizeof(s_label_scratch));
     }
     return s_label_scratch;
 }
@@ -417,23 +463,43 @@ void spoor_alarms_set_snooze_secs(int s)
 /* ----- MQTT input handler ----------------------------------------------- */
 void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
 {
-    if (addr < 0 || addr >= SPOOR_ADDR_COUNT) return;
-    uint8_t prev = s_last_inputs[addr];
-    uint8_t rising = inputs & ~prev;     /* newly active bits */
+    if (addr < 0 || addr >= SPOOR_ADDR_COUNT) {
+        ESP_LOGW(TAG, "handle_inputs: addr=%d OUT OF RANGE", addr);
+        return;
+    }
     s_last_inputs[addr] = inputs;
-    if (rising == 0) return;
+    ESP_LOGD(TAG, "handle_inputs: addr=%d inputs=0x%02x armed=0x%02x",
+             addr, inputs, s_armed[addr]);
 
+    /* If the sensor whose alarm is currently shown has returned to normal,
+     * auto-dismiss the overlay (force_dismiss is a no-op when nothing is
+     * showing, so this is safe even if the user already acknowledged or
+     * the auto-dismiss timer already expired). */
+    if (s_active_alarm_idx >= 0) {
+        int aa = s_active_alarm_idx / SPOOR_SENSORS_PER_ADDR;
+        int ab = s_active_alarm_idx % SPOOR_SENSORS_PER_ADDR;
+        if (aa >= 0 && aa < SPOOR_ADDR_COUNT &&
+            !(s_last_inputs[aa] & (1u << ab))) {
+            ESP_LOGI(TAG, "Sensor %d returned to normal — dismissing alarm",
+                     s_active_alarm_idx);
+            spotter_alarm_force_dismiss();
+            s_active_alarm_idx = -1;
+        }
+    }
+
+    /* Level-triggered: any armed sensor that is currently active AND has
+     * exited its snooze window will (re)raise the alarm. This means if
+     * the underlying condition is still present after the user
+     * acknowledges and the snooze elapses, the alarm fires again. */
     int64_t now = esp_timer_get_time();
+    int64_t snooze_us = (int64_t)s_snooze_secs * 1000000LL;
     for (int bit = 0; bit < SPOOR_SENSORS_PER_ADDR; bit++) {
-        if (!(rising & (1u << bit))) continue;
+        if (!(inputs & (1u << bit))) continue;       /* sensor not active */
         int idx = addr * SPOOR_SENSORS_PER_ADDR + bit;
         if (!armed(idx)) continue;
-
-        int64_t snooze_us = (int64_t)s_snooze_secs * 1000000LL;
         if (s_last_alarm_us[idx] != 0 &&
             (now - s_last_alarm_us[idx]) < snooze_us) {
-            ESP_LOGD(TAG, "sensor %d active but in snooze window", idx);
-            continue;
+            continue;                                /* still snoozing */
         }
         s_last_alarm_us[idx] = now;
 
@@ -443,6 +509,9 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
         snprintf(body, sizeof(body),
                  "%s active.\nTap Acknowledge or toggle off in Alarms.",
                  spoor_alarms_display_label(idx));
+        ESP_LOGI(TAG, "FIRING alarm: sensor %d (%s)", idx,
+                 spoor_alarms_display_label(idx));
         spotter_alarm_raise(spoor_alarms_display_label(idx), body, s_show_secs);
+        s_active_alarm_idx = idx;
     }
 }

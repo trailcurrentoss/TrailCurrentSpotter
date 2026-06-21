@@ -224,6 +224,7 @@ void remove_style_style_top_nav_text_normal(lv_obj_t *obj);
 
 // Style: SwitchDefault
 lv_style_t *get_style_switch_default_INDICATOR_CHECKED();
+lv_style_t *get_style_switch_default_MAIN_DEFAULT();
 void add_style_switch_default(lv_obj_t *obj);
 void remove_style_switch_default(lv_obj_t *obj);
 

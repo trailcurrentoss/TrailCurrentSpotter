@@ -476,7 +476,10 @@ static void process_message(const char *topic, const char *payload, int length) 
         cJSON *inputs_j = cJSON_GetObjectItem(doc, "inputs");
         if (inputs_j) {
             int bits = inputs_j->valueint & 0xFF;
+            ESP_LOGD(TAG, "spoor rx: addr=%d bits=0x%02x", addr, bits);
             spoor_alarms_handle_inputs(addr, (uint8_t)bits);
+        } else {
+            ESP_LOGW(TAG, "spoor rx: topic=%s missing 'inputs' field", topic);
         }
     }
     else {
