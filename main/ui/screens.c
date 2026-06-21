@@ -5361,7 +5361,7 @@ void create_screen_page_setup() {
                     // setup_reset_conn_title
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.setup_reset_conn_title = obj;
-                    lv_obj_set_pos(obj, 14, 546);
+                    lv_obj_set_pos(obj, 14, 572);
                     lv_obj_set_size(obj, 772, 18);
                     add_style_label_default(obj);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -5378,7 +5378,7 @@ void create_screen_page_setup() {
                     // setup_reset_conn_btn
                     lv_obj_t *obj = lv_btn_create(parent_obj);
                     objects.setup_reset_conn_btn = obj;
-                    lv_obj_set_pos(obj, 14, 570);
+                    lv_obj_set_pos(obj, 14, 596);
                     lv_obj_set_size(obj, 772, 56);
                     lv_obj_add_event_cb(obj, action_clear_connection, LV_EVENT_CLICKED, (void *)0);
                     add_style_style_button_default(obj);
@@ -5417,7 +5417,7 @@ void create_screen_page_setup() {
                     // setup_alarm_timing_title
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.setup_alarm_timing_title = obj;
-                    lv_obj_set_pos(obj, 14, 642);
+                    lv_obj_set_pos(obj, 14, 446);
                     lv_obj_set_size(obj, 772, 18);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -5430,7 +5430,7 @@ void create_screen_page_setup() {
                     // setup_alarm_show_row
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.setup_alarm_show_row = obj;
-                    lv_obj_set_pos(obj, 14, 666);
+                    lv_obj_set_pos(obj, 14, 470);
                     lv_obj_set_size(obj, 772, 38);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
@@ -5484,7 +5484,7 @@ void create_screen_page_setup() {
                     // setup_alarm_snooze_row
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.setup_alarm_snooze_row = obj;
-                    lv_obj_set_pos(obj, 14, 710);
+                    lv_obj_set_pos(obj, 14, 514);
                     lv_obj_set_size(obj, 772, 38);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);

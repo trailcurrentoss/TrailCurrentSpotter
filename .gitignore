@@ -7,6 +7,14 @@ build/
 # sdkconfig backup file from menuconfig
 sdkconfig.old
 
+# .eez-project backups left by one-shot patch scripts
+GUI/*.eez-project.bak*
+
+# One-shot patch scripts (tmp/ holds reusable tools like render_pages.py and
+# verify_*.py — see eezstudio skill — but patch_*.py is single-use and should
+# not be committed)
+tmp/patch_*.py
+
 **/.DS_Store
 **/*.zip
 **/*.FCBak
