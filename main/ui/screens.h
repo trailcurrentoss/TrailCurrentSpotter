@@ -383,10 +383,6 @@ typedef struct _objects_t {
     lv_obj_t *alarm_spoor2_d8_pencil_icon;
     lv_obj_t *alarm_spoor2_d8_sw;
     lv_obj_t *alarm_spoor2_d8_inv_sw;
-    lv_obj_t *alarms_grp_desc_0;
-    lv_obj_t *alarms_grp_desc_6;
-    lv_obj_t *alarms_grp_desc_9;
-    lv_obj_t *alarms_grp_desc_13;
     lv_obj_t *alarms_dock;
     lv_obj_t *alarms_dock__root;
     lv_obj_t *alarms_dock__dock_btn_drive;

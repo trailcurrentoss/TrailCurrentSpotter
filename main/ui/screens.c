@@ -2600,7 +2600,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s1_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s1_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2611,7 +2611,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s1_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s1_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)8);
                                     add_style_style_button_default(obj);
@@ -2627,7 +2627,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s1_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s1_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2649,7 +2649,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s1_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s1_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)8);
                                     add_style_switch_default(obj);
@@ -2678,7 +2678,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s2_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s2_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2689,7 +2689,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s2_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s2_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)9);
                                     add_style_style_button_default(obj);
@@ -2705,7 +2705,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s2_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s2_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2727,7 +2727,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s2_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s2_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)9);
                                     add_style_switch_default(obj);
@@ -2756,7 +2756,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s3_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s3_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2767,7 +2767,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s3_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s3_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)10);
                                     add_style_style_button_default(obj);
@@ -2783,7 +2783,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s3_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s3_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2805,7 +2805,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s3_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s3_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)10);
                                     add_style_switch_default(obj);
@@ -2834,7 +2834,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s4_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s4_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2845,7 +2845,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s4_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s4_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)11);
                                     add_style_style_button_default(obj);
@@ -2861,7 +2861,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s4_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s4_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2883,7 +2883,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s4_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s4_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)11);
                                     add_style_switch_default(obj);
@@ -2912,7 +2912,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s5_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s5_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2923,7 +2923,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s5_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s5_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)12);
                                     add_style_style_button_default(obj);
@@ -2939,7 +2939,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s5_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s5_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -2961,7 +2961,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s5_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s5_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)12);
                                     add_style_switch_default(obj);
@@ -2990,7 +2990,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s6_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s6_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3001,7 +3001,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s6_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s6_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)13);
                                     add_style_style_button_default(obj);
@@ -3017,7 +3017,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s6_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s6_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3039,7 +3039,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s6_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s6_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)13);
                                     add_style_switch_default(obj);
@@ -3068,7 +3068,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s7_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s7_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3079,7 +3079,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s7_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s7_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)14);
                                     add_style_style_button_default(obj);
@@ -3095,7 +3095,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s7_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s7_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3117,7 +3117,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s7_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s7_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)14);
                                     add_style_switch_default(obj);
@@ -3146,7 +3146,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s8_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor1_s8_name = obj;
-                                    lv_obj_set_pos(obj, 14, 463);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3157,7 +3157,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s8_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor1_s8_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 459);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)15);
                                     add_style_style_button_default(obj);
@@ -3173,7 +3173,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor1_s8_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor1_s8_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 448);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3195,7 +3195,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor1_s8_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor1_s8_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 459);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)15);
                                     add_style_switch_default(obj);
@@ -3952,7 +3952,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s1_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s1_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -3963,7 +3963,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s1_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s1_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)16);
                                     add_style_style_button_default(obj);
@@ -3979,7 +3979,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s1_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s1_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4001,7 +4001,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s1_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s1_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)16);
                                     add_style_switch_default(obj);
@@ -4030,7 +4030,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s2_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s2_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4041,7 +4041,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s2_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s2_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)17);
                                     add_style_style_button_default(obj);
@@ -4057,7 +4057,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s2_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s2_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4079,7 +4079,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s2_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s2_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)17);
                                     add_style_switch_default(obj);
@@ -4108,7 +4108,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s3_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s3_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4119,7 +4119,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s3_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s3_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)18);
                                     add_style_style_button_default(obj);
@@ -4135,7 +4135,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s3_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s3_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4157,7 +4157,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s3_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s3_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)18);
                                     add_style_switch_default(obj);
@@ -4186,7 +4186,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s4_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s4_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4197,7 +4197,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s4_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s4_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)19);
                                     add_style_style_button_default(obj);
@@ -4213,7 +4213,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s4_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s4_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4235,7 +4235,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s4_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s4_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)19);
                                     add_style_switch_default(obj);
@@ -4264,7 +4264,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s5_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s5_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4275,7 +4275,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s5_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s5_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)20);
                                     add_style_style_button_default(obj);
@@ -4291,7 +4291,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s5_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s5_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4313,7 +4313,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s5_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s5_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)20);
                                     add_style_switch_default(obj);
@@ -4342,7 +4342,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s6_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s6_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4353,7 +4353,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s6_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s6_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)21);
                                     add_style_style_button_default(obj);
@@ -4369,7 +4369,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s6_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s6_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4391,7 +4391,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s6_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s6_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)21);
                                     add_style_switch_default(obj);
@@ -4420,7 +4420,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s7_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s7_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4431,7 +4431,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s7_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s7_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)22);
                                     add_style_style_button_default(obj);
@@ -4447,7 +4447,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s7_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s7_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4469,7 +4469,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s7_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s7_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)22);
                                     add_style_switch_default(obj);
@@ -4498,7 +4498,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s8_name
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.alarm_spoor2_s8_name = obj;
-                                    lv_obj_set_pos(obj, 14, 911);
+                                    lv_obj_set_pos(obj, 14, 15);
                                     lv_obj_set_size(obj, 480, 20);
                                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4509,7 +4509,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s8_pencil_btn
                                     lv_obj_t *obj = lv_btn_create(parent_obj);
                                     objects.alarm_spoor2_s8_pencil_btn = obj;
-                                    lv_obj_set_pos(obj, 644, 907);
+                                    lv_obj_set_pos(obj, 644, 11);
                                     lv_obj_set_size(obj, 32, 28);
                                     lv_obj_add_event_cb(obj, action_open_rename_sensor, LV_EVENT_CLICKED, (void *)23);
                                     add_style_style_button_default(obj);
@@ -4525,7 +4525,7 @@ void create_screen_page_alarms() {
                                             // alarm_spoor2_s8_pencil_icon
                                             lv_obj_t *obj = lv_label_create(parent_obj);
                                             objects.alarm_spoor2_s8_pencil_icon = obj;
-                                            lv_obj_set_pos(obj, 0, 896);
+                                            lv_obj_set_pos(obj, 0, 0);
                                             lv_obj_set_size(obj, 32, 28);
                                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -4547,7 +4547,7 @@ void create_screen_page_alarms() {
                                     // alarm_spoor2_s8_sw
                                     lv_obj_t *obj = lv_switch_create(parent_obj);
                                     objects.alarm_spoor2_s8_sw = obj;
-                                    lv_obj_set_pos(obj, 700, 907);
+                                    lv_obj_set_pos(obj, 700, 11);
                                     lv_obj_set_size(obj, 50, 28);
                                     lv_obj_add_event_cb(obj, action_toggle_spoor_sensor, LV_EVENT_VALUE_CHANGED, (void *)23);
                                     add_style_switch_default(obj);
@@ -5258,58 +5258,6 @@ void create_screen_page_alarms() {
                                 }
                             }
                         }
-                        {
-                            // alarms_grp_desc_0
-                            lv_obj_t *obj = lv_label_create(parent_obj);
-                            objects.alarms_grp_desc_0 = obj;
-                            lv_obj_set_pos(obj, 506, 1470);
-                            lv_obj_set_size(obj, 280, 22);
-                            add_style_label_default(obj);
-                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "Alarm if opened");
-                        }
-                        {
-                            // alarms_grp_desc_6
-                            lv_obj_t *obj = lv_label_create(parent_obj);
-                            objects.alarms_grp_desc_6 = obj;
-                            lv_obj_set_pos(obj, 506, 1842);
-                            lv_obj_set_size(obj, 280, 22);
-                            add_style_label_default(obj);
-                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "Alarm if left on");
-                        }
-                        {
-                            // alarms_grp_desc_9
-                            lv_obj_t *obj = lv_label_create(parent_obj);
-                            objects.alarms_grp_desc_9 = obj;
-                            lv_obj_set_pos(obj, 506, 2046);
-                            lv_obj_set_size(obj, 280, 22);
-                            add_style_label_default(obj);
-                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "Alarm if running");
-                        }
-                        {
-                            // alarms_grp_desc_13
-                            lv_obj_t *obj = lv_label_create(parent_obj);
-                            objects.alarms_grp_desc_13 = obj;
-                            lv_obj_set_pos(obj, 506, 2306);
-                            lv_obj_set_size(obj, 280, 22);
-                            add_style_label_default(obj);
-                            lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "Always recommended");
-                        }
                     }
                 }
             }
@@ -5326,7 +5274,7 @@ void create_screen_page_alarms() {
             lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            create_user_widget_bottom_tab_bar(obj, 380);
+            create_user_widget_bottom_tab_bar(obj, 376);
         }
     }
     
@@ -5335,7 +5283,7 @@ void create_screen_page_alarms() {
 
 void tick_screen_page_alarms() {
     tick_user_widget_top_status_bar(87);
-    tick_user_widget_bottom_tab_bar(380);
+    tick_user_widget_bottom_tab_bar(376);
 }
 
 void create_screen_page_setup() {
@@ -5358,7 +5306,7 @@ void create_screen_page_setup() {
             lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            create_user_widget_top_status_bar(obj, 391);
+            create_user_widget_top_status_bar(obj, 387);
         }
         {
             // setup_body
@@ -6008,7 +5956,7 @@ void create_screen_page_setup() {
             lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            create_user_widget_bottom_tab_bar(obj, 443);
+            create_user_widget_bottom_tab_bar(obj, 439);
         }
     }
     
@@ -6016,8 +5964,8 @@ void create_screen_page_setup() {
 }
 
 void tick_screen_page_setup() {
-    tick_user_widget_top_status_bar(391);
-    tick_user_widget_bottom_tab_bar(443);
+    tick_user_widget_top_status_bar(387);
+    tick_user_widget_bottom_tab_bar(439);
 }
 
 void create_screen_page_wifi_setup() {
@@ -9325,14 +9273,6 @@ void change_color_theme(uint32_t theme_index) {
     
     lv_obj_set_style_bg_color(objects.alarm_spoor2_d8_row, lv_color_hex(theme_colors[theme_index][4]), LV_PART_MAIN | LV_STATE_DEFAULT);
     
-    lv_obj_set_style_text_color(objects.alarms_grp_desc_0, lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-    
-    lv_obj_set_style_text_color(objects.alarms_grp_desc_6, lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-    
-    lv_obj_set_style_text_color(objects.alarms_grp_desc_9, lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-    
-    lv_obj_set_style_text_color(objects.alarms_grp_desc_13, lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
-    
     lv_obj_set_style_bg_color(objects.setup_body, lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
     
     lv_obj_set_style_text_color(objects.setup_axle_title, lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -9807,7 +9747,7 @@ void change_color_theme(uint32_t theme_index) {
     }
     
     {
-        int startWidgetIndex = 380;
+        int startWidgetIndex = 376;
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_border_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 1], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -9828,7 +9768,7 @@ void change_color_theme(uint32_t theme_index) {
     }
     
     {
-        int startWidgetIndex = 391;
+        int startWidgetIndex = 387;
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_border_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_text_color(((lv_obj_t **)&objects)[startWidgetIndex + 1], lv_color_hex(theme_colors[theme_index][0]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -9844,7 +9784,7 @@ void change_color_theme(uint32_t theme_index) {
     }
     
     {
-        int startWidgetIndex = 443;
+        int startWidgetIndex = 439;
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_border_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 1], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
