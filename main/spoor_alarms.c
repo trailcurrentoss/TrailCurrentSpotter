@@ -467,6 +467,7 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
         ESP_LOGW(TAG, "handle_inputs: addr=%d OUT OF RANGE", addr);
         return;
     }
+    uint8_t prev = s_last_inputs[addr];
     s_last_inputs[addr] = inputs;
     ESP_LOGD(TAG, "handle_inputs: addr=%d inputs=0x%02x armed=0x%02x",
              addr, inputs, s_armed[addr]);
@@ -487,30 +488,26 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
         }
     }
 
-    /* Snooze applies only to sensors that stay continuously active after an
-     * acknowledge — not to fresh open→close→open cycles. Clear the snooze
-     * marker on any sensor observed as inactive so the next active edge
-     * fires immediately. Without this, a rapid open/close/open is hidden
-     * until the snooze window expires, while the Headwaters PWA (which has
-     * no snooze) shows it instantly. */
-    for (int bit = 0; bit < SPOOR_SENSORS_PER_ADDR; bit++) {
-        if (inputs & (1u << bit)) continue;
-        s_last_alarm_us[addr * SPOOR_SENSORS_PER_ADDR + bit] = 0;
-    }
-
-    /* Level-triggered: any armed sensor that is currently active AND has
-     * exited its snooze window will (re)raise the alarm. This means if
-     * the underlying condition is still present after the user
-     * acknowledges and the snooze elapses, the alarm fires again. */
+    /* Fire alarms:
+     *   - Any 0→1 transition (rising edge) is a fresh event and fires
+     *     immediately, regardless of the snooze window — matches what the
+     *     Headwaters PWA shows.
+     *   - When the bit is steady-state high (no edge in this msg), the
+     *     snooze gate suppresses repeated firing so a held-open condition
+     *     re-raises once per snooze_secs after acknowledge.
+     */
     int64_t now = esp_timer_get_time();
     int64_t snooze_us = (int64_t)s_snooze_secs * 1000000LL;
+    uint8_t rising = (uint8_t)(~prev) & inputs;
     for (int bit = 0; bit < SPOOR_SENSORS_PER_ADDR; bit++) {
         if (!(inputs & (1u << bit))) continue;       /* sensor not active */
         int idx = addr * SPOOR_SENSORS_PER_ADDR + bit;
         if (!armed(idx)) continue;
-        if (s_last_alarm_us[idx] != 0 &&
+        bool is_edge = (rising & (1u << bit)) != 0;
+        if (!is_edge &&
+            s_last_alarm_us[idx] != 0 &&
             (now - s_last_alarm_us[idx]) < snooze_us) {
-            continue;                                /* still snoozing */
+            continue;                                /* steady-state, still snoozing */
         }
         s_last_alarm_us[idx] = now;
 
