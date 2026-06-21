@@ -1122,13 +1122,16 @@
     "[TrailCurrentSpotter.eez-project]:/userPages/3[flow-state]": {
       "selection": {
         "0": {
-          "0": {}
+          "0": {},
+          "1": {
+            "$selected": true
+          }
         }
       },
       "transform": {
         "translate": {
           "x": -287.0975235894409,
-          "y": -258.21905100560986
+          "y": -159.2190510056098
         },
         "scale": 0.75
       },

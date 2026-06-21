@@ -23,6 +23,12 @@ static uint32_t                  s_ip          = 0;
 static uint8_t                   s_retries     = 0;
 static bool                      s_initialized = false;
 static wifi_setup_fail_reason_t  s_fail_reason = WIFI_SETUP_FAIL_NONE;
+/* Latched true the first time we get an IP. From then on, any disconnect is
+ * treated as a transient drop that must keep retrying — the device is a fixed
+ * in-trailer monitor, not a hand-held that legitimately wanders out of range,
+ * so giving up on the AP would leave the user with a dead alarm panel and no
+ * UI affordance to recover short of a power cycle. */
+static bool                      s_was_ever_connected = false;
 
 static wifi_setup_network_t s_scan[WIFI_SETUP_MAX_SCAN_RESULTS];
 static size_t                s_scan_count = 0;
@@ -139,9 +145,21 @@ static void wifi_event_handler(void *arg, esp_event_base_t base, int32_t id, voi
         case WIFI_EVENT_STA_DISCONNECTED: {
             wifi_event_sta_disconnected_t *e = data;
             int raw_reason = e ? e->reason : -1;
-            ESP_LOGW(TAG, "STA disconnected, reason=%d", raw_reason);
+            ESP_LOGW(TAG, "STA disconnected, reason=%d (state=%d retries=%u ever_connected=%d)",
+                     raw_reason, (int)s_state, (unsigned)s_retries, (int)s_was_ever_connected);
             s_ip = 0;
-            if (s_state == WIFI_SETUP_STATE_CONNECTING && s_retries < WIFI_MAX_RETRIES) {
+            if (s_was_ever_connected) {
+                /* Post-IP drop. The state machine flips to CONNECTING so the
+                 * UI's connectivity indicator (and the connectivity-alarm
+                 * monitor) sees that we've lost the link. Reconnect attempts
+                 * continue forever — esp_wifi_connect() rate-limits itself
+                 * internally per attempt, so this is not a tight loop. */
+                s_retries = 0;
+                if (s_state != WIFI_SETUP_STATE_CONNECTING) {
+                    set_state(WIFI_SETUP_STATE_CONNECTING);
+                }
+                esp_wifi_connect();
+            } else if (s_state == WIFI_SETUP_STATE_CONNECTING && s_retries < WIFI_MAX_RETRIES) {
                 s_retries++;
                 ESP_LOGI(TAG, "reconnect attempt %u/%u", s_retries, WIFI_MAX_RETRIES);
                 esp_wifi_connect();
@@ -160,6 +178,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t base, int32_t id, voi
         s_ip = e->ip_info.ip.addr;
         s_retries = 0;
         s_fail_reason = WIFI_SETUP_FAIL_NONE;
+        s_was_ever_connected = true;
         ESP_LOGI(TAG, "got IP " IPSTR, IP2STR(&e->ip_info.ip));
         set_state(WIFI_SETUP_STATE_CONNECTED);
     }
@@ -249,6 +268,10 @@ esp_err_t wifi_setup_connect(const char *ssid, const char *password)
 
     s_retries = 0;
     s_fail_reason = WIFI_SETUP_FAIL_NONE;
+    /* New connection attempt — until the new SSID actually gives us an IP,
+     * treat this as a fresh initial setup so the bad-password / AP-not-found
+     * paths can surface FAILED instead of looping forever. */
+    s_was_ever_connected = false;
     set_state(WIFI_SETUP_STATE_CONNECTING);
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &cfg));
     return esp_wifi_connect();
@@ -258,6 +281,7 @@ esp_err_t wifi_setup_disconnect(void)
 {
     if (!s_initialized) return ESP_OK;
     s_ip = 0;
+    s_was_ever_connected = false;
     set_state(WIFI_SETUP_STATE_IDLE);
     return esp_wifi_disconnect();
 }

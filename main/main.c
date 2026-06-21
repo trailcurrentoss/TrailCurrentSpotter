@@ -570,6 +570,7 @@ extern void spotter_paint_placeholders(void);
 #include "app_state.h"
 #include "pendant_config.h"
 #include "spoor_alarms.h"
+#include "connectivity_alarm.h"
 
 /* fix_keyboard_alignment used to live here and force keyboard geometry from
  * C. It was the canonical example of canvas-device divergence: any time the
@@ -681,6 +682,11 @@ void app_main(void)
      * geometry. If a keyboard is off on the device, fix the style pin
      * in EEZ Studio — do NOT add a C override here. */
 
+    /* Initialize connectivity_alarm BEFORE app_state_init so the very first
+     * wifi/mqtt state callbacks (which fire on event tasks the moment
+     * wifi_setup_init / mqtt_client_set_state_callback run) land in a
+     * fully-initialized module. */
+    connectivity_alarm_init();
     ESP_ERROR_CHECK(app_state_init());
     spoor_alarms_init();
 

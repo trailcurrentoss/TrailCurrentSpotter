@@ -427,9 +427,6 @@ typedef struct _objects_t {
     lv_obj_t *setup_info_banner;
     lv_obj_t *setup_info_icon;
     lv_obj_t *setup_info_text;
-    lv_obj_t *setup_alarm_test_title;
-    lv_obj_t *setup_alarm_test_btn;
-    lv_obj_t *setup_alarm_test_btn_lbl;
     lv_obj_t *setup_reset_conn_title;
     lv_obj_t *setup_reset_conn_btn;
     lv_obj_t *setup_reset_conn_btn_lbl;

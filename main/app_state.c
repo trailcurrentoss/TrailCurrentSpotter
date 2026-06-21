@@ -7,6 +7,7 @@
 #include "wifi_setup.h"
 #include "pendant_config.h"
 #include "app_mqtt.h"
+#include "connectivity_alarm.h"
 
 static const char *TAG = "app_state";
 static app_state_t s_state = APP_STATE_BOOT;
@@ -168,6 +169,11 @@ static void async_show_fail(void *arg)
 static void async_state_mqtt_setup(void *arg)      { (void)arg; app_state_set(APP_STATE_MQTT_SETUP); }
 static void async_state_mqtt_connecting(void *arg) { (void)arg; app_state_set(APP_STATE_MQTT_CONNECTING); }
 
+/* Bounce the connectivity-alarm notifications onto the LVGL thread. The arg
+ * encodes a bool: non-NULL = connected, NULL = disconnected. */
+static void async_notify_conn_wifi(void *arg) { connectivity_alarm_set_wifi(arg != NULL); }
+static void async_notify_conn_mqtt(void *arg) { connectivity_alarm_set_mqtt(arg != NULL); }
+
 /* Decide what to do once WiFi is up: skip straight into MQTT_CONNECTING if
  * the user has already saved MQTT creds, otherwise show the MQTT setup screen.
  * Runs on LVGL thread (async_call target). */
@@ -191,6 +197,11 @@ static void on_wifi_state(wifi_setup_state_t st, void *user_ctx)
     /* Always refresh the wifi indicator on any state change so the icon
      * flips in real time. Bounce onto LVGL thread. */
     lv_async_call(async_refresh_conn, NULL);
+    /* Tell the connectivity-alarm monitor. CONNECTED is the only state where
+     * we actually have a working link; anything else (idle/scanning/
+     * connecting/failed) counts as "no link". */
+    lv_async_call(async_notify_conn_wifi,
+                  (st == WIFI_SETUP_STATE_CONNECTED) ? (void *)1 : NULL);
     switch (st) {
     case WIFI_SETUP_STATE_IDLE:
         if (s_state == APP_STATE_WIFI_SETUP) {
@@ -259,6 +270,7 @@ static void on_mqtt_state(bool connected)
     ESP_LOGI(TAG, "mqtt connected = %d", (int)connected);
     /* Pass non-NULL for connected, NULL for disconnected. */
     lv_async_call(async_apply_mqtt_connected, connected ? (void *)1 : NULL);
+    lv_async_call(async_notify_conn_mqtt,    connected ? (void *)1 : NULL);
     /* Advance to READY on the first MQTT result either way. If the broker is
      * unreachable we still want the dashboard usable; the MQTT client keeps
      * retrying in the background and the top-bar dot turns green when it
