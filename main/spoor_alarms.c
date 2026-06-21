@@ -485,6 +485,30 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
                      s_active_alarm_idx);
             spotter_alarm_force_dismiss();
             s_active_alarm_idx = -1;
+
+            /* The dismissed alarm may have been hiding another still-active
+             * armed sensor that fired earlier (its overlay was replaced and
+             * never restored). Re-raise the lowest-indexed remaining one,
+             * bypassing the snooze gate — the user's attention has only
+             * just freed up. Without this, that hidden alarm waits out the
+             * full snooze window before reappearing. */
+            for (int i = 0; i < SPOOR_SENSOR_COUNT; i++) {
+                int a = i / SPOOR_SENSORS_PER_ADDR;
+                int b = i % SPOOR_SENSORS_PER_ADDR;
+                if (!armed(i)) continue;
+                if (!(s_last_inputs[a] & (1u << b))) continue;
+                char body[128];
+                snprintf(body, sizeof(body),
+                         "%s active.\nTap Acknowledge or toggle off in Alarms.",
+                         spoor_alarms_display_label(i));
+                ESP_LOGI(TAG, "Re-raising hidden alarm: sensor %d (%s)",
+                         i, spoor_alarms_display_label(i));
+                spotter_alarm_raise(spoor_alarms_display_label(i),
+                                    body, s_show_secs);
+                s_last_alarm_us[i] = esp_timer_get_time();
+                s_active_alarm_idx = i;
+                break;
+            }
         }
     }
 
