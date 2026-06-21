@@ -56,6 +56,21 @@ void spoor_alarms_set_snooze_secs(int s);
  * Acknowledge. No-op when no spoor alarm is currently active. */
 void spoor_alarms_acknowledged(void);
 
+/* Scan for any armed sensor whose input is currently active and raise its
+ * alarm. Returns true if an alarm was raised. Called after another alarm
+ * is dismissed (auto-dismiss on condition clear, or user Acknowledge) so
+ * a still-active sensor that was hidden behind the dismissed overlay
+ * comes back into view.
+ *
+ *   bypass_snooze=true  → ignore the snooze gate. Use when the dismiss
+ *                          was driven by ANOTHER alarm clearing — the
+ *                          user's attention just freed up.
+ *   bypass_snooze=false → respect the snooze gate. Use after a user
+ *                          Acknowledge — the just-acked alarm should
+ *                          stay silent until its snooze elapses.
+ */
+bool spoor_alarms_try_raise_next(bool bypass_snooze);
+
 /* Read-only accessors (currently unused outside the module; kept for tests). */
 int  spoor_alarms_snooze_secs(void);
 bool spoor_alarms_is_armed(int sensor_index);

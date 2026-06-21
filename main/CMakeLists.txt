@@ -5,6 +5,7 @@ idf_component_register(
         "vars.c"
         "app_state.c"
         "spoor_alarms.c"
+        "device_alarms.c"
         "connectivity_alarm.c"
         "lv_mem_psram.c"
         "ui/ui.c"

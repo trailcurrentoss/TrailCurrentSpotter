@@ -17,6 +17,7 @@
  * doesn't have to REQUIRES-import the main archive (which ESP-IDF doesn't
  * allow). The symbol resolves at link time. */
 extern void spoor_alarms_handle_inputs(int addr, uint8_t inputs);
+extern void device_alarms_handle_state(int channel, int state);
 
 /* MQTT variable setters (vars.c) — Spotter uses pdm01_device* naming */
 extern void set_var_pdm01_device01_status(int32_t value);
@@ -103,6 +104,10 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
          * (0..2). The Headwaters can-bridge republishes CAN 0x12/0x13/0x14
          * to local/spoor/<addr>/inputs as {"inputs": <0..255>}. */
         esp_mqtt_client_subscribe(s_client, "local/spoor/+/inputs", 0);
+        /* Switchback relay-output broadcasts, one per relay channel
+         * (1..24). Headwaters publishes {"state": 0|1} per channel.
+         * Feeds the device-alarm module (relay-state-driven alarms). */
+        esp_mqtt_client_subscribe(s_client, "local/relays/+/status", 0);
         ESP_LOGI(TAG, "Subscribed to all topics");
         break;
 
@@ -480,6 +485,18 @@ static void process_message(const char *topic, const char *payload, int length) 
             spoor_alarms_handle_inputs(addr, (uint8_t)bits);
         } else {
             ESP_LOGW(TAG, "spoor rx: topic=%s missing 'inputs' field", topic);
+        }
+    }
+    /* local/relays/<channel>/status — Switchback relay state, channel 1..24 */
+    else if (strncmp(topic, "local/relays/", 13) == 0) {
+        int channel = atoi(topic + 13);
+        cJSON *state_j = cJSON_GetObjectItem(doc, "state");
+        if (state_j) {
+            int state = state_j->valueint ? 1 : 0;
+            ESP_LOGD(TAG, "relay rx: ch=%d state=%d", channel, state);
+            device_alarms_handle_state(channel, state);
+        } else {
+            ESP_LOGW(TAG, "relay rx: topic=%s missing 'state' field", topic);
         }
     }
     else {

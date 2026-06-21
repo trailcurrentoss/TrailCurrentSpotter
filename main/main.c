@@ -570,6 +570,7 @@ extern void spotter_paint_placeholders(void);
 #include "app_state.h"
 #include "pendant_config.h"
 #include "spoor_alarms.h"
+#include "device_alarms.h"
 #include "connectivity_alarm.h"
 
 /* fix_keyboard_alignment used to live here and force keyboard geometry from
@@ -689,6 +690,7 @@ void app_main(void)
     connectivity_alarm_init();
     ESP_ERROR_CHECK(app_state_init());
     spoor_alarms_init();
+    device_alarms_init();
 
     last_activity_time = (uint32_t)(esp_timer_get_time() / 1000);
 

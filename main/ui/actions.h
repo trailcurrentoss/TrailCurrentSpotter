@@ -25,7 +25,6 @@ extern void action_next_zone(lv_event_t * e);
 extern void action_zone_all_on(lv_event_t * e);
 extern void action_zone_all_off(lv_event_t * e);
 extern void action_all_lights_off(lv_event_t * e);
-extern void action_toggle_alarm(lv_event_t * e);
 extern void action_set_axle_count(lv_event_t * e);
 extern void action_toggle_brakes(lv_event_t * e);
 extern void action_toggle_breakaway(lv_event_t * e);
@@ -46,6 +45,9 @@ extern void action_open_rename_sensor(lv_event_t * e);
 extern void action_save_sensor_rename(lv_event_t * e);
 extern void action_cancel_sensor_rename(lv_event_t * e);
 extern void action_alarm_snooze_duration_changed(lv_event_t * e);
+extern void action_toggle_device_alarm(lv_event_t * e);
+extern void action_toggle_device_invert(lv_event_t * e);
+extern void action_open_rename_device(lv_event_t * e);
 
 
 #ifdef __cplusplus

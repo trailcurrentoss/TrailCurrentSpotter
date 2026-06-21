@@ -14,6 +14,7 @@
 #include "ui/vars.h"
 
 #include "spotter_alarm.h"
+#include "device_alarms.h"
 
 static const char *TAG = "spoor";
 #define NVS_NS "spoor"
@@ -439,7 +440,10 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
     /* If the sensor whose alarm is currently shown has returned to normal,
      * auto-dismiss the overlay (force_dismiss is a no-op when nothing is
      * showing, so this is safe even if the user already acknowledged or
-     * the auto-dismiss timer already expired). */
+     * the auto-dismiss timer already expired). After dismissing, surface
+     * any still-active alarm that was hidden behind this one — first our
+     * own sensors, then devices. Without this cross-module pass, a fridge
+     * alarm clearing would also tear down a still-active light-on alarm. */
     if (s_active_alarm_idx >= 0) {
         int aa = s_active_alarm_idx / SPOOR_SENSORS_PER_ADDR;
         int ab = s_active_alarm_idx % SPOOR_SENSORS_PER_ADDR;
@@ -449,29 +453,8 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
                      s_active_alarm_idx);
             spotter_alarm_force_dismiss();
             s_active_alarm_idx = -1;
-
-            /* The dismissed alarm may have been hiding another still-active
-             * armed sensor that fired earlier (its overlay was replaced and
-             * never restored). Re-raise the lowest-indexed remaining one,
-             * bypassing the snooze gate — the user's attention has only
-             * just freed up. Without this, that hidden alarm waits out the
-             * full snooze window before reappearing. */
-            for (int i = 0; i < SPOOR_SENSOR_COUNT; i++) {
-                int a = i / SPOOR_SENSORS_PER_ADDR;
-                int b = i % SPOOR_SENSORS_PER_ADDR;
-                if (!armed(i)) continue;
-                if (!(s_last_inputs[a] & (1u << b))) continue;
-                char body[128];
-                snprintf(body, sizeof(body),
-                         "%s active.\nTap Acknowledge or toggle off in Alarms.",
-                         spoor_alarms_display_label(i));
-                ESP_LOGI(TAG, "Re-raising hidden alarm: sensor %d (%s)",
-                         i, spoor_alarms_display_label(i));
-                spotter_alarm_raise(spoor_alarms_display_label(i), body,
-                                    0 /* sticky — dismissed only by ack or sensor clear */);
-                s_last_alarm_us[i] = esp_timer_get_time();
-                s_active_alarm_idx = i;
-                break;
+            if (!spoor_alarms_try_raise_next(true)) {
+                device_alarms_try_raise_next(true);
             }
         }
     }
@@ -533,4 +516,33 @@ void spoor_alarms_acknowledged(void)
     ESP_LOGI(TAG, "Sensor %d acknowledged — snooze restarts (%ds)",
              s_active_alarm_idx, s_snooze_secs);
     s_active_alarm_idx = -1;
+}
+
+bool spoor_alarms_try_raise_next(bool bypass_snooze)
+{
+    int64_t now = esp_timer_get_time();
+    int64_t snooze_us = (int64_t)s_snooze_secs * 1000000LL;
+    for (int i = 0; i < SPOOR_SENSOR_COUNT; i++) {
+        int a = i / SPOOR_SENSORS_PER_ADDR;
+        int b = i % SPOOR_SENSORS_PER_ADDR;
+        if (!armed(i)) continue;
+        if (!(s_last_inputs[a] & (1u << b))) continue;     /* not active */
+        if (!bypass_snooze &&
+            s_last_alarm_us[i] != 0 &&
+            (now - s_last_alarm_us[i]) < snooze_us) {
+            continue;                                       /* in snooze */
+        }
+        char body[128];
+        snprintf(body, sizeof(body),
+                 "%s active.\nTap Acknowledge or toggle off in Alarms.",
+                 spoor_alarms_display_label(i));
+        ESP_LOGI(TAG, "Re-raising hidden alarm: sensor %d (%s)",
+                 i, spoor_alarms_display_label(i));
+        spotter_alarm_raise(spoor_alarms_display_label(i), body,
+                            0 /* sticky — dismissed only by ack or sensor clear */);
+        s_last_alarm_us[i] = now;
+        s_active_alarm_idx = i;
+        return true;
+    }
+    return false;
 }

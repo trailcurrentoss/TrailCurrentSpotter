@@ -17,6 +17,7 @@
 #include "wifi_setup.h"
 #include "pendant_config.h"
 #include "spoor_alarms.h"
+#include "device_alarms.h"
 
 static const char *TAG = "ACTIONS";
 
@@ -245,12 +246,6 @@ void action_all_lights_off(lv_event_t *e)
     }
 }
 
-void action_toggle_alarm(lv_event_t *e)
-{
-    int alarm_index = (int)(intptr_t)lv_event_get_user_data(e);
-    ESP_LOGI(TAG, "ToggleAlarm idx=%d", alarm_index);
-}
-
 /* Top-toolbar text = "<AXLE> | <Connected|Offline>". Both pieces are user-
  * controlled and they fan out across all 4 page instances of TopStatusBar
  * (drive/lights/alarms/setup_status_bar__status_link_label).
@@ -472,8 +467,17 @@ static void alarm_ack_event_cb(lv_event_t *e)
 {
     (void)e;
     ESP_LOGI(TAG, "Alarm acknowledged");
+    /* At most one of these has an active alarm; each function is a no-op
+     * unless it owns the currently-showing overlay. */
     spoor_alarms_acknowledged();
+    device_alarms_acknowledged();
     alarm_dismiss();
+    /* Surface any other still-active armed alarm. bypass_snooze=false so
+     * the alarm we just acknowledged stays silent for its snooze window
+     * (its s_last_alarm_us was just bumped to "now" by acknowledged()). */
+    if (!spoor_alarms_try_raise_next(false)) {
+        device_alarms_try_raise_next(false);
+    }
 }
 
 static void spotter_show_alarm_overlay(const char *title, const char *body)
@@ -585,7 +589,11 @@ void action_acknowledge_alarm(lv_event_t *e)
     (void)e;
     ESP_LOGI(TAG, "AcknowledgeAlarm");
     spoor_alarms_acknowledged();
+    device_alarms_acknowledged();
     if (s_alarm_overlay) alarm_dismiss();
+    if (!spoor_alarms_try_raise_next(false)) {
+        device_alarms_try_raise_next(false);
+    }
 }
 
 void action_test_alarms(lv_event_t *e)
@@ -617,13 +625,18 @@ void action_open_rename_sensor(lv_event_t *e)
 void action_save_sensor_rename(lv_event_t *e)
 {
     (void)e;
+    /* The same rename page is reused by spoor_alarms (sensors) and
+     * device_alarms (devices). Only one of these has an active rename
+     * target; the other is a no-op. */
     spoor_alarms_save_rename();
+    device_alarms_save_rename();
 }
 
 void action_cancel_sensor_rename(lv_event_t *e)
 {
     (void)e;
     spoor_alarms_cancel_rename();
+    device_alarms_cancel_rename();
 }
 
 void action_alarm_snooze_duration_changed(lv_event_t *e)
@@ -631,6 +644,29 @@ void action_alarm_snooze_duration_changed(lv_event_t *e)
     lv_obj_t *t = (lv_obj_t *)lv_event_get_target(e);
     if (!t) return;
     spoor_alarms_set_snooze_secs((int)lv_slider_get_value(t));
+}
+
+/* ============================================================================
+ * Switchback relay-output ("device") actions — userData = 0..23 maps to
+ * MQTT channel 1..24 (i.e. device idx 0 = local/relays/1/status).
+ * Logic lives in device_alarms.c.
+ * ============================================================================ */
+void action_toggle_device_alarm(lv_event_t *e)
+{
+    int idx = (int)(intptr_t)lv_event_get_user_data(e);
+    device_alarms_toggle_arm(idx);
+}
+
+void action_toggle_device_invert(lv_event_t *e)
+{
+    int idx = (int)(intptr_t)lv_event_get_user_data(e);
+    device_alarms_toggle_invert(idx);
+}
+
+void action_open_rename_device(lv_event_t *e)
+{
+    int idx = (int)(intptr_t)lv_event_get_user_data(e);
+    device_alarms_open_rename(idx);
 }
 
 /* ============================================================================
