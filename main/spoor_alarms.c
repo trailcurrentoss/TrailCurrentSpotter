@@ -25,7 +25,6 @@ static uint8_t  s_armed[SPOOR_ADDR_COUNT];                       /* arm bitmasks
 static char     s_custom[SPOOR_SENSOR_COUNT][SPOOR_LABEL_MAX + 1];
 static uint8_t  s_last_inputs[SPOOR_ADDR_COUNT];
 static int64_t  s_last_alarm_us[SPOOR_SENSOR_COUNT];             /* snooze tracking */
-static int      s_show_secs   = SPOOR_SHOW_SECS_DEFAULT;
 static int      s_snooze_secs = SPOOR_SNOOZE_SECS_DEFAULT;
 static int      s_rename_target = -1;                            /* sensor being renamed */
 static int      s_active_alarm_idx = -1;                         /* sensor whose alarm overlay is currently showing (-1 = none) */
@@ -134,13 +133,10 @@ static void nvs_load_state(void)
     }
 
     /* Timing. Single-byte u8 to keep the keys tiny. Clamp on load to defend
-     * against a corrupt/hand-edited entry. */
+     * against a corrupt/hand-edited entry. The legacy "show_s" key (from
+     * before alarms became sticky) is intentionally not read — if it sits
+     * in NVS it does no harm. */
     uint8_t v = 0;
-    if (nvs_get_u8(h, "show_s", &v) == ESP_OK) {
-        if (v < SPOOR_SHOW_SECS_MIN)      v = SPOOR_SHOW_SECS_MIN;
-        if (v > SPOOR_SHOW_SECS_MAX)      v = SPOOR_SHOW_SECS_MAX;
-        s_show_secs = v;
-    }
     if (nvs_get_u8(h, "snooze_s", &v) == ESP_OK) {
         if (v < SPOOR_SNOOZE_SECS_MIN)    v = SPOOR_SNOOZE_SECS_MIN;
         /* snooze max is 180 which fits in u8. */
@@ -170,15 +166,6 @@ static void nvs_save_label(int idx)
     } else {
         nvs_set_str(h, key, s_custom[idx]);
     }
-    nvs_commit(h);
-    nvs_close(h);
-}
-
-static void nvs_save_show(void)
-{
-    nvs_handle_t h;
-    if (nvs_open(NVS_NS, NVS_READWRITE, &h) != ESP_OK) return;
-    nvs_set_u8(h, "show_s", (uint8_t)s_show_secs);
     nvs_commit(h);
     nvs_close(h);
 }
@@ -241,14 +228,6 @@ static void paint_row(int idx)
 
 static void paint_timing(void)
 {
-    if (objects.setup_alarm_show_slider) {
-        lv_slider_set_value(objects.setup_alarm_show_slider, s_show_secs, LV_ANIM_OFF);
-    }
-    if (objects.setup_alarm_show_value) {
-        char buf[16];
-        snprintf(buf, sizeof(buf), "%d sec", s_show_secs);
-        lv_label_set_text(objects.setup_alarm_show_value, buf);
-    }
     if (objects.setup_alarm_snooze_slider) {
         lv_slider_set_value(objects.setup_alarm_snooze_slider, s_snooze_secs, LV_ANIM_OFF);
     }
@@ -320,8 +299,8 @@ void spoor_alarms_init(void)
         expand_hit_area(pencil_btn_for(i), 15);
     }
     paint_timing();
-    ESP_LOGI(TAG, "init: armed=[0x%02x 0x%02x 0x%02x] show=%ds snooze=%ds",
-             s_armed[0], s_armed[1], s_armed[2], s_show_secs, s_snooze_secs);
+    ESP_LOGI(TAG, "init: armed=[0x%02x 0x%02x 0x%02x] snooze=%ds",
+             s_armed[0], s_armed[1], s_armed[2], s_snooze_secs);
 }
 
 bool spoor_alarms_is_armed(int idx)
@@ -330,7 +309,6 @@ bool spoor_alarms_is_armed(int idx)
     return armed(idx);
 }
 
-int spoor_alarms_show_secs(void)   { return s_show_secs; }
 int spoor_alarms_snooze_secs(void) { return s_snooze_secs; }
 
 const char *spoor_alarms_display_label(int idx)
@@ -432,20 +410,6 @@ void spoor_alarms_cancel_rename(void)
 }
 
 /* ----- Timing sliders --------------------------------------------------- */
-void spoor_alarms_set_show_secs(int s)
-{
-    if (s < SPOOR_SHOW_SECS_MIN) s = SPOOR_SHOW_SECS_MIN;
-    if (s > SPOOR_SHOW_SECS_MAX) s = SPOOR_SHOW_SECS_MAX;
-    if (s == s_show_secs) {
-        paint_timing();
-        return;
-    }
-    s_show_secs = s;
-    nvs_save_show();
-    paint_timing();
-    ESP_LOGI(TAG, "show_secs = %d", s_show_secs);
-}
-
 void spoor_alarms_set_snooze_secs(int s)
 {
     if (s < SPOOR_SNOOZE_SECS_MIN) s = SPOOR_SNOOZE_SECS_MIN;
@@ -503,8 +467,8 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
                          spoor_alarms_display_label(i));
                 ESP_LOGI(TAG, "Re-raising hidden alarm: sensor %d (%s)",
                          i, spoor_alarms_display_label(i));
-                spotter_alarm_raise(spoor_alarms_display_label(i),
-                                    body, s_show_secs);
+                spotter_alarm_raise(spoor_alarms_display_label(i), body,
+                                    0 /* sticky — dismissed only by ack or sensor clear */);
                 s_last_alarm_us[i] = esp_timer_get_time();
                 s_active_alarm_idx = i;
                 break;
@@ -517,8 +481,16 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
      *     immediately, regardless of the snooze window — matches what the
      *     Headwaters PWA shows.
      *   - When the bit is steady-state high (no edge in this msg), the
-     *     snooze gate suppresses repeated firing so a held-open condition
-     *     re-raises once per snooze_secs after acknowledge.
+     *     snooze gate suppresses repeated firing. The snooze clock runs
+     *     from when the user acknowledged (set in
+     *     spoor_alarms_acknowledged()), so a held-open sensor re-raises
+     *     snooze_secs after the user dismissed the previous overlay — NOT
+     *     snooze_secs after the original fire (which would silently expire
+     *     while the user is still staring at the overlay).
+     *
+     * Alarms are raised STICKY (auto_dismiss_secs=0) — they stay on screen
+     * until the user taps Acknowledge or the sensor returns to normal.
+     * The show-duration slider on PageSetup is now unused.
      */
     int64_t now = esp_timer_get_time();
     int64_t snooze_us = (int64_t)s_snooze_secs * 1000000LL;
@@ -543,7 +515,22 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
                  spoor_alarms_display_label(idx));
         ESP_LOGI(TAG, "FIRING alarm: sensor %d (%s)", idx,
                  spoor_alarms_display_label(idx));
-        spotter_alarm_raise(spoor_alarms_display_label(idx), body, s_show_secs);
+        spotter_alarm_raise(spoor_alarms_display_label(idx), body,
+                            0 /* sticky — dismissed only by ack or sensor clear */);
         s_active_alarm_idx = idx;
     }
+}
+
+void spoor_alarms_acknowledged(void)
+{
+    if (s_active_alarm_idx < 0) return;
+    /* Move the snooze clock to "now" so the re-fire gate is measured from
+     * acknowledge rather than from the original fire. Without this, if the
+     * user takes 25s to react to a 30s-snooze alarm, the next steady-state
+     * MQTT message after another 5s would re-fire — almost no time for the
+     * user to actually address the condition. */
+    s_last_alarm_us[s_active_alarm_idx] = esp_timer_get_time();
+    ESP_LOGI(TAG, "Sensor %d acknowledged — snooze restarts (%ds)",
+             s_active_alarm_idx, s_snooze_secs);
+    s_active_alarm_idx = -1;
 }

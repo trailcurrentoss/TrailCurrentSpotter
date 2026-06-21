@@ -431,10 +431,6 @@ typedef struct _objects_t {
     lv_obj_t *setup_reset_conn_btn;
     lv_obj_t *setup_reset_conn_btn_lbl;
     lv_obj_t *setup_alarm_timing_title;
-    lv_obj_t *setup_alarm_show_row;
-    lv_obj_t *setup_alarm_show_name;
-    lv_obj_t *setup_alarm_show_value;
-    lv_obj_t *setup_alarm_show_slider;
     lv_obj_t *setup_alarm_snooze_row;
     lv_obj_t *setup_alarm_snooze_name;
     lv_obj_t *setup_alarm_snooze_value;

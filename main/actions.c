@@ -472,6 +472,7 @@ static void alarm_ack_event_cb(lv_event_t *e)
 {
     (void)e;
     ESP_LOGI(TAG, "Alarm acknowledged");
+    spoor_alarms_acknowledged();
     alarm_dismiss();
 }
 
@@ -583,6 +584,7 @@ void action_acknowledge_alarm(lv_event_t *e)
 {
     (void)e;
     ESP_LOGI(TAG, "AcknowledgeAlarm");
+    spoor_alarms_acknowledged();
     if (s_alarm_overlay) alarm_dismiss();
 }
 
@@ -622,13 +624,6 @@ void action_cancel_sensor_rename(lv_event_t *e)
 {
     (void)e;
     spoor_alarms_cancel_rename();
-}
-
-void action_alarm_show_duration_changed(lv_event_t *e)
-{
-    lv_obj_t *t = (lv_obj_t *)lv_event_get_target(e);
-    if (!t) return;
-    spoor_alarms_set_show_secs((int)lv_slider_get_value(t));
 }
 
 void action_alarm_snooze_duration_changed(lv_event_t *e)
