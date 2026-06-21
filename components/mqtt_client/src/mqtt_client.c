@@ -19,15 +19,7 @@
 extern void spoor_alarms_handle_inputs(int addr, uint8_t inputs);
 extern void device_alarms_handle_state(int channel, int state);
 
-/* MQTT variable setters (vars.c) — Spotter uses pdm01_device* naming */
-extern void set_var_pdm01_device01_status(int32_t value);
-extern void set_var_pdm01_device02_status(int32_t value);
-extern void set_var_pdm01_device03_status(int32_t value);
-extern void set_var_pdm01_device04_status(int32_t value);
-extern void set_var_pdm01_device05_status(int32_t value);
-extern void set_var_pdm01_device06_status(int32_t value);
-extern void set_var_pdm01_device07_status(int32_t value);
-extern void set_var_pdm01_device08_status(int32_t value);
+/* MQTT variable setters (vars.c) */
 extern void set_var_battery_soc_percentage(int32_t value);
 extern void set_var_battery_voltage(float value);
 extern void set_var_solar_wattage(int32_t value);
@@ -92,7 +84,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         if (s_state_cb) s_state_cb(true);
 
         /* Subscribe to all data topics */
-        esp_mqtt_client_subscribe(s_client, "local/lights/+/status", 0);
         esp_mqtt_client_subscribe(s_client, "local/energy/status", 0);
         esp_mqtt_client_subscribe(s_client, "local/airquality/temphumid", 0);
         esp_mqtt_client_subscribe(s_client, "local/airquality/status", 0);
@@ -370,34 +361,11 @@ static void process_message(const char *topic, const char *payload, int length) 
         return;
     }
 
-    /* local/lights/{id}/status */
-    if (strncmp(topic, "local/lights/", 13) == 0) {
-        const char *id_str = topic + 13;
-        int id = atoi(id_str);
-
-        cJSON *state_j = cJSON_GetObjectItem(doc, "state");
-        cJSON *brightness_j = cJSON_GetObjectItem(doc, "brightness");
-        int state = state_j ? state_j->valueint : 0;
-        int brightness = brightness_j ? brightness_j->valueint : 0;
-        int value = (state > 0) ? ((brightness > 0) ? brightness : 1) : 0;
-
-        switch (id) {
-        case 1: set_var_pdm01_device01_status(value); break;
-        case 2: set_var_pdm01_device02_status(value); break;
-        case 3: set_var_pdm01_device03_status(value); break;
-        case 4: set_var_pdm01_device04_status(value); break;
-        case 5: set_var_pdm01_device05_status(value); break;
-        case 6: set_var_pdm01_device06_status(value); break;
-        case 7: set_var_pdm01_device07_status(value); break;
-        case 8: set_var_pdm01_device08_status(value); break;
-        default: ESP_LOGW(TAG, "Unknown light id: %d", id); break;
-        }
-    }
     /* local/energy/status — emitted by TrailCurrentHeadwaters can-bridge.
      * Fields per containers/backend/src/services/can-bridge.js:
      *   battery_percent, battery_voltage, solar_watts, charge_type,
      *   consumption_watts, time_remaining_minutes (from shunt) */
-    else if (strcmp(topic, "local/energy/status") == 0) {
+    if (strcmp(topic, "local/energy/status") == 0) {
         cJSON *bp = cJSON_GetObjectItem(doc, "battery_percent");
         cJSON *bv = cJSON_GetObjectItem(doc, "battery_voltage");
         cJSON *sw = cJSON_GetObjectItem(doc, "solar_watts");

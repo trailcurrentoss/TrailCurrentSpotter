@@ -83,100 +83,6 @@ void set_var_shore_power_connection_status(const char *value) {
     shore_power_connection_status[sizeof(shore_power_connection_status) - 1] = '\0';
 }
 
-/* --- PDM device status (8 devices) --- */
-
-static int32_t pdm01_device01_status;
-int32_t get_var_pdm01_device01_status(void) { return pdm01_device01_status; }
-void set_var_pdm01_device01_status(int32_t value) {
-    pdm01_device01_status = value;
-        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
-     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
-    lv_obj_t *btn = objects.lights_btn_1;
-    if (btn) {
-        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
-        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
-    }
-}
-
-static int32_t pdm01_device02_status;
-int32_t get_var_pdm01_device02_status(void) { return pdm01_device02_status; }
-void set_var_pdm01_device02_status(int32_t value) {
-    pdm01_device02_status = value;
-        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
-     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
-    lv_obj_t *btn = objects.lights_btn_2;
-    if (btn) {
-        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
-        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
-    }
-}
-
-static int32_t pdm01_device03_status;
-int32_t get_var_pdm01_device03_status(void) { return pdm01_device03_status; }
-void set_var_pdm01_device03_status(int32_t value) {
-    pdm01_device03_status = value;
-        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
-     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
-    lv_obj_t *btn = objects.lights_btn_3;
-    if (btn) {
-        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
-        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
-    }
-}
-
-static int32_t pdm01_device04_status;
-int32_t get_var_pdm01_device04_status(void) { return pdm01_device04_status; }
-void set_var_pdm01_device04_status(int32_t value) {
-    pdm01_device04_status = value;
-        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
-     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
-    lv_obj_t *btn = objects.lights_btn_4;
-    if (btn) {
-        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
-        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
-    }
-}
-
-static int32_t pdm01_device05_status;
-int32_t get_var_pdm01_device05_status(void) { return pdm01_device05_status; }
-void set_var_pdm01_device05_status(int32_t value) {
-    pdm01_device05_status = value;
-        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
-     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
-    lv_obj_t *btn = objects.lights_btn_5;
-    if (btn) {
-        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
-        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
-    }
-}
-
-static int32_t pdm01_device06_status;
-int32_t get_var_pdm01_device06_status(void) { return pdm01_device06_status; }
-void set_var_pdm01_device06_status(int32_t value) {
-    pdm01_device06_status = value;
-        /* Mirror to the new PageLights button (1..6 map to lights_btn_1..6).
-     * lights_btn_N is CHECKABLE — toggling LV_STATE_CHECKED highlights it. */
-    lv_obj_t *btn = objects.lights_btn_6;
-    if (btn) {
-        if (value > 0) lv_obj_add_state(btn, LV_STATE_CHECKED);
-        else           lv_obj_clear_state(btn, LV_STATE_CHECKED);
-    }
-}
-
-static int32_t pdm01_device07_status;
-int32_t get_var_pdm01_device07_status(void) { return pdm01_device07_status; }
-void set_var_pdm01_device07_status(int32_t value) {
-    pdm01_device07_status = value;
-        /* device 7 has no widget in the new GUI yet — value stored only. */
-}
-
-static int32_t pdm01_device08_status;
-int32_t get_var_pdm01_device08_status(void) { return pdm01_device08_status; }
-void set_var_pdm01_device08_status(int32_t value) {
-    pdm01_device08_status = value;
-        /* device 8 has no widget in the new GUI yet — value stored only. */
-}
-
 /* --- Battery --- */
 
 static float battery_voltage;
@@ -222,10 +128,9 @@ void set_var_current_speed_value(int32_t value) {
     current_speed_value = value;
     char buf[16];
     snprintf(buf, sizeof(buf), "%d", (int)value);
-    /* TopStatusBar is instanced on all 4 pages — push to every per-instance copy */
+    /* TopStatusBar is instanced on all 3 pages — push to every per-instance copy */
     lv_obj_t *speed_widgets[] = {
         objects.drive_status_bar__status_speed_value,
-        objects.lights_status_bar__status_speed_value,
         objects.alarms_status_bar__status_speed_value,
         objects.setup_status_bar__status_speed_value,
     };

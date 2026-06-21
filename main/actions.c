@@ -22,19 +22,18 @@
 static const char *TAG = "ACTIONS";
 
 /* ============================================================================
- * Screen navigation — 4-tab dock (Drive / Lights / Alarms / Setup)
- * Tab indices wired in the .eez-project as ChangeScreen userData = 0..3.
+ * Screen navigation — 3-tab dock (Drive / Alarms / Setup).
+ * Tab indices wired in the .eez-project as ChangeScreen userData = 0..2.
  *
  * Each page has its own BottomTabBar instance, so the dock buttons are
- * per-instance objects (drive_dock__dock_btn_drive, lights_dock__dock_btn_drive,
- * etc.). After loading the target screen we need to set LV_STATE_CHECKED on
- * the active tab of THAT screen's dock and clear it on the other three so the
+ * per-instance objects (drive_dock__dock_btn_drive, alarms_dock__dock_btn_drive,
+ * etc.). After loading the target screen we set LV_STATE_CHECKED on the
+ * active tab of THAT screen's dock and clear it on the other two so the
  * highlight reflects the current page.
  * ============================================================================ */
 typedef struct {
     lv_obj_t *page;
     lv_obj_t *btn_drive;
-    lv_obj_t *btn_lights;
     lv_obj_t *btn_alarms;
     lv_obj_t *btn_setup;
 } dock_set_t;
@@ -46,32 +45,24 @@ void spotter_set_active_tab(int index) { _do_set_tab_checked(index); }
 
 static void _do_set_tab_checked(int index)
 {
-    dock_set_t docks[4] = {
+    dock_set_t docks[3] = {
         { objects.page_drive,
           objects.drive_dock__dock_btn_drive,
-          objects.drive_dock__dock_btn_lights,
           objects.drive_dock__dock_btn_alarms,
           objects.drive_dock__dock_btn_setup },
-        { objects.page_lights,
-          objects.lights_dock__dock_btn_drive,
-          objects.lights_dock__dock_btn_lights,
-          objects.lights_dock__dock_btn_alarms,
-          objects.lights_dock__dock_btn_setup },
         { objects.page_alarms,
           objects.alarms_dock__dock_btn_drive,
-          objects.alarms_dock__dock_btn_lights,
           objects.alarms_dock__dock_btn_alarms,
           objects.alarms_dock__dock_btn_setup },
         { objects.page_setup,
           objects.setup_dock__dock_btn_drive,
-          objects.setup_dock__dock_btn_lights,
           objects.setup_dock__dock_btn_alarms,
           objects.setup_dock__dock_btn_setup },
     };
-    if (index < 0 || index > 3) return;
+    if (index < 0 || index > 2) return;
     const dock_set_t *d = &docks[index];
-    lv_obj_t *btns[4] = { d->btn_drive, d->btn_lights, d->btn_alarms, d->btn_setup };
-    for (int i = 0; i < 4; i++) {
+    lv_obj_t *btns[3] = { d->btn_drive, d->btn_alarms, d->btn_setup };
+    for (int i = 0; i < 3; i++) {
         if (!btns[i]) continue;
         if (i == index) lv_obj_add_state(btns[i], LV_STATE_CHECKED);
         else            lv_obj_clear_state(btns[i], LV_STATE_CHECKED);
@@ -84,9 +75,8 @@ void action_change_screen(lv_event_t *e)
     lv_obj_t *target = NULL;
     switch (screen_index) {
     case 0: target = objects.page_drive;  break;
-    case 1: target = objects.page_lights; break;
-    case 2: target = objects.page_alarms; break;
-    case 3: target = objects.page_setup;  break;
+    case 1: target = objects.page_alarms; break;
+    case 2: target = objects.page_setup;  break;
     default:
         ESP_LOGW(TAG, "ChangeScreen: unknown index %d", screen_index);
         return;
@@ -162,93 +152,9 @@ void action_save_api_key(lv_event_t *e)           { (void)e; }
 void action_save_server_config(lv_event_t *e)     { (void)e; }
 void action_navigate_to_wifi_setup(lv_event_t *e) { (void)e; }
 
-/* ============================================================================
- * Light control — toggle via MQTT publish
- * ============================================================================ */
-void action_toggle_light(lv_event_t *e)
-{
-    int light_id = (int)(intptr_t)lv_event_get_user_data(e);
-    ESP_LOGI(TAG, "Toggling light ID: %d", light_id);
-
-    int current = 0;
-    switch (light_id) {
-    case 1: current = get_var_pdm01_device01_status(); break;
-    case 2: current = get_var_pdm01_device02_status(); break;
-    case 3: current = get_var_pdm01_device03_status(); break;
-    case 4: current = get_var_pdm01_device04_status(); break;
-    case 5: current = get_var_pdm01_device05_status(); break;
-    case 6: current = get_var_pdm01_device06_status(); break;
-    case 7: current = get_var_pdm01_device07_status(); break;
-    case 8: current = get_var_pdm01_device08_status(); break;
-    default: return;
-    }
-    int new_state = (current > 0) ? 0 : 1;
-
-    char topic[64], payload[32];
-    snprintf(topic, sizeof(topic), "local/lights/%d/command", light_id);
-    snprintf(payload, sizeof(payload), "{\"state\":%d}", new_state);
-    mqtt_client_publish(topic, payload, 0);
-}
-
-/* Wire the 6 light grid buttons on PageLights to action_toggle_light with
- * stable IDs 1..6. Called once from app_main after ui_init(). */
-void setup_light_buttons(void)
-{
-    lv_obj_t *btns[6] = {
-        objects.lights_btn_1, objects.lights_btn_2, objects.lights_btn_3,
-        objects.lights_btn_4, objects.lights_btn_5, objects.lights_btn_6,
-    };
-    for (int i = 0; i < 6; i++) {
-        if (btns[i]) {
-            lv_obj_add_event_cb(btns[i], action_toggle_light,
-                                LV_EVENT_CLICKED, (void *)(intptr_t)(i + 1));
-        }
-    }
-}
-
-/* ============================================================================
- * New actions declared by the v4 .eez-project — stubs for now. Wire to real
- * MQTT/state logic as those features are implemented.
- * ============================================================================ */
-void action_prev_zone(lv_event_t *e)
-{
-    (void)e;
-    ESP_LOGI(TAG, "PrevZone");
-}
-
-void action_next_zone(lv_event_t *e)
-{
-    (void)e;
-    ESP_LOGI(TAG, "NextZone");
-}
-
-void action_zone_all_on(lv_event_t *e)
-{
-    (void)e;
-    ESP_LOGI(TAG, "ZoneAllOn");
-}
-
-void action_zone_all_off(lv_event_t *e)
-{
-    (void)e;
-    ESP_LOGI(TAG, "ZoneAllOff");
-}
-
-void action_all_lights_off(lv_event_t *e)
-{
-    (void)e;
-    ESP_LOGI(TAG, "AllLightsOff");
-    /* Broadcast turn-off for every known light ID. */
-    for (int id = 1; id <= 8; id++) {
-        char topic[64];
-        snprintf(topic, sizeof(topic), "local/lights/%d/command", id);
-        mqtt_client_publish(topic, "{\"state\":0}", 0);
-    }
-}
-
 /* Top-toolbar text = "<AXLE> | <Connected|Offline>". Both pieces are user-
- * controlled and they fan out across all 4 page instances of TopStatusBar
- * (drive/lights/alarms/setup_status_bar__status_link_label).
+ * controlled and they fan out across all 3 page instances of TopStatusBar
+ * (drive/alarms/setup_status_bar__status_link_label).
  *
  * Axle comes from the Setup-page choice (default single on boot, persistable
  * later). Status reflects the MQTT broker connection — NOT WiFi. The wifi
@@ -267,7 +173,6 @@ static void refresh_top_label(void)
 
     lv_obj_t *labels[] = {
         objects.drive_status_bar__status_link_label,
-        objects.lights_status_bar__status_link_label,
         objects.alarms_status_bar__status_link_label,
         objects.setup_status_bar__status_link_label,
     };
@@ -279,7 +184,6 @@ static void refresh_top_label(void)
      * connected, dim when not. */
     lv_obj_t *dots[] = {
         objects.drive_status_bar__status_link_dot,
-        objects.lights_status_bar__status_link_dot,
         objects.alarms_status_bar__status_link_dot,
         objects.setup_status_bar__status_link_dot,
     };
@@ -339,10 +243,9 @@ void spotter_paint_placeholders(void)
         if (tire_psi[i]) lv_label_set_text(tire_psi[i], "--");
     }
 
-    /* Top status bar speed — fan out to all 4 page instances. */
+    /* Top status bar speed — fan out to all 3 page instances. */
     lv_obj_t *speeds[] = {
         objects.drive_status_bar__status_speed_value,
-        objects.lights_status_bar__status_speed_value,
         objects.alarms_status_bar__status_speed_value,
         objects.setup_status_bar__status_speed_value,
     };
@@ -902,12 +805,6 @@ void action_clear_connection(lv_event_t *e)
     lv_obj_set_style_text_font(ol, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ol, "Reset");
     lv_obj_center(ol);
-}
-
-void action_go_lights(lv_event_t *e)
-{
-    (void)e;
-    lv_scr_load(objects.page_lights);
 }
 
 void action_go_alarms(lv_event_t *e)

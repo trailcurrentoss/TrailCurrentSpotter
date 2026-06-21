@@ -113,8 +113,8 @@ void app_state_wifi_show_idle_message(const char *msg)
     if (objects.wifi_scan_status)  lv_label_set_text(objects.wifi_scan_status, msg);
 }
 
-/* Set the status_wifi_icon color across all 4 TopStatusBar instances. The
- * icon exists per-page (drive/lights/alarms/setup_status_bar__status_wifi_icon)
+/* Set the status_wifi_icon color across all 3 TopStatusBar instances. The
+ * icon exists per-page (drive/alarms/setup_status_bar__status_wifi_icon)
  * because each page has its own user-widget instance. Color uses the project's
  * theme tables so the icon flips correctly with light/dark theme. */
 void app_state_refresh_connection_display(void)
@@ -129,7 +129,6 @@ void app_state_refresh_connection_display(void)
 
     lv_obj_t *icons[] = {
         objects.drive_status_bar__status_wifi_icon,
-        objects.lights_status_bar__status_wifi_icon,
         objects.alarms_status_bar__status_wifi_icon,
         objects.setup_status_bar__status_wifi_icon,
     };

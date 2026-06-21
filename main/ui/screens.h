@@ -9,7 +9,6 @@ extern "C" {
 
 typedef struct _objects_t {
     lv_obj_t *page_drive;
-    lv_obj_t *page_lights;
     lv_obj_t *page_alarms;
     lv_obj_t *page_setup;
     lv_obj_t *page_wifi_setup;
@@ -89,88 +88,12 @@ typedef struct _objects_t {
     lv_obj_t *drive_dock__dock_btn_drive;
     lv_obj_t *drive_dock__dock_btn_drive_icon;
     lv_obj_t *drive_dock__dock_btn_drive_label;
-    lv_obj_t *drive_dock__dock_btn_lights;
-    lv_obj_t *drive_dock__dock_btn_lights_icon;
-    lv_obj_t *drive_dock__dock_btn_lights_label;
     lv_obj_t *drive_dock__dock_btn_alarms;
     lv_obj_t *drive_dock__dock_btn_alarms_icon;
     lv_obj_t *drive_dock__dock_btn_alarms_label;
     lv_obj_t *drive_dock__dock_btn_setup;
     lv_obj_t *drive_dock__dock_btn_setup_icon;
     lv_obj_t *drive_dock__dock_btn_setup_label;
-    lv_obj_t *lights_status_bar;
-    lv_obj_t *lights_status_bar__root;
-    lv_obj_t *lights_status_bar__status_brand_icon;
-    lv_obj_t *lights_status_bar__status_brand_text;
-    lv_obj_t *lights_status_bar__status_link_dot;
-    lv_obj_t *lights_status_bar__status_link_label;
-    lv_obj_t *lights_status_bar__status_signal_left;
-    lv_obj_t *lights_status_bar__status_signal_right;
-    lv_obj_t *lights_status_bar__status_speed_value;
-    lv_obj_t *lights_status_bar__status_speed_unit;
-    lv_obj_t *lights_status_bar__status_time;
-    lv_obj_t *lights_status_bar__status_wifi_icon;
-    lv_obj_t *lights_body;
-    lv_obj_t *lights_header;
-    lv_obj_t *lights_prev_zone;
-    lv_obj_t *lights_prev_icon;
-    lv_obj_t *lights_zone_icon;
-    lv_obj_t *lights_zone_name;
-    lv_obj_t *lights_zone_meta;
-    lv_obj_t *lights_next_zone;
-    lv_obj_t *lights_next_icon;
-    lv_obj_t *lights_grid;
-    lv_obj_t *lights_btn_1;
-    lv_obj_t *lights_btn_1_icon;
-    lv_obj_t *lights_btn_1_name;
-    lv_obj_t *lights_btn_1_state;
-    lv_obj_t *lights_btn_2;
-    lv_obj_t *lights_btn_2_icon;
-    lv_obj_t *lights_btn_2_name;
-    lv_obj_t *lights_btn_2_state;
-    lv_obj_t *lights_btn_3;
-    lv_obj_t *lights_btn_3_icon;
-    lv_obj_t *lights_btn_3_name;
-    lv_obj_t *lights_btn_3_state;
-    lv_obj_t *lights_btn_4;
-    lv_obj_t *lights_btn_4_icon;
-    lv_obj_t *lights_btn_4_name;
-    lv_obj_t *lights_btn_4_state;
-    lv_obj_t *lights_btn_5;
-    lv_obj_t *lights_btn_5_icon;
-    lv_obj_t *lights_btn_5_name;
-    lv_obj_t *lights_btn_5_state;
-    lv_obj_t *lights_btn_6;
-    lv_obj_t *lights_btn_6_icon;
-    lv_obj_t *lights_btn_6_name;
-    lv_obj_t *lights_btn_6_state;
-    lv_obj_t *lights_footer;
-    lv_obj_t *lights_all_on;
-    lv_obj_t *lights_all_on_lbl;
-    lv_obj_t *lights_all_off;
-    lv_obj_t *lights_all_off_lbl;
-    lv_obj_t *lights_dot_0;
-    lv_obj_t *lights_dot_1;
-    lv_obj_t *lights_dot_2;
-    lv_obj_t *lights_dot_3;
-    lv_obj_t *lights_dot_4;
-    lv_obj_t *lights_dot_5;
-    lv_obj_t *lights_off_all_devices;
-    lv_obj_t *lights_off_all_lbl;
-    lv_obj_t *lights_dock;
-    lv_obj_t *lights_dock__root;
-    lv_obj_t *lights_dock__dock_btn_drive;
-    lv_obj_t *lights_dock__dock_btn_drive_icon;
-    lv_obj_t *lights_dock__dock_btn_drive_label;
-    lv_obj_t *lights_dock__dock_btn_lights;
-    lv_obj_t *lights_dock__dock_btn_lights_icon;
-    lv_obj_t *lights_dock__dock_btn_lights_label;
-    lv_obj_t *lights_dock__dock_btn_alarms;
-    lv_obj_t *lights_dock__dock_btn_alarms_icon;
-    lv_obj_t *lights_dock__dock_btn_alarms_label;
-    lv_obj_t *lights_dock__dock_btn_setup;
-    lv_obj_t *lights_dock__dock_btn_setup_icon;
-    lv_obj_t *lights_dock__dock_btn_setup_label;
     lv_obj_t *alarms_status_bar;
     lv_obj_t *alarms_status_bar__root;
     lv_obj_t *alarms_status_bar__status_brand_icon;
@@ -469,9 +392,6 @@ typedef struct _objects_t {
     lv_obj_t *alarms_dock__dock_btn_drive;
     lv_obj_t *alarms_dock__dock_btn_drive_icon;
     lv_obj_t *alarms_dock__dock_btn_drive_label;
-    lv_obj_t *alarms_dock__dock_btn_lights;
-    lv_obj_t *alarms_dock__dock_btn_lights_icon;
-    lv_obj_t *alarms_dock__dock_btn_lights_label;
     lv_obj_t *alarms_dock__dock_btn_alarms;
     lv_obj_t *alarms_dock__dock_btn_alarms_icon;
     lv_obj_t *alarms_dock__dock_btn_alarms_label;
@@ -535,9 +455,6 @@ typedef struct _objects_t {
     lv_obj_t *setup_dock__dock_btn_drive;
     lv_obj_t *setup_dock__dock_btn_drive_icon;
     lv_obj_t *setup_dock__dock_btn_drive_label;
-    lv_obj_t *setup_dock__dock_btn_lights;
-    lv_obj_t *setup_dock__dock_btn_lights_icon;
-    lv_obj_t *setup_dock__dock_btn_lights_label;
     lv_obj_t *setup_dock__dock_btn_alarms;
     lv_obj_t *setup_dock__dock_btn_alarms_icon;
     lv_obj_t *setup_dock__dock_btn_alarms_label;
@@ -681,21 +598,17 @@ extern objects_t objects;
 
 enum ScreensEnum {
     SCREEN_ID_PAGE_DRIVE = 1,
-    SCREEN_ID_PAGE_LIGHTS = 2,
-    SCREEN_ID_PAGE_ALARMS = 3,
-    SCREEN_ID_PAGE_SETUP = 4,
-    SCREEN_ID_PAGE_WIFI_SETUP = 5,
-    SCREEN_ID_PAGE_WIFI_CONNECTING = 6,
-    SCREEN_ID_PAGE_MQTT_SETUP = 7,
-    SCREEN_ID_PAGE_MQTT_CONNECTING = 8,
-    SCREEN_ID_PAGE_RENAME_SENSOR = 9,
+    SCREEN_ID_PAGE_ALARMS = 2,
+    SCREEN_ID_PAGE_SETUP = 3,
+    SCREEN_ID_PAGE_WIFI_SETUP = 4,
+    SCREEN_ID_PAGE_WIFI_CONNECTING = 5,
+    SCREEN_ID_PAGE_MQTT_SETUP = 6,
+    SCREEN_ID_PAGE_MQTT_CONNECTING = 7,
+    SCREEN_ID_PAGE_RENAME_SENSOR = 8,
 };
 
 void create_screen_page_drive();
 void tick_screen_page_drive();
-
-void create_screen_page_lights();
-void tick_screen_page_lights();
 
 void create_screen_page_alarms();
 void tick_screen_page_alarms();

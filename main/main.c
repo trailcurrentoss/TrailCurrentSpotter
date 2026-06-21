@@ -562,7 +562,6 @@ static void update_warning_indicators(void)
 /* ============================================================================
  * app_main
  * ============================================================================ */
-extern void setup_light_buttons(void);
 extern void spotter_set_active_tab(int index);
 extern void spotter_apply_axle_count(int axles);
 extern void spotter_paint_placeholders(void);
@@ -635,7 +634,6 @@ void app_main(void)
     /* EEZ Studio UI */
     ui_init();
     create_dimming_overlay();
-    setup_light_buttons();
 
     /* Paint placeholders ("--", "Waiting for data...", etc.) into every
      * widget that's supposed to show data from TrailCurrent. Replaced by

@@ -1,8 +1,7 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/3",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/0",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
-    "selectedGlobalVariableObject": "[TrailCurrentSpotter.eez-project]:/variables/globalVariables/30",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
     "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
@@ -203,10 +202,10 @@
                 {
                   "type": "tab",
                   "id": "#2c4c8c23-38a7-4ea6-b967-44d788b092d2",
-                  "name": "PageSetup",
+                  "name": "PageDrive",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/3",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/0",
                     "permanent": false
                   },
                   "icon": "svg:page"
