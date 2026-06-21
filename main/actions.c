@@ -434,6 +434,11 @@ static lv_obj_t *s_alarm_pulse_panel = NULL;
 static lv_timer_t *s_alarm_pulse_timer = NULL;
 static lv_timer_t *s_alarm_chime_timer = NULL;
 static bool s_alarm_pulse_high = false;
+/* When >= 0, the current overlay was raised by device_alarms for this device
+ * index and gets a green "Resolve" button beside Acknowledge that publishes
+ * a CAN relay-toggle command. Cleared by alarm_dismiss(). */
+static int  s_alarm_device_idx = -1;
+static lv_obj_t *s_alarm_resolve_btn = NULL;
 
 static void alarm_pulse_cb(lv_timer_t *t)
 {
@@ -460,6 +465,8 @@ static void alarm_dismiss(void)
     if (s_alarm_chime_timer) { lv_timer_del(s_alarm_chime_timer); s_alarm_chime_timer = NULL; }
     if (s_alarm_overlay)     { lv_obj_del(s_alarm_overlay);       s_alarm_overlay = NULL; }
     s_alarm_pulse_panel = NULL;
+    s_alarm_resolve_btn = NULL;
+    s_alarm_device_idx  = -1;
     spotter_audio_chime_stop();
 }
 
@@ -477,6 +484,27 @@ static void alarm_ack_event_cb(lv_event_t *e)
      * (its s_last_alarm_us was just bumped to "now" by acknowledged()). */
     if (!spoor_alarms_try_raise_next(false)) {
         device_alarms_try_raise_next(false);
+    }
+}
+
+/* Resolve button — publish a relay-toggle CAN command for the device whose
+ * alarm is currently showing, then disable the button so a stuck-finger
+ * double-tap doesn't toggle the relay twice. The overlay STAYS until the
+ * relay's status MQTT message comes back and device_alarms dismisses on
+ * condition clear — gives the user feedback that the toggle landed. */
+static void alarm_resolve_event_cb(lv_event_t *e)
+{
+    (void)e;
+    if (s_alarm_device_idx < 0) {
+        ESP_LOGW(TAG, "Resolve tapped but no device_idx — ignored");
+        return;
+    }
+    ESP_LOGI(TAG, "Resolve tapped for device %d", s_alarm_device_idx);
+    device_alarms_send_toggle(s_alarm_device_idx);
+    if (s_alarm_resolve_btn) {
+        lv_obj_clear_flag(s_alarm_resolve_btn, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_style_bg_opa(s_alarm_resolve_btn, 120,
+                                LV_PART_MAIN | LV_STATE_DEFAULT);
     }
 }
 
@@ -552,10 +580,21 @@ static void spotter_show_alarm_overlay(const char *title, const char *body)
                               : "Test alarm — chime active. Press Acknowledge to silence.");
     lv_obj_align(b, LV_ALIGN_TOP_MID, 0, 150);
 
-    /* Acknowledge button. */
+    /* Button row. Sensor / connectivity alarms get a single centered
+     * Acknowledge. Device alarms get Acknowledge on the left + a green
+     * Resolve on the right (taps publish a relay-toggle CAN command). */
+    bool has_resolve = (s_alarm_device_idx >= 0);
+    uint32_t fg_w = theme_colors[active_theme_index][COLOR_ID_FOREGROUND_WHITE];
+
     lv_obj_t *btn = lv_btn_create(card);
-    lv_obj_set_size(btn, 260, 64);
-    lv_obj_align(btn, LV_ALIGN_BOTTOM_MID, 0, -28);
+    if (has_resolve) {
+        /* Two-button layout: 220 + 20 gap + 220 = 460 centered in 560 card. */
+        lv_obj_set_size(btn, 220, 64);
+        lv_obj_align(btn, LV_ALIGN_BOTTOM_LEFT, 50, -28);
+    } else {
+        lv_obj_set_size(btn, 260, 64);
+        lv_obj_align(btn, LV_ALIGN_BOTTOM_MID, 0, -28);
+    }
     lv_obj_set_style_bg_color(btn, lv_color_hex(hot),
                               LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(btn, 240, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -563,13 +602,33 @@ static void spotter_show_alarm_overlay(const char *title, const char *body)
     lv_obj_add_event_cb(btn, alarm_ack_event_cb, LV_EVENT_CLICKED, NULL);
 
     lv_obj_t *btnlbl = lv_label_create(btn);
-    uint32_t fg_w = theme_colors[active_theme_index][COLOR_ID_FOREGROUND_WHITE];
     lv_obj_set_style_text_color(btnlbl, lv_color_hex(fg_w),
                                 LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(btnlbl, &lv_font_montserrat_22,
                                LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(btnlbl, "Acknowledge");
     lv_obj_center(btnlbl);
+
+    if (has_resolve) {
+        uint32_t success = theme_colors[active_theme_index][COLOR_ID_SUCCESS];
+        lv_obj_t *resolve = lv_btn_create(card);
+        s_alarm_resolve_btn = resolve;
+        lv_obj_set_size(resolve, 220, 64);
+        lv_obj_align(resolve, LV_ALIGN_BOTTOM_RIGHT, -50, -28);
+        lv_obj_set_style_bg_color(resolve, lv_color_hex(success),
+                                  LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_opa(resolve, 240, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_radius(resolve, 12, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_add_event_cb(resolve, alarm_resolve_event_cb, LV_EVENT_CLICKED, NULL);
+
+        lv_obj_t *rlbl = lv_label_create(resolve);
+        lv_obj_set_style_text_color(rlbl, lv_color_hex(fg_w),
+                                    LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_font(rlbl, &lv_font_montserrat_22,
+                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(rlbl, "Resolve");
+        lv_obj_center(rlbl);
+    }
 
     /* Start the pulse + chime timers. spotter_audio_chime_start enables the
      * PA and opens the codec; ticks fire a tone burst each cycle until
@@ -694,12 +753,29 @@ void spotter_alarm_raise(const char *title, const char *body, int auto_dismiss_s
         lv_timer_del(s_alarm_auto_dismiss_timer);
         s_alarm_auto_dismiss_timer = NULL;
     }
+    /* Non-device path — clear any leftover device idx so the new overlay
+     * doesn't accidentally render a Resolve button bound to the previous
+     * alarm's device. */
+    s_alarm_device_idx = -1;
     spotter_show_alarm_overlay(title, body);
     if (auto_dismiss_secs > 0) {
         s_alarm_auto_dismiss_timer = lv_timer_create(
             alarm_auto_dismiss_cb, (uint32_t)auto_dismiss_secs * 1000U, NULL);
         lv_timer_set_repeat_count(s_alarm_auto_dismiss_timer, 1);
     }
+}
+
+void spotter_alarm_raise_device(const char *title, const char *body, int device_idx)
+{
+    if (s_alarm_auto_dismiss_timer) {
+        lv_timer_del(s_alarm_auto_dismiss_timer);
+        s_alarm_auto_dismiss_timer = NULL;
+    }
+    s_alarm_device_idx = device_idx;        /* enables the Resolve button */
+    spotter_show_alarm_overlay(title, body);
+    /* Always sticky — overlay clears on Acknowledge tap, Resolve-triggered
+     * relay status flip, or the alarm condition resolving on its own. No
+     * auto-dismiss timer. */
 }
 
 void spotter_alarm_force_dismiss(void)

@@ -18,6 +18,13 @@ extern "C" {
  */
 void spotter_alarm_raise(const char *title, const char *body, int auto_dismiss_secs);
 
+/* Same as spotter_alarm_raise() but binds the overlay to a specific device
+ * (0..23) and adds a green "Resolve" button next to Acknowledge. Tapping
+ * Resolve publishes a relay-toggle CAN command for that device — the
+ * underlying status MQTT message clears the alarm once the relay actually
+ * flips. The overlay is always sticky (no auto-dismiss timer). */
+void spotter_alarm_raise_device(const char *title, const char *body, int device_idx);
+
 /* Force-close the overlay (silently). Safe to call when no overlay is shown. */
 void spotter_alarm_force_dismiss(void);
 

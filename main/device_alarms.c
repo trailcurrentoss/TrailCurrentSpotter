@@ -14,6 +14,7 @@
 
 #include "spoor_alarms.h"     /* for SPOOR_SNOOZE_SECS_DEFAULT — shared default */
 #include "spotter_alarm.h"
+#include "app_mqtt.h"          /* mqtt_client_publish for can/outbound */
 
 static const char *TAG = "device";
 #define NVS_NS "device"
@@ -501,8 +502,7 @@ void device_alarms_handle_state(int channel, int state)
              inverted(idx) ? "is off" : "is on");
     ESP_LOGI(TAG, "FIRING device alarm: %d (%s) inverted=%d",
              idx, device_alarms_display_label(idx), (int)inverted(idx));
-    spotter_alarm_raise(device_alarms_display_label(idx), body,
-                        0 /* sticky — dismissed only by ack or condition clear */);
+    spotter_alarm_raise_device(device_alarms_display_label(idx), body, idx);
     s_active_alarm_idx = idx;
 }
 
@@ -512,6 +512,40 @@ void device_alarms_acknowledged(void)
     s_last_alarm_us[s_active_alarm_idx] = esp_timer_get_time();
     ESP_LOGI(TAG, "Device %d acknowledged — snooze restarts", s_active_alarm_idx);
     s_active_alarm_idx = -1;
+}
+
+void device_alarms_send_toggle(int device_idx)
+{
+    if (device_idx < 0 || device_idx >= DEVICE_COUNT) {
+        ESP_LOGW(TAG, "send_toggle: device_idx=%d OUT OF RANGE", device_idx);
+        return;
+    }
+    int instance = device_idx / DEVICES_PER_BOARD;       /* 0..2 — Switchback board */
+    int channel  = device_idx % DEVICES_PER_BOARD;        /* 0..7 — channel within board */
+    int can_id   = 0x025 + instance;                      /* matches Headwaters sendRelayToggle */
+
+    /* can/outbound JSON envelope — same shape as Headwaters publishCanMessage
+     * in TrailCurrentHeadwaters/containers/backend/src/mqtt.js. The data
+     * field is 8 sub-arrays of 8 bits each, MSB first. For our 1-byte
+     * payload (channel index), byte 0 = channel; bytes 1-7 = 0. */
+    char payload[640];
+    int n = snprintf(payload, sizeof(payload),
+        "{\"identifier\":\"0x%x\",\"data_length_code\":1,\"data\":["
+        "[%d,%d,%d,%d,%d,%d,%d,%d],"
+        "[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],"
+        "[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],"
+        "[0,0,0,0,0,0,0,0]"
+        "],\"extd\":0,\"rtr\":0,\"ss\":0,\"self\":0}",
+        can_id,
+        (channel >> 7) & 1, (channel >> 6) & 1, (channel >> 5) & 1, (channel >> 4) & 1,
+        (channel >> 3) & 1, (channel >> 2) & 1, (channel >> 1) & 1, (channel >> 0) & 1);
+    if (n < 0 || n >= (int)sizeof(payload)) {
+        ESP_LOGE(TAG, "send_toggle: payload formatting failed (n=%d)", n);
+        return;
+    }
+    ESP_LOGI(TAG, "send_toggle: device=%d can_id=0x%x channel=%d",
+             device_idx, can_id, channel);
+    mqtt_client_publish("can/outbound", payload, 0);
 }
 
 bool device_alarms_try_raise_next(bool bypass_snooze)
@@ -537,8 +571,7 @@ bool device_alarms_try_raise_next(bool bypass_snooze)
                  inverted(i) ? "is off" : "is on");
         ESP_LOGI(TAG, "Re-raising hidden device alarm: %d (%s)",
                  i, device_alarms_display_label(i));
-        spotter_alarm_raise(device_alarms_display_label(i), body,
-                            0 /* sticky — dismissed only by ack or condition clear */);
+        spotter_alarm_raise_device(device_alarms_display_label(i), body, i);
         s_last_alarm_us[i] = now;
         s_active_alarm_idx = i;
         return true;

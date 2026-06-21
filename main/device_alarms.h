@@ -62,6 +62,12 @@ void device_alarms_acknowledged(void);
  * the dismissed overlay. */
 bool device_alarms_try_raise_next(bool bypass_snooze);
 
+/* Publish a relay-toggle CAN command to the Switchback that owns this
+ * device. Uses can/outbound (the raw CAN MQTT topic) with the same wire
+ * format Headwaters produces internally. Status MQTT message will follow
+ * once the relay actually flips. Caller is the Resolve button. */
+void device_alarms_send_toggle(int device_idx);
+
 /* Read-only accessors. */
 bool device_alarms_is_armed(int device_index);
 bool device_alarms_is_inverted(int device_index);
