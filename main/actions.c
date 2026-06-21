@@ -753,10 +753,14 @@ void spotter_alarm_raise(const char *title, const char *body, int auto_dismiss_s
         lv_timer_del(s_alarm_auto_dismiss_timer);
         s_alarm_auto_dismiss_timer = NULL;
     }
-    /* Non-device path — clear any leftover device idx so the new overlay
-     * doesn't accidentally render a Resolve button bound to the previous
-     * alarm's device. */
-    s_alarm_device_idx = -1;
+    /* Tear down any prior overlay FIRST — alarm_dismiss() resets
+     * s_alarm_device_idx, so it has to run before we set ours. Without this
+     * ordering, the second raise's set-then-show sequence would have
+     * spotter_show_alarm_overlay's internal alarm_dismiss reset the flag
+     * we just set, producing a "Resolve button only on the first alarm"
+     * regression. */
+    if (s_alarm_overlay) alarm_dismiss();
+    s_alarm_device_idx = -1;        /* non-device path */
     spotter_show_alarm_overlay(title, body);
     if (auto_dismiss_secs > 0) {
         s_alarm_auto_dismiss_timer = lv_timer_create(
@@ -771,6 +775,10 @@ void spotter_alarm_raise_device(const char *title, const char *body, int device_
         lv_timer_del(s_alarm_auto_dismiss_timer);
         s_alarm_auto_dismiss_timer = NULL;
     }
+    /* See ordering note in spotter_alarm_raise() — dismiss before setting
+     * s_alarm_device_idx so the prior overlay's teardown doesn't clobber
+     * our flag. */
+    if (s_alarm_overlay) alarm_dismiss();
     s_alarm_device_idx = device_idx;        /* enables the Resolve button */
     spotter_show_alarm_overlay(title, body);
     /* Always sticky — overlay clears on Acknowledge tap, Resolve-triggered
