@@ -888,7 +888,7 @@
                       "rangeMinType": "literal",
                       "rangeMax": 100,
                       "rangeMaxType": "literal",
-                      "value": 87,
+                      "value": 0,
                       "valueType": "literal",
                       "bgStartAngle": 135,
                       "bgEndAngle": 45,
@@ -944,7 +944,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "87",
+                      "text": "--",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -1052,7 +1052,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "12.9 V",
+                      "text": "-- V",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -1106,7 +1106,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "13h 40m left",
+                      "text": "-- left",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -1362,7 +1362,7 @@
                           },
                           "group": "",
                           "groupIndex": 0,
-                          "text": "65",
+                          "text": "--",
                           "textType": "literal",
                           "longMode": "WRAP",
                           "recolor": false
@@ -1537,7 +1537,7 @@
                           },
                           "group": "",
                           "groupIndex": 0,
-                          "text": "65",
+                          "text": "--",
                           "textType": "literal",
                           "longMode": "WRAP",
                           "recolor": false
@@ -2638,7 +2638,7 @@
                       "rangeMinType": "literal",
                       "rangeMax": 100,
                       "rangeMaxType": "literal",
-                      "value": 70,
+                      "value": 0,
                       "valueType": "literal",
                       "bgStartAngle": 135,
                       "bgEndAngle": 45,
@@ -2747,7 +2747,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "410",
+                      "text": "--",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -2909,7 +2909,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "70% of capacity",
+                      "text": "No data",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -30114,7 +30114,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "TANDEM | Linked",
+              "text": "SINGLE | Offline",
               "textType": "literal",
               "longMode": "WRAP",
               "recolor": false
@@ -30274,7 +30274,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "0",
+              "text": "--",
               "textType": "literal",
               "longMode": "WRAP",
               "recolor": false

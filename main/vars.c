@@ -347,7 +347,7 @@ static void refresh_battery_remaining_label(void)
 {
     if (!objects.drive_bat_remain) return;
     if (power_time_to_go_measurement <= 0.0f) {
-        lv_label_set_text(objects.drive_bat_remain, "Calculating...");
+        lv_label_set_text(objects.drive_bat_remain, "-- left");
         return;
     }
     char buf[32];

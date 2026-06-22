@@ -6,6 +6,11 @@
 #include "app_state.h"
 #include "spotter_alarm.h"
 
+/* Defined in actions.c — wipes every MQTT-fed widget back to its placeholder
+ * ("--", "-- V", "-- left", "No data"). Called here on any down-transition so
+ * stale values aren't mistaken for live ones while the link is broken. */
+extern void spotter_paint_placeholders(void);
+
 static const char *TAG = "conn_alarm";
 
 typedef enum {
@@ -123,6 +128,7 @@ void connectivity_alarm_set_wifi(bool connected)
     if (s_wifi_ok == connected) return;
     s_wifi_ok = connected;
     ESP_LOGI(TAG, "wifi=%d mqtt=%d", (int)s_wifi_ok, (int)s_mqtt_ok);
+    if (!connected) spotter_paint_placeholders();
     reevaluate();
 }
 
@@ -131,5 +137,6 @@ void connectivity_alarm_set_mqtt(bool connected)
     if (s_mqtt_ok == connected) return;
     s_mqtt_ok = connected;
     ESP_LOGI(TAG, "wifi=%d mqtt=%d", (int)s_wifi_ok, (int)s_mqtt_ok);
+    if (!connected) spotter_paint_placeholders();
     reevaluate();
 }

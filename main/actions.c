@@ -224,13 +224,12 @@ void spotter_paint_placeholders(void)
     /* Battery card */
     if (objects.drive_bat_value)  lv_label_set_text(objects.drive_bat_value, "--");
     if (objects.drive_bat_volts)  lv_label_set_text(objects.drive_bat_volts, "-- V");
-    /* Same idiom as Headwaters web UI when the shunt hasn't reported yet. */
-    if (objects.drive_bat_remain) lv_label_set_text(objects.drive_bat_remain, "Calculating...");
+    if (objects.drive_bat_remain) lv_label_set_text(objects.drive_bat_remain, "-- left");
     if (objects.drive_bat_arc)    lv_arc_set_value(objects.drive_bat_arc, 0);
 
     /* Solar card */
     if (objects.drive_solar_value) lv_label_set_text(objects.drive_solar_value, "--");
-    if (objects.drive_solar_pct)   lv_label_set_text(objects.drive_solar_pct, "Waiting for data...");
+    if (objects.drive_solar_pct)   lv_label_set_text(objects.drive_solar_pct, "No data");
     if (objects.drive_solar_arc)   lv_arc_set_value(objects.drive_solar_arc, 0);
 
     /* Tire pressure cells — six cells, all placeholder until TPMS reports. */
