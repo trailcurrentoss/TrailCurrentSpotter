@@ -124,13 +124,12 @@
             {
               "type": "row",
               "id": "#d6c884b2-25c1-4039-8bcc-681f4af7693d",
-              "weight": 29.8254181453273,
+              "weight": 20.89208809155997,
               "children": [
                 {
                   "type": "tabset",
                   "id": "#07c8e6e0-186f-446c-ba27-7ec519d25f91",
                   "weight": 1,
-                  "selected": 1,
                   "enableClose": false,
                   "children": [
                     {
@@ -196,8 +195,7 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 44.78918218167261,
-              "selected": 3,
+              "weight": 53.72251223543992,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -1021,9 +1019,8 @@
           "0": {},
           "1": {
             "0": {
-              "2": {
-                "$selected": true
-              }
+              "2": {},
+              "4": {}
             },
             "2": {}
           },

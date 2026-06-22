@@ -760,7 +760,7 @@
                     {
                       "objID": "ccf6ae70-ab00-4f5d-d479-1d12f2ea0a63",
                       "type": "LVGLLabelWidget",
-                      "left": 105,
+                      "left": 110,
                       "top": 59,
                       "width": 36,
                       "height": 34,
@@ -813,7 +813,7 @@
                     {
                       "objID": "4f120593-26ac-f3f5-8625-8a0a36d78a9c",
                       "type": "LVGLArcWidget",
-                      "left": 16,
+                      "left": 23,
                       "top": 36,
                       "width": 210,
                       "height": 210,
@@ -898,7 +898,7 @@
                     {
                       "objID": "ec1fc4b1-87da-6903-f0cc-b2590ad9d276",
                       "type": "LVGLLabelWidget",
-                      "left": 93,
+                      "left": 94,
                       "top": 124,
                       "width": 44,
                       "height": 27,
@@ -951,7 +951,7 @@
                     {
                       "objID": "59a4b338-9c47-a74a-db32-5b479230f7a1",
                       "type": "LVGLLabelWidget",
-                      "left": 141,
+                      "left": 142,
                       "top": 124,
                       "width": 21,
                       "height": 24,
@@ -1050,7 +1050,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "--",
+                      "text": "----",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -2608,7 +2608,7 @@
                     {
                       "objID": "9f3d4e9d-2267-e030-866b-8e59d44119d1",
                       "type": "LVGLArcWidget",
-                      "left": 20,
+                      "left": 23,
                       "top": 36,
                       "width": 210,
                       "height": 210,
@@ -2746,7 +2746,7 @@
                     {
                       "objID": "41aaa11f-f50f-f6cf-81af-e5775bd5c07b",
                       "type": "LVGLLabelWidget",
-                      "left": 79,
+                      "left": 80,
                       "top": 124,
                       "width": 66,
                       "height": 27,
@@ -2791,7 +2791,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "--",
+                      "text": "---",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -2799,7 +2799,7 @@
                     {
                       "objID": "2fc53892-b4ad-b1ff-10c4-256110162f37",
                       "type": "LVGLLabelWidget",
-                      "left": 149,
+                      "left": 150,
                       "top": 124,
                       "width": 27,
                       "height": 24,

@@ -230,14 +230,16 @@ void spotter_set_mqtt_connected(bool connected)
 void spotter_paint_placeholders(void);
 void spotter_paint_placeholders(void)
 {
-    /* Battery card */
+    /* Battery card — placeholder character counts MUST match each value's
+     * hero-advance width so monospace right-anchoring keeps them axis-aligned
+     * with no data. 2-digit hero → "--", 4-char "%.1f" hero → "----", etc. */
     if (objects.drive_bat_value)  lv_label_set_text(objects.drive_bat_value, "--");
-    if (objects.drive_bat_volts)  lv_label_set_text(objects.drive_bat_volts, "--");
+    if (objects.drive_bat_volts)  lv_label_set_text(objects.drive_bat_volts, "----");
     if (objects.drive_bat_remain) lv_label_set_text(objects.drive_bat_remain, "-- left");
     if (objects.drive_bat_arc)    lv_arc_set_value(objects.drive_bat_arc, 0);
 
     /* Solar card */
-    if (objects.drive_solar_value) lv_label_set_text(objects.drive_solar_value, "--");
+    if (objects.drive_solar_value) lv_label_set_text(objects.drive_solar_value, "---");
     if (objects.drive_solar_pct)   lv_label_set_text(objects.drive_solar_pct, "No data");
     if (objects.drive_solar_arc)   lv_arc_set_value(objects.drive_solar_arc, 0);
 

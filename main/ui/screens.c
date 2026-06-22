@@ -80,7 +80,7 @@ void create_screen_page_drive() {
                             // drive_batt_icon_1
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_batt_icon_1 = obj;
-                            lv_obj_set_pos(obj, 105, 59);
+                            lv_obj_set_pos(obj, 110, 59);
                             lv_obj_set_size(obj, 36, 34);
                             add_style_label_fa32_icon(obj);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][11]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -92,7 +92,7 @@ void create_screen_page_drive() {
                             // drive_bat_arc
                             lv_obj_t *obj = lv_arc_create(parent_obj);
                             objects.drive_bat_arc = obj;
-                            lv_obj_set_pos(obj, 16, 36);
+                            lv_obj_set_pos(obj, 23, 36);
                             lv_obj_set_size(obj, 210, 210);
                             lv_arc_set_value(obj, 0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER);
@@ -123,7 +123,7 @@ void create_screen_page_drive() {
                             // drive_bat_value
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_bat_value = obj;
-                            lv_obj_set_pos(obj, 93, 124);
+                            lv_obj_set_pos(obj, 94, 124);
                             lv_obj_set_size(obj, 44, 27);
                             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_data_value36(obj);
@@ -136,7 +136,7 @@ void create_screen_page_drive() {
                             // drive_bat_pct_sym
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_bat_pct_sym = obj;
-                            lv_obj_set_pos(obj, 141, 124);
+                            lv_obj_set_pos(obj, 142, 124);
                             lv_obj_set_size(obj, 21, 24);
                             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_default(obj);
@@ -157,7 +157,7 @@ void create_screen_page_drive() {
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "--");
+                            lv_label_set_text(obj, "----");
                         }
                         {
                             // drive_bat_remain
@@ -673,7 +673,7 @@ void create_screen_page_drive() {
                             // drive_solar_arc
                             lv_obj_t *obj = lv_arc_create(parent_obj);
                             objects.drive_solar_arc = obj;
-                            lv_obj_set_pos(obj, 20, 36);
+                            lv_obj_set_pos(obj, 23, 36);
                             lv_obj_set_size(obj, 210, 210);
                             lv_arc_set_value(obj, 0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER);
@@ -716,20 +716,20 @@ void create_screen_page_drive() {
                             // drive_solar_value
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_solar_value = obj;
-                            lv_obj_set_pos(obj, 79, 124);
+                            lv_obj_set_pos(obj, 80, 124);
                             lv_obj_set_size(obj, 66, 27);
                             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_data_value36(obj);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "--");
+                            lv_label_set_text(obj, "---");
                         }
                         {
                             // drive_solar_unit_sym
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_solar_unit_sym = obj;
-                            lv_obj_set_pos(obj, 149, 124);
+                            lv_obj_set_pos(obj, 150, 124);
                             lv_obj_set_size(obj, 27, 24);
                             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_default(obj);
