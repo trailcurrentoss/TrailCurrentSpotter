@@ -121,10 +121,11 @@ void app_state_refresh_connection_display(void)
 {
     bool connected = (wifi_setup_get_state() == WIFI_SETUP_STATE_CONNECTED);
     /* Pull theme colors from the EEZ-exported tables. COLOR_ID_SUCCESS is
-     * the bright "on" green; COLOR_ID_SECONDARY_TEXT_COLOR is dim/muted. */
+     * the bright "on" green; COLOR_ID_WARNING is amber so a dropped link is
+     * obvious at a glance instead of fading into muted chrome. */
     uint32_t c = connected
         ? theme_colors[active_theme_index][COLOR_ID_SUCCESS]
-        : theme_colors[active_theme_index][COLOR_ID_SECONDARY_TEXT_COLOR];
+        : theme_colors[active_theme_index][COLOR_ID_WARNING];
     lv_color_t lc = lv_color_hex(c);
 
     lv_obj_t *icons[] = {
