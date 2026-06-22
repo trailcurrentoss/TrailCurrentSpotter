@@ -130,6 +130,7 @@
                   "type": "tabset",
                   "id": "#07c8e6e0-186f-446c-ba27-7ec519d25f91",
                   "weight": 1,
+                  "selected": 1,
                   "enableClose": false,
                   "children": [
                     {
@@ -196,6 +197,7 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 44.78918218167261,
+              "selected": 3,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
