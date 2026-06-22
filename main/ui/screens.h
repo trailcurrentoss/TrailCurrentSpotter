@@ -36,6 +36,7 @@ typedef struct _objects_t {
     lv_obj_t *drive_bat_pct_sym;
     lv_obj_t *drive_bat_volts;
     lv_obj_t *drive_bat_remain;
+    lv_obj_t *drive_bat_volts_unit;
     lv_obj_t *drive_card_tires;
     lv_obj_t *drive_tire_title;
     lv_obj_t *drive_tire_sub;

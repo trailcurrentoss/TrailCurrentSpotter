@@ -232,7 +232,7 @@ void spotter_paint_placeholders(void)
 {
     /* Battery card */
     if (objects.drive_bat_value)  lv_label_set_text(objects.drive_bat_value, "--");
-    if (objects.drive_bat_volts)  lv_label_set_text(objects.drive_bat_volts, "-- V");
+    if (objects.drive_bat_volts)  lv_label_set_text(objects.drive_bat_volts, "--");
     if (objects.drive_bat_remain) lv_label_set_text(objects.drive_bat_remain, "-- left");
     if (objects.drive_bat_arc)    lv_arc_set_value(objects.drive_bat_arc, 0);
 

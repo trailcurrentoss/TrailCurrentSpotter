@@ -67,8 +67,8 @@ float get_var_battery_voltage(void) { return battery_voltage; }
 void set_var_battery_voltage(float value) {
     battery_voltage = value;
     if (objects.drive_bat_volts) {
-        char buf[16];
-        snprintf(buf, sizeof(buf), "%.1f V", value);
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%.1f", value);
         lv_label_set_text(objects.drive_bat_volts, buf);
     }
 }

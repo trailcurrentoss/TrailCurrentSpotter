@@ -14,6 +14,10 @@ idf_component_register(
         "ui/images.c"
         "ui/ui_font_fa16.c"
         "ui/ui_font_fa32.c"
+        "ui/ui_font_roboto_mono_18.c"
+        "ui/ui_font_roboto_mono_32.c"
+        "ui/ui_font_roboto_mono_36.c"
+        "ui/ui_font_roboto_mono_48.c"
         "ui/ui_image_trailer_back.c"
         "ui/ui_image_trailer_side.c"
     INCLUDE_DIRS

@@ -228,6 +228,26 @@ lv_style_t *get_style_switch_default_MAIN_DEFAULT();
 void add_style_switch_default(lv_obj_t *obj);
 void remove_style_switch_default(lv_obj_t *obj);
 
+// Style: LabelDataValue18
+lv_style_t *get_style_label_data_value18_MAIN_DEFAULT();
+void add_style_label_data_value18(lv_obj_t *obj);
+void remove_style_label_data_value18(lv_obj_t *obj);
+
+// Style: LabelDataValue32
+lv_style_t *get_style_label_data_value32_MAIN_DEFAULT();
+void add_style_label_data_value32(lv_obj_t *obj);
+void remove_style_label_data_value32(lv_obj_t *obj);
+
+// Style: LabelDataValue36
+lv_style_t *get_style_label_data_value36_MAIN_DEFAULT();
+void add_style_label_data_value36(lv_obj_t *obj);
+void remove_style_label_data_value36(lv_obj_t *obj);
+
+// Style: LabelDataValue48
+lv_style_t *get_style_label_data_value48_MAIN_DEFAULT();
+void add_style_label_data_value48(lv_obj_t *obj);
+void remove_style_label_data_value48(lv_obj_t *obj);
+
 
 
 #ifdef __cplusplus
