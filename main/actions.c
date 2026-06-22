@@ -615,6 +615,49 @@ void action_alarm_snooze_duration_changed(lv_event_t *e)
     spoor_alarms_set_snooze_secs((int)lv_slider_get_value(t));
 }
 
+/* Chime volume slider on PageSetup. References objects.setup_volume_slider /
+ * setup_volume_value which only exist after the user has authored the
+ * volume widgets in EEZ Studio (per the eezstudio spec) AND re-exported via
+ * Ctrl+B. Until that export ships, the C body would fail to compile because
+ * the struct members don't exist. Flip SPOTTER_VOLUME_UI_PRESENT to 1 after
+ * completing the export to enable the runtime wiring. The persisted volume
+ * still applies to chimes either way — see components/audio/. */
+#define SPOTTER_VOLUME_UI_PRESENT 1
+
+#if SPOTTER_VOLUME_UI_PRESENT
+void action_volume_changed(lv_event_t *e)
+{
+    lv_obj_t *t = (lv_obj_t *)lv_event_get_target(e);
+    if (!t) return;
+    int v = (int)lv_slider_get_value(t);
+    if (v < 0)   v = 0;
+    if (v > 100) v = 100;
+    spotter_audio_set_volume((uint8_t)v);
+    if (objects.setup_volume_value) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%d%%", v);
+        lv_label_set_text(objects.setup_volume_value, buf);
+    }
+}
+
+void spotter_paint_volume(void)
+{
+    uint8_t v = spotter_audio_get_volume();
+    if (objects.setup_volume_slider) {
+        lv_slider_set_value(objects.setup_volume_slider, v, LV_ANIM_OFF);
+    }
+    if (objects.setup_volume_value) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%u%%", (unsigned)v);
+        lv_label_set_text(objects.setup_volume_value, buf);
+    }
+}
+#else
+/* Stubs until the EEZ Studio export contains the volume widgets. */
+void action_volume_changed(lv_event_t *e) { (void)e; }
+void spotter_paint_volume(void)            { }
+#endif
+
 /* ============================================================================
  * Switchback relay-output ("device") actions — userData = 0..23 maps to
  * MQTT channel 1..24 (i.e. device idx 0 = local/relays/1/status).

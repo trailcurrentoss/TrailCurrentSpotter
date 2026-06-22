@@ -565,6 +565,7 @@ static void update_warning_indicators(void)
 extern void spotter_set_active_tab(int index);
 extern void spotter_apply_axle_count(int axles);
 extern void spotter_paint_placeholders(void);
+extern void spotter_paint_volume(void);
 
 #include "app_state.h"
 #include "pendant_config.h"
@@ -647,6 +648,9 @@ void app_main(void)
      * state across all 4 dashboard pages. Persist this in NVS later if we
      * want the user's chosen axle count to survive reboot. */
     spotter_apply_axle_count(1);
+
+    /* Reflect persisted chime volume into the Setup slider + "NN%" label. */
+    spotter_paint_volume();
 
     /* Restore user settings */
     restore_user_settings();

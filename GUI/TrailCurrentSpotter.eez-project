@@ -622,6 +622,14 @@
       "localVariables": [],
       "userProperties": [],
       "name": "OpenRenameDevice"
+    },
+    {
+      "objID": "ade1c2e2-28e2-669a-6b54-1a7d77e5f18a",
+      "components": [],
+      "connectionLines": [],
+      "localVariables": [],
+      "userProperties": [],
+      "name": "VolumeChanged"
     }
   ],
   "userPages": [
@@ -2391,7 +2399,7 @@
                           },
                           "group": "",
                           "groupIndex": 0,
-                          "text": "",
+                          "text": "\uf06a",
                           "textType": "literal",
                           "longMode": "WRAP",
                           "recolor": false
@@ -2677,7 +2685,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf185",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -3176,7 +3184,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf04a",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -3514,7 +3522,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf04e",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -4156,7 +4164,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf0f3",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -4525,7 +4533,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -4798,7 +4806,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -5071,7 +5079,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -5344,7 +5352,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -5617,7 +5625,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -5890,7 +5898,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -6163,7 +6171,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -6436,7 +6444,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -6709,7 +6717,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7032,7 +7040,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7355,7 +7363,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7678,7 +7686,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8001,7 +8009,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8324,7 +8332,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8647,7 +8655,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8970,7 +8978,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -9391,7 +9399,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -9664,7 +9672,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -9937,7 +9945,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10210,7 +10218,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10483,7 +10491,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10756,7 +10764,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11029,7 +11037,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11302,7 +11310,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11575,7 +11583,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11898,7 +11906,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -12221,7 +12229,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -12544,7 +12552,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -12867,7 +12875,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13190,7 +13198,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13513,7 +13521,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13836,7 +13844,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -14257,7 +14265,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -14530,7 +14538,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -14803,7 +14811,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15076,7 +15084,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15349,7 +15357,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15622,7 +15630,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15895,7 +15903,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -16168,7 +16176,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -16441,7 +16449,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -16764,7 +16772,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17087,7 +17095,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17410,7 +17418,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17733,7 +17741,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -18056,7 +18064,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -18379,7 +18387,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -18702,7 +18710,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "",
+                              "text": "\uf303",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -19824,7 +19832,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf013",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -20093,7 +20101,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf0c1",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -20425,7 +20433,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf185",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -20605,7 +20613,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf04d",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -20777,7 +20785,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "",
+                      "text": "\uf05a",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -20875,7 +20883,7 @@
                   "objID": "1fb9dd96-160a-74f2-75cc-2989e72edf6a",
                   "type": "LVGLLabelWidget",
                   "left": 14,
-                  "top": 528,
+                  "top": 600,
                   "width": 772,
                   "height": 18,
                   "customInputs": [],
@@ -20933,7 +20941,7 @@
                   "objID": "ec2bbb76-d177-f22f-5fb7-6996da09bd00",
                   "type": "LVGLButtonWidget",
                   "left": 14,
-                  "top": 552,
+                  "top": 624,
                   "width": 772,
                   "height": 56,
                   "customInputs": [],
@@ -21303,6 +21311,271 @@
                   "useStyle": "StylePanelDefault",
                   "localStyles": {
                     "objID": "45318c20-ac7b-6cd7-4a8f-81862f1f4a3f",
+                    "definition": {
+                      "MAIN": {
+                        "DEFAULT": {
+                          "bg_opa": 0,
+                          "border_width": 0,
+                          "pad_top": 0,
+                          "pad_bottom": 0,
+                          "pad_left": 0,
+                          "pad_right": 0
+                        }
+                      }
+                    }
+                  },
+                  "group": "",
+                  "groupIndex": 0
+                },
+                {
+                  "objID": "0c19b565-b865-fc91-e55b-d48948deb33b",
+                  "type": "LVGLLabelWidget",
+                  "left": 14,
+                  "top": 518,
+                  "width": 772,
+                  "height": 18,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "e6333059-1510-9304-db30-d211caee0378",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "identifier": "setup_audio_title",
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "px",
+                  "heightUnit": "px",
+                  "children": [],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_ON_FOCUS|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "hiddenFlagType": "literal",
+                  "clickableFlag": true,
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "useStyle": "LabelDefault",
+                  "localStyles": {
+                    "objID": "f9cdad03-8afa-0e26-8003-a2402a9d24cb",
+                    "definition": {
+                      "MAIN": {
+                        "DEFAULT": {
+                          "text_color": "AccentColor",
+                          "text_font": "MONTSERRAT_16"
+                        }
+                      }
+                    }
+                  },
+                  "group": "",
+                  "groupIndex": 0,
+                  "text": "AUDIO",
+                  "textType": "literal",
+                  "longMode": "WRAP",
+                  "recolor": false
+                },
+                {
+                  "objID": "974272e2-d2d8-38e3-3aa3-5087ce405030",
+                  "type": "LVGLPanelWidget",
+                  "left": 14,
+                  "top": 542,
+                  "width": 772,
+                  "height": 38,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "32015bc2-46d9-27dd-a23c-0f942e237a45",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "identifier": "setup_volume_row",
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "px",
+                  "heightUnit": "px",
+                  "children": [
+                    {
+                      "objID": "a65cf200-fe01-9f47-b74e-a9120d30f19b",
+                      "type": "LVGLLabelWidget",
+                      "left": 14,
+                      "top": 8,
+                      "width": 350,
+                      "height": 22,
+                      "customInputs": [],
+                      "customOutputs": [],
+                      "style": {
+                        "objID": "e8878c0b-beba-344b-6a62-ac1172071ceb",
+                        "useStyle": "default",
+                        "conditionalStyles": [],
+                        "childStyles": []
+                      },
+                      "timeline": [],
+                      "eventHandlers": [],
+                      "identifier": "setup_volume_name",
+                      "leftUnit": "px",
+                      "topUnit": "px",
+                      "widthUnit": "px",
+                      "heightUnit": "px",
+                      "children": [],
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_ON_FOCUS|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "hiddenFlagType": "literal",
+                      "clickableFlag": false,
+                      "clickableFlagType": "literal",
+                      "flagScrollbarMode": "",
+                      "flagScrollDirection": "",
+                      "scrollSnapX": "",
+                      "scrollSnapY": "",
+                      "checkedStateType": "literal",
+                      "disabledStateType": "literal",
+                      "states": "",
+                      "useStyle": "LabelDefault",
+                      "localStyles": {
+                        "objID": "9a6ed50c-28b5-0f6b-f26b-463b90472a10"
+                      },
+                      "group": "",
+                      "groupIndex": 0,
+                      "text": "Chime Volume",
+                      "textType": "literal",
+                      "longMode": "WRAP",
+                      "recolor": false
+                    },
+                    {
+                      "objID": "30680d01-fa73-dcbf-1f95-730e630054e3",
+                      "type": "LVGLLabelWidget",
+                      "left": 370,
+                      "top": 8,
+                      "width": 80,
+                      "height": 22,
+                      "customInputs": [],
+                      "customOutputs": [],
+                      "style": {
+                        "objID": "3423d992-5e41-1eb9-e644-6aaeb07aede7",
+                        "useStyle": "default",
+                        "conditionalStyles": [],
+                        "childStyles": []
+                      },
+                      "timeline": [],
+                      "eventHandlers": [],
+                      "identifier": "setup_volume_value",
+                      "leftUnit": "px",
+                      "topUnit": "px",
+                      "widthUnit": "px",
+                      "heightUnit": "px",
+                      "children": [],
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_ON_FOCUS|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "hiddenFlagType": "literal",
+                      "clickableFlag": false,
+                      "clickableFlagType": "literal",
+                      "flagScrollbarMode": "",
+                      "flagScrollDirection": "",
+                      "scrollSnapX": "",
+                      "scrollSnapY": "",
+                      "checkedStateType": "literal",
+                      "disabledStateType": "literal",
+                      "states": "",
+                      "useStyle": "LabelSecondary",
+                      "localStyles": {
+                        "objID": "daaca041-e8f2-8afc-bd70-90854476f09e",
+                        "definition": {
+                          "MAIN": {
+                            "DEFAULT": {
+                              "text_align": "RIGHT"
+                            }
+                          }
+                        }
+                      },
+                      "group": "",
+                      "groupIndex": 0,
+                      "text": "80%",
+                      "textType": "literal",
+                      "longMode": "WRAP",
+                      "recolor": false
+                    },
+                    {
+                      "objID": "d8ee57b8-5d35-5194-0102-8e8346b4926a",
+                      "type": "LVGLSliderWidget",
+                      "left": 460,
+                      "top": 14,
+                      "width": 300,
+                      "height": 18,
+                      "customInputs": [],
+                      "customOutputs": [],
+                      "style": {
+                        "objID": "38834aee-62cb-006f-4a23-1f7663af3e55",
+                        "useStyle": "default",
+                        "conditionalStyles": [],
+                        "childStyles": []
+                      },
+                      "timeline": [],
+                      "eventHandlers": [
+                        {
+                          "objID": "829ce90d-985e-d1c8-7f2a-a0930a37e848",
+                          "eventName": "VALUE_CHANGED",
+                          "handlerType": "action",
+                          "action": "VolumeChanged",
+                          "userData": 0
+                        }
+                      ],
+                      "identifier": "setup_volume_slider",
+                      "leftUnit": "px",
+                      "topUnit": "px",
+                      "widthUnit": "px",
+                      "heightUnit": "px",
+                      "children": [],
+                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_ON_FOCUS|SCROLL_WITH_ARROW|SNAPPABLE",
+                      "hiddenFlagType": "literal",
+                      "clickableFlag": true,
+                      "clickableFlagType": "literal",
+                      "flagScrollbarMode": "",
+                      "flagScrollDirection": "",
+                      "scrollSnapX": "",
+                      "scrollSnapY": "",
+                      "checkedStateType": "literal",
+                      "disabledStateType": "literal",
+                      "states": "",
+                      "useStyle": "StyleDefaultSlider",
+                      "localStyles": {
+                        "objID": "04318b7b-8830-7b3d-4ce2-c7f97d00bba1"
+                      },
+                      "group": "",
+                      "groupIndex": 0,
+                      "min": 0,
+                      "minType": "literal",
+                      "max": 100,
+                      "maxType": "literal",
+                      "mode": "NORMAL",
+                      "value": 80,
+                      "valueType": "literal",
+                      "previewValue": 0,
+                      "valueLeft": 0,
+                      "valueLeftType": "literal",
+                      "previewValueLeft": 0,
+                      "enableAnimation": false
+                    }
+                  ],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_ON_FOCUS|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "hiddenFlagType": "literal",
+                  "clickableFlag": false,
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "useStyle": "StylePanelDefault",
+                  "localStyles": {
+                    "objID": "20faa972-0dc7-fc7f-fa95-3dee2d963da3",
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
@@ -28748,7 +29021,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "TLS cert verification is skipped — any cert is accepted.",
+                  "text": "TLS cert verification is skipped \u2014 any cert is accepted.",
                   "textType": "literal",
                   "longMode": "WRAP",
                   "recolor": false
@@ -29453,7 +29726,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "",
+              "text": "\uf14e",
               "textType": "literal",
               "longMode": "WRAP",
               "recolor": false
@@ -29674,7 +29947,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "",
+              "text": "\uf04a",
               "textType": "literal",
               "longMode": "WRAP",
               "recolor": false
@@ -29727,7 +30000,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "",
+              "text": "\uf04e",
               "textType": "literal",
               "longMode": "WRAP",
               "recolor": false
@@ -29942,7 +30215,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "",
+              "text": "\uf1eb",
               "textType": "literal",
               "longMode": "WRAP",
               "recolor": false
@@ -30105,7 +30378,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "",
+                  "text": "\uf624",
                   "textType": "literal",
                   "longMode": "WRAP",
                   "recolor": false
@@ -30284,7 +30557,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "",
+                  "text": "\uf0f3",
                   "textType": "literal",
                   "longMode": "WRAP",
                   "recolor": false
@@ -30463,7 +30736,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "",
+                  "text": "\uf013",
                   "textType": "literal",
                   "longMode": "WRAP",
                   "recolor": false

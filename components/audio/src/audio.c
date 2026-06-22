@@ -11,8 +11,14 @@
 #include "driver/i2s_std.h"
 #include "esp_codec_dev.h"
 #include "esp_codec_dev_defaults.h"
+#include "nvs.h"
+#include "nvs_flash.h"
 
 static const char *TAG = "audio";
+
+#define AUDIO_NVS_NS       "audio"
+#define AUDIO_NVS_KEY_VOL  "vol"
+#define AUDIO_VOLUME_DEFAULT 80
 
 /* I2S pinout per Waveshare ESP32-S3-Touch-LCD-4.3C reference. */
 #define I2S_NUM     I2S_NUM_1
@@ -43,6 +49,29 @@ static size_t   s_tone_bytes = 0;
 static TaskHandle_t      s_chime_task = NULL;
 static SemaphoreHandle_t s_chime_sem  = NULL;
 static volatile bool     s_chime_run  = false;
+
+static uint8_t s_volume_pct = AUDIO_VOLUME_DEFAULT;
+
+static void nvs_load_volume(void)
+{
+    nvs_handle_t h;
+    esp_err_t r = nvs_open(AUDIO_NVS_NS, NVS_READONLY, &h);
+    if (r != ESP_OK) return;   /* missing namespace -> keep default */
+    uint8_t v = 0;
+    if (nvs_get_u8(h, AUDIO_NVS_KEY_VOL, &v) == ESP_OK && v <= 100) {
+        s_volume_pct = v;
+    }
+    nvs_close(h);
+}
+
+static void nvs_save_volume(void)
+{
+    nvs_handle_t h;
+    if (nvs_open(AUDIO_NVS_NS, NVS_READWRITE, &h) != ESP_OK) return;
+    nvs_set_u8(h, AUDIO_NVS_KEY_VOL, s_volume_pct);
+    nvs_commit(h);
+    nvs_close(h);
+}
 
 static esp_err_t build_tone_buffer(void)
 {
@@ -91,6 +120,9 @@ esp_err_t spotter_audio_init(i2c_master_bus_handle_t bus, audio_pa_set_fn_t pa_s
     if (s_inited) return ESP_OK;
     if (!bus) return ESP_ERR_INVALID_ARG;
     s_pa_set = pa_set;
+
+    /* Restore saved chime volume (default 80 if not present). */
+    nvs_load_volume();
 
     /* I2S TX channel. */
     i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM, I2S_ROLE_MASTER);
@@ -177,9 +209,26 @@ void spotter_audio_chime_start(void)
         .bits_per_sample = 16,
     };
     esp_codec_dev_open(s_play_dev, &fs);
-    esp_codec_dev_set_out_vol(s_play_dev, 80);
+    esp_codec_dev_set_out_vol(s_play_dev, (int)s_volume_pct);
     s_chime_run = true;
     s_started = true;
+}
+
+uint8_t spotter_audio_get_volume(void)
+{
+    return s_volume_pct;
+}
+
+void spotter_audio_set_volume(uint8_t volume_pct)
+{
+    if (volume_pct > 100) volume_pct = 100;
+    if (volume_pct == s_volume_pct) return;
+    s_volume_pct = volume_pct;
+    /* Apply live if a chime is currently playing. ES8311 accepts 0..100. */
+    if (s_inited && s_started && s_play_dev) {
+        esp_codec_dev_set_out_vol(s_play_dev, (int)s_volume_pct);
+    }
+    nvs_save_volume();
 }
 
 void spotter_audio_chime_tick(void)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include "esp_err.h"
 #include "driver/i2c_master.h"
 
@@ -24,6 +25,11 @@ void spotter_audio_chime_tick(void);
 
 /* End the chime sequence: closes the codec, mutes the PA. */
 void spotter_audio_chime_stop(void);
+
+/* Chime volume, 0..100. Loaded from NVS on init (default 80). Setter clamps,
+ * persists to NVS, and applies live if a chime is currently active. */
+uint8_t spotter_audio_get_volume(void);
+void    spotter_audio_set_volume(uint8_t volume_pct);
 
 #ifdef __cplusplus
 }
