@@ -54,13 +54,16 @@ void device_alarms_save_rename(void);
 void device_alarms_cancel_rename(void);
 
 /* Acknowledge hook — resets the snooze clock for the currently-showing
- * device alarm (no-op when no device alarm is active). */
-void device_alarms_acknowledged(void);
+ * device alarm. Returns the 0-based device index that was acked, or -1
+ * if no device alarm was active. Call only when the overlay was raised
+ * by device_alarms (Resolve button presence indicates this); otherwise
+ * the wrong snooze clock advances. */
+int device_alarms_acknowledged(void);
 
 /* Mirror of spoor_alarms_try_raise_next() — see spoor_alarms.h. Called from
  * dismiss paths to surface a still-active device alarm that was hidden by
- * the dismissed overlay. */
-bool device_alarms_try_raise_next(bool bypass_snooze);
+ * the dismissed overlay. exclude_idx = 0..23 to skip a specific device. */
+bool device_alarms_try_raise_next(bool bypass_snooze, int exclude_idx);
 
 /* Publish a relay-toggle CAN command to the Switchback that owns this
  * device. Uses can/outbound (the raw CAN MQTT topic) with the same wire

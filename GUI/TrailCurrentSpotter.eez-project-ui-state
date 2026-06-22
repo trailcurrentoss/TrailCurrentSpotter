@@ -28,7 +28,7 @@
           },
           {
             "type": "border",
-            "selected": 0,
+            "selected": 3,
             "size": 240,
             "location": "right",
             "children": [
@@ -1017,13 +1017,16 @@
       "selection": {
         "0": {
           "0": {},
-          "1": {},
+          "1": {
+            "0": {},
+            "2": {}
+          },
           "2": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -189.0546875,
+          "x": -284.0546875,
           "y": -199
         },
         "scale": 0.75
@@ -1277,8 +1280,8 @@
   "showComponentDescriptions": true,
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
-  "lvglPart": "INDICATOR",
-  "lvglState": "CHECKED",
+  "lvglPart": "MAIN",
+  "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
     "POSITION AND SIZE",
     "MISCELLANEOUS",

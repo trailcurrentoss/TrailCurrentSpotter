@@ -453,8 +453,10 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
                      s_active_alarm_idx);
             spotter_alarm_force_dismiss();
             s_active_alarm_idx = -1;
-            if (!spoor_alarms_try_raise_next(true)) {
-                device_alarms_try_raise_next(true);
+            /* Sensor just cleared — its own "not active" check filters it
+             * out automatically, so no exclude_idx needed. */
+            if (!spoor_alarms_try_raise_next(true, -1)) {
+                device_alarms_try_raise_next(true, -1);
             }
         }
     }
@@ -504,25 +506,28 @@ void spoor_alarms_handle_inputs(int addr, uint8_t inputs)
     }
 }
 
-void spoor_alarms_acknowledged(void)
+int spoor_alarms_acknowledged(void)
 {
-    if (s_active_alarm_idx < 0) return;
+    if (s_active_alarm_idx < 0) return -1;
     /* Move the snooze clock to "now" so the re-fire gate is measured from
      * acknowledge rather than from the original fire. Without this, if the
      * user takes 25s to react to a 30s-snooze alarm, the next steady-state
      * MQTT message after another 5s would re-fire — almost no time for the
      * user to actually address the condition. */
-    s_last_alarm_us[s_active_alarm_idx] = esp_timer_get_time();
+    int acked = s_active_alarm_idx;
+    s_last_alarm_us[acked] = esp_timer_get_time();
     ESP_LOGI(TAG, "Sensor %d acknowledged — snooze restarts (%ds)",
-             s_active_alarm_idx, s_snooze_secs);
+             acked, s_snooze_secs);
     s_active_alarm_idx = -1;
+    return acked;
 }
 
-bool spoor_alarms_try_raise_next(bool bypass_snooze)
+bool spoor_alarms_try_raise_next(bool bypass_snooze, int exclude_idx)
 {
     int64_t now = esp_timer_get_time();
     int64_t snooze_us = (int64_t)s_snooze_secs * 1000000LL;
     for (int i = 0; i < SPOOR_SENSOR_COUNT; i++) {
+        if (i == exclude_idx) continue;                    /* just-acked */
         int a = i / SPOOR_SENSORS_PER_ADDR;
         int b = i % SPOOR_SENSORS_PER_ADDR;
         if (!armed(i)) continue;

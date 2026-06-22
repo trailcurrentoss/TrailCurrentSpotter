@@ -30,7 +30,7 @@ typedef struct _objects_t {
     lv_obj_t *drive_status_bar__status_wifi_icon;
     lv_obj_t *drive_body;
     lv_obj_t *drive_card_bat;
-    lv_obj_t *drive_bat_title;
+    lv_obj_t *drive_batt_icon_1;
     lv_obj_t *drive_bat_arc;
     lv_obj_t *drive_bat_value;
     lv_obj_t *drive_bat_pct_sym;
@@ -61,7 +61,6 @@ typedef struct _objects_t {
     lv_obj_t *drive_bsm_warn_icon;
     lv_obj_t *drive_bsm_warn_text;
     lv_obj_t *drive_card_solar;
-    lv_obj_t *drive_solar_title;
     lv_obj_t *drive_solar_arc;
     lv_obj_t *drive_solar_icon;
     lv_obj_t *drive_solar_value;

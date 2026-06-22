@@ -475,8 +475,9 @@ void device_alarms_handle_state(int channel, int state)
         ESP_LOGI(TAG, "Device %d condition cleared — dismissing alarm", idx);
         spotter_alarm_force_dismiss();
         s_active_alarm_idx = -1;
-        if (!device_alarms_try_raise_next(true)) {
-            spoor_alarms_try_raise_next(true);
+        /* Device just cleared — its "not active" check skips it; no exclude. */
+        if (!device_alarms_try_raise_next(true, -1)) {
+            spoor_alarms_try_raise_next(true, -1);
         }
         return;
     }
@@ -506,12 +507,14 @@ void device_alarms_handle_state(int channel, int state)
     s_active_alarm_idx = idx;
 }
 
-void device_alarms_acknowledged(void)
+int device_alarms_acknowledged(void)
 {
-    if (s_active_alarm_idx < 0) return;
-    s_last_alarm_us[s_active_alarm_idx] = esp_timer_get_time();
-    ESP_LOGI(TAG, "Device %d acknowledged — snooze restarts", s_active_alarm_idx);
+    if (s_active_alarm_idx < 0) return -1;
+    int acked = s_active_alarm_idx;
+    s_last_alarm_us[acked] = esp_timer_get_time();
+    ESP_LOGI(TAG, "Device %d acknowledged — snooze restarts", acked);
     s_active_alarm_idx = -1;
+    return acked;
 }
 
 void device_alarms_send_toggle(int device_idx)
@@ -548,11 +551,12 @@ void device_alarms_send_toggle(int device_idx)
     mqtt_client_publish("can/outbound", payload, 0);
 }
 
-bool device_alarms_try_raise_next(bool bypass_snooze)
+bool device_alarms_try_raise_next(bool bypass_snooze, int exclude_idx)
 {
     int64_t now = esp_timer_get_time();
     int64_t snooze_us = (int64_t)spoor_alarms_snooze_secs() * 1000000LL;
     for (int i = 0; i < DEVICE_COUNT; i++) {
+        if (i == exclude_idx) continue;                    /* just-acked */
         if (!armed(i)) continue;
         int board = i / DEVICES_PER_BOARD;
         int bit   = i % DEVICES_PER_BOARD;

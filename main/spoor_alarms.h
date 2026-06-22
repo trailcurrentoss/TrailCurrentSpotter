@@ -51,25 +51,30 @@ void spoor_alarms_set_snooze_secs(int s);
 
 /* Notify the spoor module that the currently-showing alarm was acknowledged
  * by the user. Resets the per-sensor snooze clock so the snooze window
- * starts NOW (not from when the alarm originally fired). Call this from
- * every code path that dismisses the overlay in response to a user tap on
- * Acknowledge. No-op when no spoor alarm is currently active. */
-void spoor_alarms_acknowledged(void);
+ * starts NOW (not from when the alarm originally fired). Returns the
+ * 0-based sensor index that was acked, or -1 if no spoor alarm was active.
+ *
+ * Call only when the overlay was raised by spoor_alarms (i.e. it's a sensor
+ * alarm, not a device alarm) — otherwise the wrong module's snooze clock
+ * advances, silently suppressing an alarm the user never saw. */
+int spoor_alarms_acknowledged(void);
 
 /* Scan for any armed sensor whose input is currently active and raise its
  * alarm. Returns true if an alarm was raised. Called after another alarm
- * is dismissed (auto-dismiss on condition clear, or user Acknowledge) so
- * a still-active sensor that was hidden behind the dismissed overlay
- * comes back into view.
+ * is dismissed so a still-active sensor that was hidden behind the
+ * dismissed overlay comes back into view.
  *
  *   bypass_snooze=true  → ignore the snooze gate. Use when the dismiss
- *                          was driven by ANOTHER alarm clearing — the
- *                          user's attention just freed up.
- *   bypass_snooze=false → respect the snooze gate. Use after a user
- *                          Acknowledge — the just-acked alarm should
- *                          stay silent until its snooze elapses.
+ *                          freed up the user's attention (auto-dismiss on
+ *                          condition clear, or user Acknowledge — see
+ *                          exclude_idx below for the ack case).
+ *   bypass_snooze=false → respect the snooze gate.
+ *   exclude_idx         → 0..23 to skip a specific sensor in the scan
+ *                          (the just-acked one — its condition is still
+ *                          active, so without exclusion bypass_snooze=true
+ *                          would immediately re-raise it). -1 = no exclusion.
  */
-bool spoor_alarms_try_raise_next(bool bypass_snooze);
+bool spoor_alarms_try_raise_next(bool bypass_snooze, int exclude_idx);
 
 /* Read-only accessors (currently unused outside the module; kept for tests). */
 int  spoor_alarms_snooze_secs(void);

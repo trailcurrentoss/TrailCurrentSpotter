@@ -377,16 +377,22 @@ static void alarm_ack_event_cb(lv_event_t *e)
 {
     (void)e;
     ESP_LOGI(TAG, "Alarm acknowledged");
-    /* At most one of these has an active alarm; each function is a no-op
-     * unless it owns the currently-showing overlay. */
-    spoor_alarms_acknowledged();
-    device_alarms_acknowledged();
+    /* Acknowledge the owning module ONLY — both modules track their own
+     * s_active_alarm_idx independently, and when a sensor alarm replaces
+     * a device alarm in the overlay the device's idx is left stale. Calling
+     * both acknowledged()s would advance the snooze on an alarm the user
+     * never saw. s_alarm_device_idx (set in spotter_alarm_raise_device)
+     * tells us which module owns the visible overlay. */
+    bool is_device = (s_alarm_device_idx >= 0);
+    int acked_spoor  = is_device ? -1 : spoor_alarms_acknowledged();
+    int acked_device = is_device ? device_alarms_acknowledged() : -1;
     alarm_dismiss();
-    /* Surface any other still-active armed alarm. bypass_snooze=false so
-     * the alarm we just acknowledged stays silent for its snooze window
-     * (its s_last_alarm_us was just bumped to "now" by acknowledged()). */
-    if (!spoor_alarms_try_raise_next(false)) {
-        device_alarms_try_raise_next(false);
+    /* Surface any other still-active armed alarm. bypass_snooze=true so
+     * alarms still in their fire-time snooze window also surface — the
+     * just-acked one is excluded explicitly via exclude_idx so it doesn't
+     * immediately re-raise on its still-active condition. */
+    if (!spoor_alarms_try_raise_next(true, acked_spoor)) {
+        device_alarms_try_raise_next(true, acked_device);
     }
 }
 
@@ -550,11 +556,12 @@ void action_acknowledge_alarm(lv_event_t *e)
 {
     (void)e;
     ESP_LOGI(TAG, "AcknowledgeAlarm");
-    spoor_alarms_acknowledged();
-    device_alarms_acknowledged();
+    bool is_device = (s_alarm_device_idx >= 0);
+    int acked_spoor  = is_device ? -1 : spoor_alarms_acknowledged();
+    int acked_device = is_device ? device_alarms_acknowledged() : -1;
     if (s_alarm_overlay) alarm_dismiss();
-    if (!spoor_alarms_try_raise_next(false)) {
-        device_alarms_try_raise_next(false);
+    if (!spoor_alarms_try_raise_next(true, acked_spoor)) {
+        device_alarms_try_raise_next(true, acked_device);
     }
 }
 

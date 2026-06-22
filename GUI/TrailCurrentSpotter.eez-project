@@ -742,23 +742,23 @@
                   "heightUnit": "px",
                   "children": [
                     {
-                      "objID": "17fc6443-ed55-0513-aaf5-8389be355c9f",
+                      "objID": "ccf6ae70-ab00-4f5d-d479-1d12f2ea0a63",
                       "type": "LVGLLabelWidget",
-                      "left": 0,
-                      "top": 12,
-                      "width": 256,
-                      "height": 18,
+                      "left": 105,
+                      "top": 67,
+                      "width": 36,
+                      "height": 36,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
-                        "objID": "fd5720f4-7332-2dd2-53b7-42cd28f81486",
+                        "objID": "d229166c-b4a9-4f10-e274-a2ec7de6bdbc",
                         "useStyle": "default",
                         "conditionalStyles": [],
                         "childStyles": []
                       },
                       "timeline": [],
                       "eventHandlers": [],
-                      "identifier": "drive_bat_title",
+                      "identifier": "drive_batt_icon_1",
                       "leftUnit": "px",
                       "topUnit": "px",
                       "widthUnit": "px",
@@ -774,16 +774,14 @@
                       "checkedStateType": "literal",
                       "disabledStateType": "literal",
                       "states": "",
-                      "useStyle": "LabelDefault",
+                      "useStyle": "LabelFa32Icon",
                       "localStyles": {
-                        "objID": "1b4ad395-dfae-649a-96f4-679d044f1a56",
+                        "objID": "94c13003-a24e-43dc-9e9d-cf858fa882c6",
                         "definition": {
                           "MAIN": {
                             "DEFAULT": {
-                              "text_font": "MONTSERRAT_14",
-                              "text_color": "SecondaryTextColor",
+                              "text_color": "Success",
                               "text_align": "CENTER",
-                              "text_letter_space": 2,
                               "align": "TOP_LEFT"
                             }
                           }
@@ -791,7 +789,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "BATTERY",
+                      "text": "\\uf240",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -799,10 +797,10 @@
                     {
                       "objID": "4f120593-26ac-f3f5-8625-8a0a36d78a9c",
                       "type": "LVGLArcWidget",
-                      "left": 33,
+                      "left": 16,
                       "top": 36,
-                      "width": 190,
-                      "height": 190,
+                      "width": 210,
+                      "height": 210,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -884,8 +882,8 @@
                     {
                       "objID": "ec1fc4b1-87da-6903-f0cc-b2590ad9d276",
                       "type": "LVGLLabelWidget",
-                      "left": 58,
-                      "top": 101,
+                      "left": 51,
+                      "top": 103,
                       "width": 100,
                       "height": 60,
                       "customInputs": [],
@@ -938,8 +936,8 @@
                     {
                       "objID": "59a4b338-9c47-a74a-db32-5b479230f7a1",
                       "type": "LVGLLabelWidget",
-                      "left": 164,
-                      "top": 119,
+                      "left": 157,
+                      "top": 115,
                       "width": 30,
                       "height": 28,
                       "customInputs": [],
@@ -2547,67 +2545,12 @@
                   "heightUnit": "px",
                   "children": [
                     {
-                      "objID": "d760485f-de0a-407d-4738-9c386dd6ca77",
-                      "type": "LVGLLabelWidget",
-                      "left": 0,
-                      "top": 12,
-                      "width": 256,
-                      "height": 18,
-                      "customInputs": [],
-                      "customOutputs": [],
-                      "style": {
-                        "objID": "8536dfbd-8bd3-eed1-5254-86337c67cba8",
-                        "useStyle": "default",
-                        "conditionalStyles": [],
-                        "childStyles": []
-                      },
-                      "timeline": [],
-                      "eventHandlers": [],
-                      "identifier": "drive_solar_title",
-                      "leftUnit": "px",
-                      "topUnit": "px",
-                      "widthUnit": "px",
-                      "heightUnit": "px",
-                      "children": [],
-                      "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
-                      "hiddenFlagType": "literal",
-                      "clickableFlagType": "literal",
-                      "flagScrollbarMode": "",
-                      "flagScrollDirection": "",
-                      "scrollSnapX": "",
-                      "scrollSnapY": "",
-                      "checkedStateType": "literal",
-                      "disabledStateType": "literal",
-                      "states": "",
-                      "useStyle": "LabelDefault",
-                      "localStyles": {
-                        "objID": "6d9b2891-c6ab-3cbf-b22b-4bc35675dfdb",
-                        "definition": {
-                          "MAIN": {
-                            "DEFAULT": {
-                              "text_font": "MONTSERRAT_14",
-                              "text_color": "SecondaryTextColor",
-                              "text_align": "CENTER",
-                              "text_letter_space": 2,
-                              "align": "TOP_LEFT"
-                            }
-                          }
-                        }
-                      },
-                      "group": "",
-                      "groupIndex": 0,
-                      "text": "SOLAR",
-                      "textType": "literal",
-                      "longMode": "WRAP",
-                      "recolor": false
-                    },
-                    {
                       "objID": "9f3d4e9d-2267-e030-866b-8e59d44119d1",
                       "type": "LVGLArcWidget",
-                      "left": 33,
+                      "left": 20,
                       "top": 36,
-                      "width": 190,
-                      "height": 190,
+                      "width": 210,
+                      "height": 210,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
