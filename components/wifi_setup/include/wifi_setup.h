@@ -82,6 +82,15 @@ size_t wifi_setup_get_scan_results(wifi_setup_network_t *out, size_t out_cap);
  * Password may be empty for open networks. */
 esp_err_t wifi_setup_connect(const char *ssid, const char *password);
 
+/* Same as wifi_setup_connect() but enables persistent retry: failures (no AP
+ * found, auth timeout, etc.) never transition to STATE_FAILED — the driver
+ * keeps attempting to reconnect indefinitely. Used for the boot-time auto-
+ * connect with saved credentials so the device reattaches automatically when
+ * WiFi becomes available again, instead of dumping the user into the setup
+ * screen. Cleared by wifi_setup_connect() (non-persistent) and
+ * wifi_setup_disconnect(). */
+esp_err_t wifi_setup_connect_persistent(const char *ssid, const char *password);
+
 /* Disconnect and stop any reconnect attempts. */
 esp_err_t wifi_setup_disconnect(void);
 

@@ -173,16 +173,38 @@ static void async_state_mqtt_connecting(void *arg) { (void)arg; app_state_set(AP
 static void async_notify_conn_wifi(void *arg) { connectivity_alarm_set_wifi(arg != NULL); }
 static void async_notify_conn_mqtt(void *arg) { connectivity_alarm_set_mqtt(arg != NULL); }
 
-/* Decide what to do once WiFi is up: skip straight into MQTT_CONNECTING if
- * the user has already saved MQTT creds, otherwise show the MQTT setup screen.
+/* Decide what to do once WiFi is up. Three cases by current state:
+ *   - APP_STATE_READY: boot-to-dashboard path. Start the MQTT client silently
+ *     in the background (once); don't change UI state. The connectivity alarm
+ *     dismisses itself when MQTT actually connects.
+ *   - APP_STATE_WIFI_CONNECTING: user-initiated setup flow. Drive the normal
+ *     progression to MQTT setup or MQTT connecting.
+ *   - APP_STATE_MQTT_SETUP / anything else: don't disturb (user is finishing
+ *     setup; WiFi just associated in the background).
  * Runs on LVGL thread (async_call target). */
 static void async_wifi_up_next(void *arg)
 {
     (void)arg;
+    static bool s_mqtt_kicked = false;
+
+    if (s_state == APP_STATE_READY) {
+        if (!s_mqtt_kicked && pendant_config_has_mqtt()) {
+            ESP_LOGI(TAG, "WiFi up on dashboard — starting MQTT client in background");
+            if (mqtt_client_load_settings()) {
+                mqtt_client_connect();
+                s_mqtt_kicked = true;
+            }
+        }
+        return;
+    }
+    if (s_state != APP_STATE_WIFI_CONNECTING) {
+        return;
+    }
     if (pendant_config_has_mqtt()) {
         app_state_set(APP_STATE_MQTT_CONNECTING);
         if (mqtt_client_load_settings()) {
             mqtt_client_connect();
+            s_mqtt_kicked = true;
         }
     } else {
         app_state_set(APP_STATE_MQTT_SETUP);
@@ -213,10 +235,11 @@ static void on_wifi_state(wifi_setup_state_t st, void *user_ctx)
         }
         break;
     case WIFI_SETUP_STATE_CONNECTED:
-        if (s_state == APP_STATE_WIFI_CONNECTING) {
-            /* WiFi just came up — proceed to MQTT setup or connect. */
-            lv_async_call(async_wifi_up_next, NULL);
-        }
+        /* WiFi just came up. Fire async_wifi_up_next regardless of current
+         * state — it decides what to do based on s_state (boot-to-dashboard
+         * vs. user-driven setup flow) and is a no-op for subsequent
+         * reconnects once MQTT is already running. */
+        lv_async_call(async_wifi_up_next, NULL);
         break;
     case WIFI_SETUP_STATE_FAILED:
         if (s_state == APP_STATE_WIFI_CONNECTING) {
@@ -295,6 +318,18 @@ static void make_unscrollable(lv_obj_t *screen)
 
 void app_state_set(app_state_t next)
 {
+    /* Safety belt: never display the MQTT setup screen when MQTT creds are
+     * already saved. If anything tries to route us there, redirect to the
+     * connecting state instead — matches the WiFi pattern where saved creds
+     * mean the setup screen is only reachable via Settings → Clear data. */
+    if (next == APP_STATE_MQTT_SETUP && pendant_config_has_mqtt()) {
+        ESP_LOGW(TAG, "MQTT_SETUP requested but MQTT creds saved — redirecting to MQTT_CONNECTING");
+        next = APP_STATE_MQTT_CONNECTING;
+        if (mqtt_client_load_settings()) {
+            mqtt_client_connect();
+        }
+    }
+
     if (s_state == next) return;
     ESP_LOGI(TAG, "state %d -> %d", (int)s_state, (int)next);
     s_state = next;
@@ -347,18 +382,41 @@ esp_err_t app_state_init(void)
     wifi_setup_set_hostname("Spotter");
     mqtt_client_set_state_callback(on_mqtt_state);
 
-    if (pendant_config_has_wifi()) {
-        const pendant_config_t *cfg = pendant_config_get();
-        ESP_LOGI(TAG, "auto-connecting to saved SSID: %s", cfg->wifi_ssid);
-        app_state_set(APP_STATE_WIFI_CONNECTING);
-        if (objects.wifi_connecting_ssid) {
-            lv_label_set_text(objects.wifi_connecting_ssid, cfg->wifi_ssid);
-        }
-        wifi_setup_connect(cfg->wifi_ssid, cfg->wifi_pass);
-    } else {
-        ESP_LOGI(TAG, "no saved WiFi — entering setup");
+    /* Boot-time policy: a setup screen (WiFi or MQTT) is shown ONLY if the
+     * corresponding credentials are missing. Anything else — including being
+     * unable to associate with the AP or reach the broker at power-on — lands
+     * on the dashboard, where the existing connectivity alarm already
+     * communicates the loss. The setup screens are only reachable again via
+     * Settings → Clear data.
+     *
+     * Runtime drops (connectivity lost after we were once up) are unaffected
+     * — the connectivity_alarm continues to fire normally. */
+
+    if (!pendant_config_has_wifi()) {
+        ESP_LOGI(TAG, "no saved WiFi — entering WiFi setup");
         app_state_set(APP_STATE_WIFI_SETUP);
+        return ESP_OK;
     }
+
+    /* WiFi creds saved — start the auto-connect in the background regardless
+     * of which screen we land on. Uses persistent retry so it keeps trying
+     * forever rather than ever transitioning to STATE_FAILED. */
+    const pendant_config_t *cfg = pendant_config_get();
+    ESP_LOGI(TAG, "auto-connecting to saved SSID: %s", cfg->wifi_ssid);
+    wifi_setup_connect_persistent(cfg->wifi_ssid, cfg->wifi_pass);
+
+    if (!pendant_config_has_mqtt()) {
+        ESP_LOGI(TAG, "no saved MQTT — entering MQTT setup (WiFi connects in background)");
+        app_state_set(APP_STATE_MQTT_SETUP);
+        return ESP_OK;
+    }
+
+    /* Both sets of creds saved — go straight to the dashboard. The MQTT
+     * client is kicked off by on_wifi_state(CONNECTED) once WiFi associates;
+     * the connectivity alarm raises on its own if either link is still down
+     * when the debounce window elapses. */
+    ESP_LOGI(TAG, "both creds saved — going directly to dashboard");
+    app_state_set(APP_STATE_READY);
     return ESP_OK;
 }
 

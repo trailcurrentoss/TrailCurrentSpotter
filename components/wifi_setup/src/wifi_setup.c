@@ -29,6 +29,13 @@ static wifi_setup_fail_reason_t  s_fail_reason = WIFI_SETUP_FAIL_NONE;
  * so giving up on the AP would leave the user with a dead alarm panel and no
  * UI affordance to recover short of a power cycle. */
 static bool                      s_was_ever_connected = false;
+/* Set by wifi_setup_connect_persistent() for the boot-time auto-connect with
+ * saved credentials. While true, the disconnect handler retries forever
+ * instead of giving up after WIFI_MAX_RETRIES — so a power cycle with the
+ * router off doesn't dump the user into the setup screen. Cleared by
+ * wifi_setup_connect() (user-initiated, must keep its fail/retry feedback)
+ * and wifi_setup_disconnect(). */
+static bool                      s_persistent_retry = false;
 
 static wifi_setup_network_t s_scan[WIFI_SETUP_MAX_SCAN_RESULTS];
 static size_t                s_scan_count = 0;
@@ -145,10 +152,10 @@ static void wifi_event_handler(void *arg, esp_event_base_t base, int32_t id, voi
         case WIFI_EVENT_STA_DISCONNECTED: {
             wifi_event_sta_disconnected_t *e = data;
             int raw_reason = e ? e->reason : -1;
-            ESP_LOGW(TAG, "STA disconnected, reason=%d (state=%d retries=%u ever_connected=%d)",
-                     raw_reason, (int)s_state, (unsigned)s_retries, (int)s_was_ever_connected);
+            ESP_LOGW(TAG, "STA disconnected, reason=%d (state=%d retries=%u ever_connected=%d persistent=%d)",
+                     raw_reason, (int)s_state, (unsigned)s_retries, (int)s_was_ever_connected, (int)s_persistent_retry);
             s_ip = 0;
-            if (s_was_ever_connected) {
+            if (s_was_ever_connected || s_persistent_retry) {
                 /* Post-IP drop. The state machine flips to CONNECTING so the
                  * UI's connectivity indicator (and the connectivity-alarm
                  * monitor) sees that we've lost the link. Reconnect attempts
@@ -254,7 +261,7 @@ size_t wifi_setup_get_scan_results(wifi_setup_network_t *out, size_t out_cap)
     return n;
 }
 
-esp_err_t wifi_setup_connect(const char *ssid, const char *password)
+static esp_err_t connect_internal(const char *ssid, const char *password, bool persistent)
 {
     if (!ssid || ssid[0] == '\0') return ESP_ERR_INVALID_ARG;
     if (!s_initialized) return ESP_ERR_INVALID_STATE;
@@ -270,11 +277,23 @@ esp_err_t wifi_setup_connect(const char *ssid, const char *password)
     s_fail_reason = WIFI_SETUP_FAIL_NONE;
     /* New connection attempt — until the new SSID actually gives us an IP,
      * treat this as a fresh initial setup so the bad-password / AP-not-found
-     * paths can surface FAILED instead of looping forever. */
+     * paths can surface FAILED instead of looping forever. Persistent mode
+     * overrides that and keeps retrying. */
     s_was_ever_connected = false;
+    s_persistent_retry   = persistent;
     set_state(WIFI_SETUP_STATE_CONNECTING);
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &cfg));
     return esp_wifi_connect();
+}
+
+esp_err_t wifi_setup_connect(const char *ssid, const char *password)
+{
+    return connect_internal(ssid, password, false);
+}
+
+esp_err_t wifi_setup_connect_persistent(const char *ssid, const char *password)
+{
+    return connect_internal(ssid, password, true);
 }
 
 esp_err_t wifi_setup_disconnect(void)
@@ -282,6 +301,7 @@ esp_err_t wifi_setup_disconnect(void)
     if (!s_initialized) return ESP_OK;
     s_ip = 0;
     s_was_ever_connected = false;
+    s_persistent_retry   = false;
     set_state(WIFI_SETUP_STATE_IDLE);
     return esp_wifi_disconnect();
 }
