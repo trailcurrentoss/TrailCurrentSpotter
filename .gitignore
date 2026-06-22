@@ -9,11 +9,14 @@ sdkconfig.old
 
 # .eez-project backups left by one-shot patch scripts
 GUI/*.eez-project.bak*
+GUI/*.eez-project.bak.*
 
-# One-shot patch scripts (tmp/ holds reusable tools like render_pages.py and
-# verify_*.py — see eezstudio skill — but patch_*.py is single-use and should
-# not be committed)
-tmp/patch_*.py
+# All tmp/ directories are local working state — patch scripts, alignment
+# scripts, generators, font conversion. Reusable tooling lives in the
+# eezstudio skill at ~/.claude/skills/eezstudio/, never in the repo.
+tmp/
+GUI/tmp/
+**/tmp/
 
 **/.DS_Store
 **/*.zip

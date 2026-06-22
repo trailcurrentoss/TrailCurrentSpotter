@@ -898,10 +898,10 @@
                     {
                       "objID": "ec1fc4b1-87da-6903-f0cc-b2590ad9d276",
                       "type": "LVGLLabelWidget",
-                      "left": 86,
-                      "top": 120,
-                      "width": 58,
-                      "height": 36,
+                      "left": 93,
+                      "top": 124,
+                      "width": 44,
+                      "height": 27,
                       "customInputs": [],
                       "customOutputs": [],
                       "style": {
@@ -928,7 +928,7 @@
                       "checkedStateType": "literal",
                       "disabledStateType": "literal",
                       "states": "",
-                      "useStyle": "LabelDataValue48",
+                      "useStyle": "LabelDataValue36",
                       "localStyles": {
                         "objID": "964bdef2-9405-d1b3-6866-d1fd6369f6f0",
                         "definition": {
@@ -945,15 +945,15 @@
                       "groupIndex": 0,
                       "text": "--",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "CLIP",
                       "recolor": false
                     },
                     {
                       "objID": "59a4b338-9c47-a74a-db32-5b479230f7a1",
                       "type": "LVGLLabelWidget",
-                      "left": 148,
+                      "left": 141,
                       "top": 124,
-                      "width": 22,
+                      "width": 21,
                       "height": 24,
                       "customInputs": [],
                       "customOutputs": [],
@@ -999,7 +999,7 @@
                       "groupIndex": 0,
                       "text": "%",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "CLIP",
                       "recolor": false
                     },
                     {
@@ -1007,7 +1007,7 @@
                       "type": "LVGLLabelWidget",
                       "left": 96,
                       "top": 178,
-                      "width": 43,
+                      "width": 45,
                       "height": 14,
                       "customInputs": [],
                       "customOutputs": [],
@@ -1052,7 +1052,7 @@
                       "groupIndex": 0,
                       "text": "--",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "CLIP",
                       "recolor": false
                     },
                     {
@@ -1112,9 +1112,9 @@
                     {
                       "objID": "6bb9ef6f-4c3f-4619-b0e6-689e6672fd2a",
                       "type": "LVGLLabelWidget",
-                      "left": 142,
+                      "left": 144,
                       "top": 174,
-                      "width": 17,
+                      "width": 16,
                       "height": 21,
                       "customInputs": [],
                       "customOutputs": [],
@@ -1159,7 +1159,7 @@
                       "groupIndex": 0,
                       "text": "V",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "CLIP",
                       "recolor": false
                     }
                   ],
@@ -1363,9 +1363,9 @@
                         {
                           "objID": "7bdb333b-e49b-1408-ef2b-860b27ec5dd6",
                           "type": "LVGLLabelWidget",
-                          "left": 36,
+                          "left": 35,
                           "top": 12,
-                          "width": 38,
+                          "width": 40,
                           "height": 23,
                           "customInputs": [],
                           "customOutputs": [],
@@ -1414,7 +1414,7 @@
                           "groupIndex": 0,
                           "text": "--",
                           "textType": "literal",
-                          "longMode": "WRAP",
+                          "longMode": "CLIP",
                           "recolor": false
                         },
                         {
@@ -1537,9 +1537,9 @@
                         {
                           "objID": "ffaadb19-8cb8-251e-1467-b82c94c60a95",
                           "type": "LVGLLabelWidget",
-                          "left": 36,
+                          "left": 35,
                           "top": 12,
-                          "width": 38,
+                          "width": 40,
                           "height": 23,
                           "customInputs": [],
                           "customOutputs": [],
@@ -1588,7 +1588,7 @@
                           "groupIndex": 0,
                           "text": "--",
                           "textType": "literal",
-                          "longMode": "WRAP",
+                          "longMode": "CLIP",
                           "recolor": false
                         },
                         {
@@ -1711,9 +1711,9 @@
                         {
                           "objID": "c41fa582-938f-2b5a-ed00-276b1bebb8dc",
                           "type": "LVGLLabelWidget",
-                          "left": 36,
+                          "left": 35,
                           "top": 12,
-                          "width": 38,
+                          "width": 40,
                           "height": 23,
                           "customInputs": [],
                           "customOutputs": [],
@@ -1762,7 +1762,7 @@
                           "groupIndex": 0,
                           "text": "--",
                           "textType": "literal",
-                          "longMode": "WRAP",
+                          "longMode": "CLIP",
                           "recolor": false
                         },
                         {
@@ -1885,9 +1885,9 @@
                         {
                           "objID": "aeab05b0-8553-889f-8f0b-01941d5c1d82",
                           "type": "LVGLLabelWidget",
-                          "left": 36,
+                          "left": 35,
                           "top": 12,
-                          "width": 38,
+                          "width": 40,
                           "height": 23,
                           "customInputs": [],
                           "customOutputs": [],
@@ -1936,7 +1936,7 @@
                           "groupIndex": 0,
                           "text": "--",
                           "textType": "literal",
-                          "longMode": "WRAP",
+                          "longMode": "CLIP",
                           "recolor": false
                         },
                         {
@@ -2059,9 +2059,9 @@
                         {
                           "objID": "5116e05e-e025-6adc-31a8-f23f04cef4cc",
                           "type": "LVGLLabelWidget",
-                          "left": 36,
+                          "left": 35,
                           "top": 12,
-                          "width": 38,
+                          "width": 40,
                           "height": 23,
                           "customInputs": [],
                           "customOutputs": [],
@@ -2110,7 +2110,7 @@
                           "groupIndex": 0,
                           "text": "--",
                           "textType": "literal",
-                          "longMode": "WRAP",
+                          "longMode": "CLIP",
                           "recolor": false
                         },
                         {
@@ -2233,9 +2233,9 @@
                         {
                           "objID": "2b79c2f3-4f14-9603-68fb-73c0c35c69f8",
                           "type": "LVGLLabelWidget",
-                          "left": 36,
+                          "left": 35,
                           "top": 12,
-                          "width": 38,
+                          "width": 40,
                           "height": 23,
                           "customInputs": [],
                           "customOutputs": [],
@@ -2284,7 +2284,7 @@
                           "groupIndex": 0,
                           "text": "--",
                           "textType": "literal",
-                          "longMode": "WRAP",
+                          "longMode": "CLIP",
                           "recolor": false
                         },
                         {
@@ -2748,7 +2748,7 @@
                       "type": "LVGLLabelWidget",
                       "left": 79,
                       "top": 124,
-                      "width": 65,
+                      "width": 66,
                       "height": 27,
                       "customInputs": [],
                       "customOutputs": [],
@@ -2793,15 +2793,15 @@
                       "groupIndex": 0,
                       "text": "--",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "CLIP",
                       "recolor": false
                     },
                     {
                       "objID": "2fc53892-b4ad-b1ff-10c4-256110162f37",
                       "type": "LVGLLabelWidget",
-                      "left": 148,
+                      "left": 149,
                       "top": 124,
-                      "width": 28,
+                      "width": 27,
                       "height": 24,
                       "customInputs": [],
                       "customOutputs": [],
@@ -2847,7 +2847,7 @@
                       "groupIndex": 0,
                       "text": "W",
                       "textType": "literal",
-                      "longMode": "WRAP",
+                      "longMode": "CLIP",
                       "recolor": false
                     },
                     {

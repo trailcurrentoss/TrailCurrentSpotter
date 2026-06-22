@@ -123,9 +123,10 @@ void create_screen_page_drive() {
                             // drive_bat_value
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_bat_value = obj;
-                            lv_obj_set_pos(obj, 86, 120);
-                            lv_obj_set_size(obj, 58, 36);
-                            add_style_label_data_value48(obj);
+                            lv_obj_set_pos(obj, 93, 124);
+                            lv_obj_set_size(obj, 44, 27);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
+                            add_style_label_data_value36(obj);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -135,8 +136,9 @@ void create_screen_page_drive() {
                             // drive_bat_pct_sym
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_bat_pct_sym = obj;
-                            lv_obj_set_pos(obj, 148, 124);
-                            lv_obj_set_size(obj, 22, 24);
+                            lv_obj_set_pos(obj, 141, 124);
+                            lv_obj_set_size(obj, 21, 24);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_default(obj);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -149,7 +151,8 @@ void create_screen_page_drive() {
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_bat_volts = obj;
                             lv_obj_set_pos(obj, 96, 178);
-                            lv_obj_set_size(obj, 43, 14);
+                            lv_obj_set_size(obj, 45, 14);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_data_value18(obj);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -173,8 +176,9 @@ void create_screen_page_drive() {
                             // drive_bat_volts_unit
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_bat_volts_unit = obj;
-                            lv_obj_set_pos(obj, 142, 174);
-                            lv_obj_set_size(obj, 17, 21);
+                            lv_obj_set_pos(obj, 144, 174);
+                            lv_obj_set_size(obj, 16, 21);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             add_style_label_default(obj);
@@ -265,8 +269,9 @@ void create_screen_page_drive() {
                                     // drive_tire_l1_psi
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.drive_tire_l1_psi = obj;
-                                    lv_obj_set_pos(obj, 36, 12);
-                                    lv_obj_set_size(obj, 38, 23);
+                                    lv_obj_set_pos(obj, 35, 12);
+                                    lv_obj_set_size(obj, 40, 23);
+                                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                                     add_style_label_data_value32(obj);
                                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -322,8 +327,9 @@ void create_screen_page_drive() {
                                     // drive_tire_r1_psi
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.drive_tire_r1_psi = obj;
-                                    lv_obj_set_pos(obj, 36, 12);
-                                    lv_obj_set_size(obj, 38, 23);
+                                    lv_obj_set_pos(obj, 35, 12);
+                                    lv_obj_set_size(obj, 40, 23);
+                                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                                     add_style_label_data_value32(obj);
                                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -380,8 +386,9 @@ void create_screen_page_drive() {
                                     // drive_tire_l2_psi
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.drive_tire_l2_psi = obj;
-                                    lv_obj_set_pos(obj, 36, 12);
-                                    lv_obj_set_size(obj, 38, 23);
+                                    lv_obj_set_pos(obj, 35, 12);
+                                    lv_obj_set_size(obj, 40, 23);
+                                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                                     add_style_label_data_value32(obj);
                                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -438,8 +445,9 @@ void create_screen_page_drive() {
                                     // drive_tire_r2_psi
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.drive_tire_r2_psi = obj;
-                                    lv_obj_set_pos(obj, 36, 12);
-                                    lv_obj_set_size(obj, 38, 23);
+                                    lv_obj_set_pos(obj, 35, 12);
+                                    lv_obj_set_size(obj, 40, 23);
+                                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                                     add_style_label_data_value32(obj);
                                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -496,8 +504,9 @@ void create_screen_page_drive() {
                                     // drive_tire_l3_psi
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.drive_tire_l3_psi = obj;
-                                    lv_obj_set_pos(obj, 36, 12);
-                                    lv_obj_set_size(obj, 38, 23);
+                                    lv_obj_set_pos(obj, 35, 12);
+                                    lv_obj_set_size(obj, 40, 23);
+                                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                                     add_style_label_data_value32(obj);
                                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -554,8 +563,9 @@ void create_screen_page_drive() {
                                     // drive_tire_r3_psi
                                     lv_obj_t *obj = lv_label_create(parent_obj);
                                     objects.drive_tire_r3_psi = obj;
-                                    lv_obj_set_pos(obj, 36, 12);
-                                    lv_obj_set_size(obj, 38, 23);
+                                    lv_obj_set_pos(obj, 35, 12);
+                                    lv_obj_set_size(obj, 40, 23);
+                                    lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                                     add_style_label_data_value32(obj);
                                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -707,7 +717,8 @@ void create_screen_page_drive() {
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_solar_value = obj;
                             lv_obj_set_pos(obj, 79, 124);
-                            lv_obj_set_size(obj, 65, 27);
+                            lv_obj_set_size(obj, 66, 27);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_data_value36(obj);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -718,8 +729,9 @@ void create_screen_page_drive() {
                             // drive_solar_unit_sym
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.drive_solar_unit_sym = obj;
-                            lv_obj_set_pos(obj, 148, 124);
-                            lv_obj_set_size(obj, 28, 24);
+                            lv_obj_set_pos(obj, 149, 124);
+                            lv_obj_set_size(obj, 27, 24);
+                            lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
                             add_style_label_default(obj);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_22, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
