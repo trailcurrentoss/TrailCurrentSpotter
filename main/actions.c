@@ -658,6 +658,50 @@ void action_volume_changed(lv_event_t *e) { (void)e; }
 void spotter_paint_volume(void)            { }
 #endif
 
+/* Backlight brightness slider on PageSetup. The slider is authored in the
+ * .eez-project at range 10..100 (%); the backlight HAL takes 0..255. Map
+ * 10..100% -> 25..255 so the lowest slider value still leaves the screen
+ * visible (slider=0 would turn the panel off via the IO extender). */
+extern void set_backlight(uint8_t brightness);
+extern uint8_t get_backlight(void);
+
+static inline uint8_t brightness_pct_to_bl(int pct)
+{
+    if (pct < 10)  pct = 10;
+    if (pct > 100) pct = 100;
+    return (uint8_t)((pct * 255) / 100);
+}
+
+void action_brightness_changed(lv_event_t *e)
+{
+    lv_obj_t *t = (lv_obj_t *)lv_event_get_target(e);
+    if (!t) return;
+    int pct = (int)lv_slider_get_value(t);
+    set_backlight(brightness_pct_to_bl(pct));
+    if (objects.setup_brightness_value) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%d%%", pct);
+        lv_label_set_text(objects.setup_brightness_value, buf);
+    }
+    set_var_user_settings_changed(true);
+}
+
+void spotter_paint_brightness(void)
+{
+    uint8_t bl = get_backlight();
+    int pct = (bl * 100 + 127) / 255;          /* round to nearest */
+    if (pct < 10)  pct = 10;
+    if (pct > 100) pct = 100;
+    if (objects.setup_brightness_slider) {
+        lv_slider_set_value(objects.setup_brightness_slider, pct, LV_ANIM_OFF);
+    }
+    if (objects.setup_brightness_value) {
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%d%%", pct);
+        lv_label_set_text(objects.setup_brightness_value, buf);
+    }
+}
+
 /* ============================================================================
  * Switchback relay-output ("device") actions — userData = 0..23 maps to
  * MQTT channel 1..24 (i.e. device idx 0 = local/relays/1/status).

@@ -256,6 +256,11 @@ static void restore_user_settings(void)
     nvs_get_u8(nvs, "onWhileDriving", &keep_on);
     set_var_keep_screen_on_while_driving(keep_on != 0);
 
+    uint8_t brightness = 0;
+    if (nvs_get_u8(nvs, "brightness", &brightness) == ESP_OK && brightness > 0) {
+        set_backlight(brightness);
+    }
+
     char tz[100] = {0};
     size_t tz_len = sizeof(tz);
     if (nvs_get_str(nvs, "timeZone", tz, &tz_len) == ESP_OK) {
@@ -280,6 +285,7 @@ static void persist_user_settings(void)
     nvs_set_i32(nvs, "selectedTheme", get_var_selected_theme());
     nvs_set_i32(nvs, "screenTimeout", get_var_screen_timeout_value());
     nvs_set_u8(nvs, "onWhileDriving", get_var_keep_screen_on_while_driving() ? 1 : 0);
+    nvs_set_u8(nvs, "brightness", get_backlight());
     nvs_set_str(nvs, "timeZone", get_var_current_time_zone_string());
     nvs_commit(nvs);
     nvs_close(nvs);
@@ -566,6 +572,7 @@ extern void spotter_set_active_tab(int index);
 extern void spotter_apply_axle_count(int axles);
 extern void spotter_paint_placeholders(void);
 extern void spotter_paint_volume(void);
+extern void spotter_paint_brightness(void);
 
 #include "app_state.h"
 #include "pendant_config.h"
@@ -652,8 +659,11 @@ void app_main(void)
     /* Reflect persisted chime volume into the Setup slider + "NN%" label. */
     spotter_paint_volume();
 
-    /* Restore user settings */
+    /* Restore user settings (loads brightness from NVS via set_backlight) */
     restore_user_settings();
+
+    /* Reflect the restored brightness into the Setup slider + "NN%" label. */
+    spotter_paint_brightness();
     ESP_LOGI(TAG, "Spotter firmware version %s", CURRENT_VERSION);
 
     /* MQTT client config (loaded but not connected — happens after WiFi). */

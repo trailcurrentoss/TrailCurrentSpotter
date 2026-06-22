@@ -42,6 +42,7 @@ extern void action_toggle_device_alarm(lv_event_t * e);
 extern void action_toggle_device_invert(lv_event_t * e);
 extern void action_open_rename_device(lv_event_t * e);
 extern void action_volume_changed(lv_event_t * e);
+extern void action_brightness_changed(lv_event_t * e);
 
 
 #ifdef __cplusplus

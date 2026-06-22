@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/2",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
@@ -202,10 +202,10 @@
                 {
                   "type": "tab",
                   "id": "#2c4c8c23-38a7-4ea6-b967-44d788b092d2",
-                  "name": "PageDrive",
+                  "name": "PageSetup",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/2",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -1018,8 +1018,7 @@
         "0": {
           "0": {},
           "1": {
-            "0": {},
-            "2": {}
+            "$selected": true
           },
           "2": {}
         }
@@ -1095,14 +1094,8 @@
           "0": {},
           "1": {
             "0": {},
-            "1": {
-              "0": {},
-              "2": {
-                "2": {}
-              },
-              "3": {
-                "2": {}
-              }
+            "17": {
+              "$selected": true
             }
           }
         }
