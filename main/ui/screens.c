@@ -94,7 +94,7 @@ void create_screen_page_drive() {
                             objects.drive_bat_arc = obj;
                             lv_obj_set_pos(obj, 16, 36);
                             lv_obj_set_size(obj, 210, 210);
-                            lv_arc_set_value(obj, 87);
+                            lv_arc_set_value(obj, 0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                             add_style_arc_default(obj);
@@ -130,7 +130,7 @@ void create_screen_page_drive() {
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "87");
+                            lv_label_set_text(obj, "--");
                         }
                         {
                             // drive_bat_pct_sym
@@ -156,7 +156,7 @@ void create_screen_page_drive() {
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "12.9 V");
+                            lv_label_set_text(obj, "-- V");
                         }
                         {
                             // drive_bat_remain
@@ -169,7 +169,7 @@ void create_screen_page_drive() {
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][11]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "13h 40m left");
+                            lv_label_set_text(obj, "-- left");
                         }
                     }
                 }
@@ -265,7 +265,7 @@ void create_screen_page_drive() {
                                     lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                                    lv_label_set_text(obj, "65");
+                                    lv_label_set_text(obj, "--");
                                 }
                                 {
                                     // drive_tire_l1_lbl
@@ -323,7 +323,7 @@ void create_screen_page_drive() {
                                     lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                                     lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                                    lv_label_set_text(obj, "65");
+                                    lv_label_set_text(obj, "--");
                                 }
                                 {
                                     // drive_tire_r1_lbl
@@ -660,7 +660,7 @@ void create_screen_page_drive() {
                             objects.drive_solar_arc = obj;
                             lv_obj_set_pos(obj, 20, 36);
                             lv_obj_set_size(obj, 210, 210);
-                            lv_arc_set_value(obj, 70);
+                            lv_arc_set_value(obj, 0);
                             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLLABLE|LV_OBJ_FLAG_SCROLL_CHAIN_HOR|LV_OBJ_FLAG_SCROLL_CHAIN_VER);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                             add_style_arc_default(obj);
@@ -708,7 +708,7 @@ void create_screen_page_drive() {
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "410");
+                            lv_label_set_text(obj, "--");
                         }
                         {
                             // drive_solar_unit_sym
@@ -747,7 +747,7 @@ void create_screen_page_drive() {
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][12]), LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                            lv_label_set_text(obj, "70% of capacity");
+                            lv_label_set_text(obj, "No data");
                         }
                     }
                 }
@@ -5759,7 +5759,7 @@ void create_screen_page_setup() {
                     // setup_info_banner
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.setup_info_banner = obj;
-                    lv_obj_set_pos(obj, 14, 458);
+                    lv_obj_set_pos(obj, 14, 554);
                     lv_obj_set_size(obj, 772, 40);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                     lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
@@ -5807,7 +5807,7 @@ void create_screen_page_setup() {
                     // setup_reset_conn_title
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.setup_reset_conn_title = obj;
-                    lv_obj_set_pos(obj, 14, 734);
+                    lv_obj_set_pos(obj, 14, 830);
                     lv_obj_set_size(obj, 772, 18);
                     add_style_label_default(obj);
                     lv_obj_set_style_text_font(obj, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -5824,7 +5824,7 @@ void create_screen_page_setup() {
                     // setup_reset_conn_btn
                     lv_obj_t *obj = lv_btn_create(parent_obj);
                     objects.setup_reset_conn_btn = obj;
-                    lv_obj_set_pos(obj, 14, 762);
+                    lv_obj_set_pos(obj, 14, 858);
                     lv_obj_set_size(obj, 772, 56);
                     lv_obj_add_event_cb(obj, action_clear_connection, LV_EVENT_CLICKED, (void *)0);
                     add_style_style_button_default(obj);
@@ -5863,7 +5863,7 @@ void create_screen_page_setup() {
                     // setup_alarm_timing_title
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.setup_alarm_timing_title = obj;
-                    lv_obj_set_pos(obj, 14, 518);
+                    lv_obj_set_pos(obj, 14, 614);
                     lv_obj_set_size(obj, 772, 18);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -5876,7 +5876,7 @@ void create_screen_page_setup() {
                     // setup_alarm_snooze_row
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.setup_alarm_snooze_row = obj;
-                    lv_obj_set_pos(obj, 14, 546);
+                    lv_obj_set_pos(obj, 14, 642);
                     lv_obj_set_size(obj, 772, 60);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
@@ -5930,7 +5930,7 @@ void create_screen_page_setup() {
                     // setup_audio_title
                     lv_obj_t *obj = lv_label_create(parent_obj);
                     objects.setup_audio_title = obj;
-                    lv_obj_set_pos(obj, 14, 626);
+                    lv_obj_set_pos(obj, 14, 722);
                     lv_obj_set_size(obj, 772, 18);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -5943,7 +5943,7 @@ void create_screen_page_setup() {
                     // setup_volume_row
                     lv_obj_t *obj = lv_obj_create(parent_obj);
                     objects.setup_volume_row = obj;
-                    lv_obj_set_pos(obj, 14, 654);
+                    lv_obj_set_pos(obj, 14, 750);
                     lv_obj_set_size(obj, 772, 60);
                     lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
                     lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE|LV_OBJ_FLAG_SCROLLABLE);
@@ -6046,6 +6046,31 @@ void create_screen_page_setup() {
                         }
                     }
                 }
+                {
+                    // setup_timezone_title
+                    lv_obj_t *obj = lv_label_create(parent_obj);
+                    objects.setup_timezone_title = obj;
+                    lv_obj_set_pos(obj, 14, 454);
+                    lv_obj_set_size(obj, 772, 18);
+                    lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_ON_FOCUS|LV_OBJ_FLAG_CLICKABLE);
+                    lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+                    add_style_label_default(obj);
+                    lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][0]), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_font(obj, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_label_set_text(obj, "TIME ZONE");
+                }
+                {
+                    // setup_timezone_dropdown
+                    lv_obj_t *obj = lv_dropdown_create(parent_obj);
+                    objects.setup_timezone_dropdown = obj;
+                    lv_obj_set_pos(obj, 14, 482);
+                    lv_obj_set_size(obj, 772, 50);
+                    lv_dropdown_set_options(obj, "Alaska\nChicago, Illinois\nDenver, Colorado\nHawaii\nLos Angeles\nNew York\nPhoenix");
+                    lv_dropdown_set_dir(obj, LV_DIR_TOP);
+                    lv_dropdown_set_symbol(obj, LV_SYMBOL_UP);
+                    lv_dropdown_set_selected(obj, 5);
+                    lv_obj_add_event_cb(obj, action_timezone_change, LV_EVENT_VALUE_CHANGED, (void *)0);
+                }
             }
         }
         {
@@ -6060,7 +6085,7 @@ void create_screen_page_setup() {
             lv_obj_set_style_pad_bottom(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_bg_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-            create_user_widget_bottom_tab_bar(obj, 447);
+            create_user_widget_bottom_tab_bar(obj, 449);
         }
     }
     
@@ -6069,7 +6094,7 @@ void create_screen_page_setup() {
 
 void tick_screen_page_setup() {
     tick_user_widget_top_status_bar(386);
-    tick_user_widget_bottom_tab_bar(447);
+    tick_user_widget_bottom_tab_bar(449);
 }
 
 void create_screen_page_wifi_setup() {
@@ -8687,7 +8712,7 @@ void create_user_widget_top_status_bar(lv_obj_t *parent_obj, int startWidgetInde
                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_label_set_text(obj, "TANDEM | Linked");
+                    lv_label_set_text(obj, "SINGLE | Offline");
                 }
                 {
                     // status_signal_left
@@ -8724,7 +8749,7 @@ void create_user_widget_top_status_bar(lv_obj_t *parent_obj, int startWidgetInde
                     lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[active_theme_index][9]), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_align(obj, LV_ALIGN_TOP_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_label_set_text(obj, "0");
+                    lv_label_set_text(obj, "--");
                 }
                 {
                     // status_speed_unit
@@ -9483,6 +9508,8 @@ void change_color_theme(uint32_t theme_index) {
     
     lv_obj_set_style_text_color(objects.setup_audio_title, lv_color_hex(theme_colors[theme_index][0]), LV_PART_MAIN | LV_STATE_DEFAULT);
     
+    lv_obj_set_style_text_color(objects.setup_timezone_title, lv_color_hex(theme_colors[theme_index][0]), LV_PART_MAIN | LV_STATE_DEFAULT);
+    
     lv_obj_set_style_bg_color(objects.wifi_header, lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
     
     lv_obj_set_style_border_color(objects.wifi_header, lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -9888,7 +9915,7 @@ void change_color_theme(uint32_t theme_index) {
     }
     
     {
-        int startWidgetIndex = 447;
+        int startWidgetIndex = 449;
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_border_color(((lv_obj_t **)&objects)[startWidgetIndex + 0], lv_color_hex(theme_colors[theme_index][10]), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_obj_set_style_bg_color(((lv_obj_t **)&objects)[startWidgetIndex + 1], lv_color_hex(theme_colors[theme_index][2]), LV_PART_MAIN | LV_STATE_DEFAULT);

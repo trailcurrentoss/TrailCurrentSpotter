@@ -135,10 +135,19 @@ void action_keep_on_while_driving_changed(lv_event_t *e)
     (void)e;
 }
 
+/* Defined in main.c — applies the POSIX TZ string for `idx` and repaints
+ * the top-toolbar clock. */
+extern void    clock_set_timezone_index(int32_t idx);
+extern int32_t clock_get_timezone_count(void);
+
 void action_timezone_change(lv_event_t *e)
 {
-    /* Dropdown widget is gone; no-op until re-added to the new Setup screen. */
     (void)e;
+    if (!objects.setup_timezone_dropdown) return;
+    uint16_t idx = lv_dropdown_get_selected(objects.setup_timezone_dropdown);
+    if ((int32_t)idx >= clock_get_timezone_count()) return;
+    clock_set_timezone_index((int32_t)idx);
+    set_var_user_settings_changed(true);
 }
 
 /* ============================================================================
@@ -250,6 +259,17 @@ void spotter_paint_placeholders(void)
     };
     for (size_t i = 0; i < sizeof(speeds)/sizeof(*speeds); i++) {
         if (speeds[i]) lv_label_set_text(speeds[i], "--");
+    }
+
+    /* Top status bar clock — same three-instance fan-out, until Bearing
+     * delivers a UTC datetime via MQTT local/gps/time. */
+    lv_obj_t *times[] = {
+        objects.drive_status_bar__status_time,
+        objects.alarms_status_bar__status_time,
+        objects.setup_status_bar__status_time,
+    };
+    for (size_t i = 0; i < sizeof(times)/sizeof(*times); i++) {
+        if (times[i]) lv_label_set_text(times[i], "--:--");
     }
 }
 

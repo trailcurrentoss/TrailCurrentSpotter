@@ -1,4 +1,8 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
@@ -236,6 +240,10 @@ static void handle_screen_timeout(void)
  * ============================================================================ */
 #define USER_SETTINGS_NVS_NAMESPACE "user_settings"
 
+/* Defined below in the Clock section but called from restore_user_settings. */
+void    clock_set_timezone_index(int32_t idx);
+int32_t clock_get_timezone_index(void);
+
 static void restore_user_settings(void)
 {
     nvs_handle_t nvs;
@@ -261,19 +269,130 @@ static void restore_user_settings(void)
         set_backlight(brightness);
     }
 
-    char tz[100] = {0};
-    size_t tz_len = sizeof(tz);
-    if (nvs_get_str(nvs, "timeZone", tz, &tz_len) == ESP_OK) {
-        set_var_current_time_zone_string(tz);
+    int32_t tz_idx = 5;  /* New York */
+    nvs_get_i32(nvs, "tzIndex", &tz_idx);
+    clock_set_timezone_index(tz_idx);
+    if (objects.setup_timezone_dropdown) {
+        lv_dropdown_set_selected(objects.setup_timezone_dropdown, (uint16_t)tz_idx);
     }
-
-    /* Old timezone dropdown widget is gone from the new GUI; the underlying TZ
-     * string is still applied via setenv(). Re-add a dropdown to PageSetup if
-     * the timezone selector is needed in the new UI. */
 
     nvs_close(nvs);
     ESP_LOGI(TAG, "User settings restored (theme=%d, timeout=%d)", (int)theme, (int)timeout);
 }
+
+/* ============================================================================
+ * Clock — POSIX TZ + system time from Bearing (via MQTT local/gps/time)
+ * ============================================================================
+ * Pattern lifted from Milepost (which drives the same clock off CAN frame
+ * 0x06). On Spotter the UTC datetime arrives over MQTT instead of CAN, but
+ * everything downstream — system-time seeding, POSIX TZ application, the
+ * 1 Hz display tick — is identical.
+ *
+ * The dropdown options in PageSetup mirror this array (same order):
+ *   "Alaska / Chicago, Illinois / Denver, Colorado / Hawaii /
+ *    Los Angeles / New York / Phoenix" */
+static const char *TIMEZONE_POSIX[] = {
+    "AKST9AKDT,M3.2.0/2:00:00,M11.1.0/2:00:00",  /* 0 Alaska */
+    "CST6CDT,M3.2.0/2:00:00,M11.1.0/2:00:00",    /* 1 Chicago */
+    "MST7MDT,M3.2.0/2:00:00,M11.1.0/2:00:00",    /* 2 Denver */
+    "HST10",                                      /* 3 Hawaii (no DST) */
+    "PST8PDT,M3.2.0/2:00:00,M11.1.0/2:00:00",    /* 4 Los Angeles */
+    "EST5EDT,M3.2.0/2:00:00,M11.1.0/2:00:00",    /* 5 New York */
+    "MST7",                                       /* 6 Phoenix (no DST) */
+};
+#define TIMEZONE_COUNT (sizeof(TIMEZONE_POSIX) / sizeof(TIMEZONE_POSIX[0]))
+
+static int32_t s_tz_index = 5;         /* New York default */
+static bool    s_system_time_set = false;
+static int     s_last_clock_min  = -1;
+
+static void clock_apply_user_tz(void)
+{
+    int idx = s_tz_index;
+    if (idx < 0 || idx >= (int)TIMEZONE_COUNT) idx = 5;
+    setenv("TZ", TIMEZONE_POSIX[idx], 1);
+    tzset();
+    set_var_current_time_zone_string(TIMEZONE_POSIX[idx]);
+}
+
+/* Push HH:MM AM/PM into all three TopStatusBar instances. Memoizes on
+ * the minute so unchanged ticks are no-ops. */
+static void clock_update_toolbar(bool force)
+{
+    if (!s_system_time_set) return;
+
+    time_t now;
+    time(&now);
+    struct tm ti;
+    localtime_r(&now, &ti);
+
+    if (!force && ti.tm_min == s_last_clock_min) return;
+    s_last_clock_min = ti.tm_min;
+
+    int h12 = ti.tm_hour % 12;
+    if (h12 == 0) h12 = 12;
+    char buf[12];
+    snprintf(buf, sizeof(buf), "%d:%02d %s",
+             h12, ti.tm_min, ti.tm_hour >= 12 ? "PM" : "AM");
+
+    lv_obj_t *labels[] = {
+        objects.drive_status_bar__status_time,
+        objects.alarms_status_bar__status_time,
+        objects.setup_status_bar__status_time,
+    };
+    for (size_t i = 0; i < sizeof(labels) / sizeof(*labels); i++) {
+        if (labels[i]) lv_label_set_text(labels[i], buf);
+    }
+}
+
+/* Called from vars.c whenever Bearing's UTC datetime lands. ISO format:
+ * "YYYY-MM-DD HH:MM:SS". First call seeds the clock with settimeofday();
+ * later calls re-sync only on drift > 2 s to avoid 1 Hz GNSS yank-back. */
+void spotter_clock_set_from_iso_utc(const char *iso_utc)
+{
+    if (!iso_utc || !*iso_utc) return;
+
+    struct tm tm_utc = {0};
+    if (strptime(iso_utc, "%Y-%m-%d %H:%M:%S", &tm_utc) == NULL) return;
+
+    /* Reject pre-fix garbage (GNSS pre-lock: 1970/2000/etc.) */
+    int year = tm_utc.tm_year + 1900;
+    if (year < 2025 || year > 2099) return;
+
+    setenv("TZ", "UTC0", 1);
+    tzset();
+    tm_utc.tm_isdst = 0;
+    time_t gnss_epoch = mktime(&tm_utc);
+    /* Restore the user's TZ regardless of what happens next */
+    clock_apply_user_tz();
+    if (gnss_epoch <= 0) return;
+
+    if (s_system_time_set) {
+        time_t now;
+        time(&now);
+        time_t diff = gnss_epoch > now ? gnss_epoch - now : now - gnss_epoch;
+        if (diff <= 2) return;
+    }
+
+    struct timeval tv = { .tv_sec = gnss_epoch, .tv_usec = 0 };
+    settimeofday(&tv, NULL);
+    s_system_time_set = true;
+    s_last_clock_min = -1;
+    clock_update_toolbar(true);
+}
+
+/* Public entry points so actions.c can drive TZ changes. */
+void clock_set_timezone_index(int32_t idx)
+{
+    if (idx < 0 || idx >= (int)TIMEZONE_COUNT) return;
+    s_tz_index = idx;
+    clock_apply_user_tz();
+    s_last_clock_min = -1;
+    clock_update_toolbar(true);
+}
+
+int32_t clock_get_timezone_index(void) { return s_tz_index; }
+int32_t clock_get_timezone_count(void) { return (int32_t)TIMEZONE_COUNT; }
 
 static void persist_user_settings(void)
 {
@@ -286,7 +405,7 @@ static void persist_user_settings(void)
     nvs_set_i32(nvs, "screenTimeout", get_var_screen_timeout_value());
     nvs_set_u8(nvs, "onWhileDriving", get_var_keep_screen_on_while_driving() ? 1 : 0);
     nvs_set_u8(nvs, "brightness", get_backlight());
-    nvs_set_str(nvs, "timeZone", get_var_current_time_zone_string());
+    nvs_set_i32(nvs, "tzIndex", clock_get_timezone_index());
     nvs_commit(nvs);
     nvs_close(nvs);
 
@@ -728,6 +847,14 @@ void app_main(void)
         if (now - warning_check_time >= 33) {
             update_warning_indicators();
             warning_check_time = now;
+        }
+
+        /* Top-toolbar clock — minute-resolution display, polled at 0.5 Hz
+         * so the rollover from XX:59 to XX:00 doesn't lag more than a tick. */
+        static uint32_t clock_tick_ms = 0;
+        if (now - clock_tick_ms >= 2000) {
+            clock_update_toolbar(false);
+            clock_tick_ms = now;
         }
 
         vTaskDelay(pdMS_TO_TICKS(5));

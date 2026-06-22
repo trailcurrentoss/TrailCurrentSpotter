@@ -454,6 +454,8 @@ typedef struct _objects_t {
     lv_obj_t *setup_brightness_name;
     lv_obj_t *setup_brightness_value;
     lv_obj_t *setup_brightness_slider;
+    lv_obj_t *setup_timezone_title;
+    lv_obj_t *setup_timezone_dropdown;
     lv_obj_t *setup_dock;
     lv_obj_t *setup_dock__root;
     lv_obj_t *setup_dock__dock_btn_drive;

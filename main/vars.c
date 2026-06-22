@@ -7,32 +7,9 @@
 #include "ui/vars.h"
 #include "ui/styles.h"
 
-static char date_time_utc[100] = {0};
-static char date_time_local[100] = {0};
-
-/* Portable timegm() replacement */
-static time_t my_timegm(struct tm *tm)
-{
-    char *old_tz = getenv("TZ");
-    char *saved_tz = NULL;
-
-    if (old_tz) {
-        saved_tz = strdup(old_tz);
-    }
-    setenv("TZ", "UTC0", 1);
-    tzset();
-    tm->tm_isdst = 0;
-
-    time_t t = mktime(tm);
-
-    setenv("TZ", get_var_current_time_zone_string(), 1);
-    tzset();
-
-    if (saved_tz) {
-        free(saved_tz);
-    }
-    return t;
-}
+/* Defined in main.c — seeds the system clock from a Bearing UTC string and
+ * triggers the top-toolbar clock to repaint. */
+extern void spotter_clock_set_from_iso_utc(const char *iso_utc);
 
 /* --- Solar --- */
 
@@ -199,23 +176,18 @@ void set_var_current_longitude(float value) {
     /* widget removed in new GUI */
 }
 
-/* --- Date/Time --- */
+/* --- Date/Time ---
+ * Value arrives as a UTC ISO string ("YYYY-MM-DD HH:MM:SS") from Bearing
+ * via MQTT topic local/gps/time. The clock module in main.c owns the
+ * system time and the user-selected POSIX timezone; we just relay. */
 
 static char current_date_time[100] = {0};
 const char *get_var_current_date_time(void) { return current_date_time; }
 void set_var_current_date_time(const char *value) {
-    strncpy(date_time_utc, value, sizeof(date_time_utc) - 1);
-    date_time_utc[sizeof(date_time_utc) - 1] = '\0';
-
-    struct tm tm_utc = {0};
-    if (strptime(date_time_utc, "%Y-%m-%d %H:%M:%S", &tm_utc) != NULL) {
-        time_t t_utc = my_timegm(&tm_utc);
-        struct tm *tm_local = localtime(&t_utc);
-        strftime(date_time_local, sizeof(date_time_local),
-                 "%m/%d/%Y %I:%M %p", tm_local);
-    } else {
-        date_time_local[0] = '\0';
-    }
+    if (!value) return;
+    strncpy(current_date_time, value, sizeof(current_date_time) - 1);
+    current_date_time[sizeof(current_date_time) - 1] = '\0';
+    spotter_clock_set_from_iso_utc(current_date_time);
 }
 
 /* --- Temperature & Humidity --- */
