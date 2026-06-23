@@ -44,7 +44,10 @@ enum FlowGlobalVariables {
     FLOW_GLOBAL_VARIABLE_WIFI_SSID = 26,
     FLOW_GLOBAL_VARIABLE_SERVER_URL = 27,
     FLOW_GLOBAL_VARIABLE_API_KEY_CONFIGURED = 28,
-    FLOW_GLOBAL_VARIABLE_CONNECTION_STATUS_TEXT = 29
+    FLOW_GLOBAL_VARIABLE_CONNECTION_STATUS_TEXT = 29,
+    FLOW_GLOBAL_VARIABLE_BATTERY_METER_ENABLED = 30,
+    FLOW_GLOBAL_VARIABLE_BATTERY_PERCENT = 31,
+    FLOW_GLOBAL_VARIABLE_BATTERY_CHARGING = 32
 };
 
 // Native global variables
@@ -109,6 +112,12 @@ extern bool get_var_api_key_configured();
 extern void set_var_api_key_configured(bool value);
 extern const char *get_var_connection_status_text();
 extern void set_var_connection_status_text(const char *value);
+extern bool get_var_battery_meter_enabled();
+extern void set_var_battery_meter_enabled(bool value);
+extern int32_t get_var_battery_percent();
+extern void set_var_battery_percent(int32_t value);
+extern bool get_var_battery_charging();
+extern void set_var_battery_charging(bool value);
 
 
 #ifdef __cplusplus

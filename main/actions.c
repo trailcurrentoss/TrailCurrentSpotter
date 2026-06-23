@@ -815,6 +815,138 @@ void spotter_paint_brightness(void)
 }
 
 /* ============================================================================
+ * Battery meter — optional top-bar gauge showing onboard Li-ion SOC.
+ *
+ * Hardware path (per board schematic): VBAT -> 20k/10k divider -> EXIO_ADC pin
+ * on the U10 I/O-expander MCU, exposed to the ESP32-S3 over I2C. A separate
+ * task (TBD) reads U10's ADC, converts to %, and calls spotter_battery_set_state.
+ *
+ * For now the gauge widget stays hidden by default and, when enabled, shows
+ * "--%" until that hardware reader lands.
+ *
+ * Charging-state icon:  (bolt) when charging,  (battery-full)
+ * otherwise. The CS8501 charger's CHRG/STDBY pins aren't wired to the ESP32,
+ * so charging is inferred elsewhere (USB-VBUS sense or rising-voltage trend);
+ * spotter_battery_set_state() takes the flag from the caller.
+ * ============================================================================ */
+static bool    s_battery_meter_enabled = false;
+static uint8_t s_battery_percent       = 0;     /* 0 means "no reading yet" */
+static bool    s_battery_charging      = false;
+static bool    s_battery_have_reading  = false;
+
+#define BATTERY_ICON_DISCHARGING "\xEF\x89\x80"   /* U+F240 battery-full */
+#define BATTERY_ICON_CHARGING    "\xEF\x83\xA7"   /* U+F0E7 bolt        */
+
+static void apply_battery_meter_visibility(bool show)
+{
+    lv_obj_t *icons[] = {
+        objects.drive_status_bar__status_battery_icon,
+        objects.alarms_status_bar__status_battery_icon,
+        objects.setup_status_bar__status_battery_icon,
+    };
+    lv_obj_t *vals[] = {
+        objects.drive_status_bar__status_battery_value,
+        objects.alarms_status_bar__status_battery_value,
+        objects.setup_status_bar__status_battery_value,
+    };
+    for (size_t i = 0; i < sizeof(icons)/sizeof(*icons); i++) {
+        if (icons[i]) {
+            if (show) lv_obj_clear_flag(icons[i], LV_OBJ_FLAG_HIDDEN);
+            else      lv_obj_add_flag  (icons[i], LV_OBJ_FLAG_HIDDEN);
+        }
+        if (vals[i]) {
+            if (show) lv_obj_clear_flag(vals[i], LV_OBJ_FLAG_HIDDEN);
+            else      lv_obj_add_flag  (vals[i], LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+}
+
+static void apply_battery_state(void)
+{
+    const char *icon = s_battery_charging ? BATTERY_ICON_CHARGING
+                                          : BATTERY_ICON_DISCHARGING;
+    lv_obj_t *icons[] = {
+        objects.drive_status_bar__status_battery_icon,
+        objects.alarms_status_bar__status_battery_icon,
+        objects.setup_status_bar__status_battery_icon,
+    };
+    for (size_t i = 0; i < sizeof(icons)/sizeof(*icons); i++) {
+        if (icons[i]) lv_label_set_text(icons[i], icon);
+    }
+
+    /* Placeholder char-count matches the "85%" hero (3 chars) so the
+     * right-anchored label sits in the same slot whether or not a reading
+     * has arrived. */
+    char buf[8];
+    if (s_battery_have_reading) {
+        snprintf(buf, sizeof(buf), "%u%%", (unsigned)s_battery_percent);
+    } else {
+        snprintf(buf, sizeof(buf), "--%%");
+    }
+    lv_obj_t *vals[] = {
+        objects.drive_status_bar__status_battery_value,
+        objects.alarms_status_bar__status_battery_value,
+        objects.setup_status_bar__status_battery_value,
+    };
+    for (size_t i = 0; i < sizeof(vals)/sizeof(*vals); i++) {
+        if (vals[i]) lv_label_set_text(vals[i], buf);
+    }
+}
+
+/* Called from main.c after restore_user_settings reads the persisted on/off
+ * flag from NVS. Paints the initial visibility + placeholder text and syncs
+ * the Setup-page switch. */
+void spotter_paint_battery_meter(void);
+void spotter_paint_battery_meter(void)
+{
+    if (objects.setup_battery_meter_sw) {
+        if (s_battery_meter_enabled) lv_obj_add_state  (objects.setup_battery_meter_sw, LV_STATE_CHECKED);
+        else                         lv_obj_clear_state(objects.setup_battery_meter_sw, LV_STATE_CHECKED);
+    }
+    apply_battery_state();
+    apply_battery_meter_visibility(s_battery_meter_enabled);
+}
+
+/* main.c reads the NVS-restored value and writes it here. */
+void spotter_battery_meter_set_enabled(bool enabled);
+void spotter_battery_meter_set_enabled(bool enabled)
+{
+    s_battery_meter_enabled = enabled;
+    set_var_battery_meter_enabled(enabled);
+}
+
+bool spotter_battery_meter_get_enabled(void);
+bool spotter_battery_meter_get_enabled(void) { return s_battery_meter_enabled; }
+
+/* Hardware reader entry point — call from an I2C task once U10's ADC is wired.
+ * `pct` clamped to 0..100; `charging` derived from USB-VBUS sense or voltage
+ * trend. Repaints regardless of meter on/off state so toggling on later shows
+ * fresh numbers. */
+void spotter_battery_set_state(uint8_t pct, bool charging);
+void spotter_battery_set_state(uint8_t pct, bool charging)
+{
+    if (pct > 100) pct = 100;
+    s_battery_percent      = pct;
+    s_battery_charging     = charging;
+    s_battery_have_reading = true;
+    set_var_battery_percent((int32_t)pct);
+    set_var_battery_charging(charging);
+    apply_battery_state();
+}
+
+void action_toggle_battery_meter(lv_event_t *e)
+{
+    (void)e;
+    if (!objects.setup_battery_meter_sw) return;
+    bool on = lv_obj_has_state(objects.setup_battery_meter_sw, LV_STATE_CHECKED);
+    s_battery_meter_enabled = on;
+    set_var_battery_meter_enabled(on);
+    apply_battery_meter_visibility(on);
+    set_var_user_settings_changed(true);
+    ESP_LOGI(TAG, "Battery meter = %s", on ? "on" : "off");
+}
+
+/* ============================================================================
  * Switchback relay-output ("device") actions — userData = 0..23 maps to
  * MQTT channel 1..24 (i.e. device idx 0 = local/relays/1/status).
  * Logic lives in device_alarms.c.

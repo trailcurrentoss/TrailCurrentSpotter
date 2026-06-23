@@ -97,6 +97,173 @@ static esp_err_t io_ext_write_reg(uint8_t reg, uint8_t val)
     return i2c_master_transmit(io_ext_dev, buf, 2, 100);
 }
 
+/* Read a 16-bit word from the CH422G-family expander.
+ *
+ * Two-phase I2C transaction: write the 1-byte register address, then read
+ * 2 bytes back. Little-endian per the Waveshare reference firmware
+ * (DOCS/.../examples/esp-idf/07_display_bmp/components/i2c/i2c.c
+ * DEV_I2C_Read_Word): result = high << 8 | low. Used to sample EXIO_ADC
+ * (register 0x06) — the onboard battery-voltage divider feeds into it. */
+#define IO_EXT_REG_ADC  0x06
+static esp_err_t io_ext_read_word(uint8_t reg, uint16_t *out)
+{
+    uint8_t data[2] = { 0 };
+    esp_err_t err = i2c_master_transmit_receive(io_ext_dev, &reg, 1,
+                                                data, 2, 100);
+    if (err != ESP_OK) return err;
+    *out = (uint16_t)data[0] | ((uint16_t)data[1] << 8);
+    return ESP_OK;
+}
+
+/* Convert the EXIO_ADC raw count to VBAT in millivolts.
+ *
+ * Empirically calibrated against real hardware: with the CS8501 holding the
+ * cell at its 4.20 V termination voltage (DONE LED lit), the I2C read at
+ * reg 0x06 returns raw=414 ± 2. That's a clean 10.14 mV/count — meaning
+ * Waveshare's U10 firmware is already applying the 20K/10K divider compen-
+ * sation and the ADC's reference scale, and returning the battery voltage
+ * in CENTIVOLTS (raw=420 ↔ 4.20 V). So the conversion is just raw * 10. */
+static uint16_t adc_count_to_vbat_mv(uint16_t raw)
+{
+    if (raw > 6000) raw = 6000;   /* cap at 60.00 V; well above any sane input */
+    return (uint16_t)(raw * 10u);
+}
+
+/* 4.2V Li-Po SOC, calibrated for "always under load when on battery".
+ *
+ * The Spotter draws ~200 mA continuously (LCD backlight + ESP32 WiFi),
+ * which sags a small Li-Po by 200-300 mV from its open-circuit voltage
+ * the moment the USB charger releases. A naive open-circuit curve would
+ * therefore drop from 100% to ~65% on unplug — which is technically
+ * "true" but ugly UX (every laptop/phone hides this by calibrating their
+ * curve against typical load).
+ *
+ * The breakpoints below are shifted to match what users expect:
+ *   - The whole CV plateau (>= 4.10V) reads 100% so the gauge agrees with
+ *     the CS8501's DONE LED.
+ *   - The mid-band (3.7-4.0V) — where the cell spends most of its
+ *     life under load — is stretched so a typical "discharging from full"
+ *     reading lands at 85-90%, not 65%.
+ *   - The steep cutoff below 3.5V is unchanged: that's the actual cliff
+ *     where the cell is genuinely about to die. */
+static uint8_t vbat_mv_to_soc_percent(uint16_t mv)
+{
+    static const struct { uint16_t mv; uint8_t pct; } pts[] = {
+        { 4100, 100 },
+        { 4000,  95 },
+        { 3900,  85 },
+        { 3800,  70 },
+        { 3700,  50 },
+        { 3600,  30 },
+        { 3500,  15 },
+        { 3400,   5 },
+        { 3300,   0 },
+    };
+    const int n = sizeof(pts) / sizeof(pts[0]);
+    if (mv >= pts[0].mv)     return pts[0].pct;
+    if (mv <= pts[n-1].mv)   return pts[n-1].pct;
+    for (int i = 0; i < n - 1; i++) {
+        if (mv <= pts[i].mv && mv >= pts[i+1].mv) {
+            uint32_t span_mv  = pts[i].mv   - pts[i+1].mv;
+            uint32_t span_pct = pts[i].pct  - pts[i+1].pct;
+            uint32_t over     = mv          - pts[i+1].mv;
+            return (uint8_t)(pts[i+1].pct + (over * span_pct) / span_mv);
+        }
+    }
+    return 0;
+}
+
+/* Read VBAT once and push SOC + charging state into the top-bar gauge.
+ *
+ * Charging detection: the CS8501's CHRG/STDBY pins aren't wired to the
+ * ESP32, so we infer charging from the voltage holding above the CV
+ * plateau (~4.15V). On unplug from a full charge the voltage drops below
+ * this within a couple minutes, so the icon flips back to "discharging"
+ * without needing the full voltage-trend ring buffer. Good enough for a
+ * glanceable gauge. */
+/* 16-sample moving average over the raw ADC counts (~32 s at the 2 s
+ * poll cadence). Two jobs:
+ *  - smooth out the ±2-count ADC noise so the displayed % doesn't
+ *    twitch on every poll;
+ *  - turn the abrupt voltage step at charger-unplug (cell sags 200+ mV
+ *    in <1 s under load) into a gradual ~30 s slide, so the gauge
+ *    behaves like a phone battery instead of yanking from 100% to 70%.
+ * 32 s is short enough that real charge/discharge events still track
+ * within a minute. */
+#define BATT_AVG_N  16
+static uint16_t batt_raw_ring[BATT_AVG_N] = { 0 };
+static uint8_t  batt_ring_pos = 0;
+static uint8_t  batt_ring_filled = 0;
+
+static uint16_t batt_avg_push(uint16_t raw)
+{
+    batt_raw_ring[batt_ring_pos] = raw;
+    batt_ring_pos = (batt_ring_pos + 1) % BATT_AVG_N;
+    if (batt_ring_filled < BATT_AVG_N) batt_ring_filled++;
+    uint32_t sum = 0;
+    for (uint8_t i = 0; i < batt_ring_filled; i++) sum += batt_raw_ring[i];
+    return (uint16_t)(sum / batt_ring_filled);
+}
+
+/* Forward decls — these accessors live in actions.c (battery-meter section).
+ * poll_battery_meter calls get_enabled() each tick so the gate stays in sync
+ * with the toggle; spotter_battery_set_state pushes the result into the
+ * top-bar labels (fan-out across all 3 status_bar instances). */
+extern void spotter_battery_set_state(uint8_t pct, bool charging);
+extern bool spotter_battery_meter_get_enabled(void);
+
+static void poll_battery_meter(void)
+{
+    /* Gated by the Setup-page "Battery Meter" toggle. When disabled we
+     * touch neither the I2C bus (shared with GT911 touch, ES8311 codec,
+     * PCF85063 RTC) nor the LVGL labels, so MQTT-driven gauges and the
+     * 60 Hz redraw path don't compete with us for cycles when the user
+     * has explicitly turned this feature off.
+     *
+     * On the OFF -> ON transition we clear the moving-average ring so the
+     * first displayed reading reflects fresh data, not whatever stale
+     * voltage was in the buffer from the previous enabled session. */
+    bool enabled = spotter_battery_meter_get_enabled();
+    static bool was_enabled = false;
+    if (!enabled) {
+        if (was_enabled) {
+            batt_ring_pos = 0;
+            batt_ring_filled = 0;
+            was_enabled = false;
+        }
+        return;
+    }
+    was_enabled = true;
+
+    uint16_t raw_now = 0;
+    esp_err_t err = io_ext_read_word(IO_EXT_REG_ADC, &raw_now);
+    if (err != ESP_OK) {
+        ESP_LOGW(TAG, "battery: I2C ADC read failed: %s", esp_err_to_name(err));
+        return;
+    }
+    uint16_t raw = batt_avg_push(raw_now);
+    uint16_t mv  = adc_count_to_vbat_mv(raw);
+    uint8_t  soc = vbat_mv_to_soc_percent(mv);
+    /* Charging heuristic: above ~4.00 V the cell is either in CV phase or
+     * just-finished and resting at the float voltage held by the CS8501.
+     * Below that, USB is unplugged (otherwise the charger would have
+     * pulled it back up). 4.00 V is far enough below the 4.12-4.16 V
+     * rest-after-full plateau that ±2 counts of ADC noise don't flip the
+     * icon back and forth. */
+    bool charging = (mv > 4000);
+    /* Logged once on first read + on every flag flip so the monitor doesn't
+     * flood. Keep around so we can re-calibrate if the scale drifts on a
+     * different board revision. */
+    static int log_count = 0;
+    static bool last_charging = false;
+    if (log_count++ < 3 || charging != last_charging) {
+        ESP_LOGI(TAG, "battery: raw=%u mV=%u soc=%u%% charging=%d",
+                 raw, mv, soc, charging);
+        last_charging = charging;
+    }
+    spotter_battery_set_state(soc, charging);
+}
+
 static void ch422g_set_bit(uint8_t bit, bool high)
 {
     if (high) io_ext_out |= bit;
@@ -249,6 +416,13 @@ int32_t clock_get_timezone_index(void);
  * restore_user_settings writes to it on boot. */
 static bool s_clock_format_24h;
 
+/* Battery-meter accessors live in actions.c — declared here because
+ * restore_user_settings / persist_user_settings call them on boot and on
+ * every settings-write cycle. */
+extern void spotter_battery_meter_set_enabled(bool enabled);
+extern bool spotter_battery_meter_get_enabled(void);
+extern void spotter_paint_battery_meter(void);
+
 static void restore_user_settings(void)
 {
     nvs_handle_t nvs;
@@ -288,6 +462,10 @@ static void restore_user_settings(void)
         if (s_clock_format_24h) lv_obj_add_state(objects.setup_clock_format_sw,   LV_STATE_CHECKED);
         else                    lv_obj_clear_state(objects.setup_clock_format_sw, LV_STATE_CHECKED);
     }
+
+    uint8_t batt_meter = 0;
+    nvs_get_u8(nvs, "battMeter", &batt_meter);
+    spotter_battery_meter_set_enabled(batt_meter != 0);
 
     nvs_close(nvs);
     ESP_LOGI(TAG, "User settings restored (theme=%d, timeout=%d)", (int)theme, (int)timeout);
@@ -767,6 +945,7 @@ static void persist_user_settings(void)
     nvs_set_u8(nvs, "brightness", get_backlight());
     nvs_set_i32(nvs, "tzIndex", clock_get_timezone_index());
     nvs_set_u8(nvs, "clockFmt24h", s_clock_format_24h ? 1 : 0);
+    nvs_set_u8(nvs, "battMeter", spotter_battery_meter_get_enabled() ? 1 : 0);
     nvs_commit(nvs);
     nvs_close(nvs);
 
@@ -1053,6 +1232,9 @@ extern void spotter_apply_axle_count(int axles);
 extern void spotter_paint_placeholders(void);
 extern void spotter_paint_volume(void);
 extern void spotter_paint_brightness(void);
+/* Battery-meter accessors are declared above restore_user_settings (which
+ * is where they're first called). The forward declarations live near the
+ * NVS settings block. */
 
 #include "app_state.h"
 #include "pendant_config.h"
@@ -1197,6 +1379,10 @@ void app_main(void)
 
     /* Reflect the restored brightness into the Setup slider + "NN%" label. */
     spotter_paint_brightness();
+
+    /* Reflect the restored battery-meter on/off into the Setup switch and
+     * paint the placeholder gauge. */
+    spotter_paint_battery_meter();
     ESP_LOGI(TAG, "Spotter firmware version %s", CURRENT_VERSION);
 
     /* MQTT client config (loaded but not connected — happens after WiFi). */
@@ -1269,6 +1455,17 @@ void app_main(void)
         if (now - clock_tick_ms >= 2000) {
             clock_update_toolbar(false);
             clock_tick_ms = now;
+        }
+
+        /* Battery gauge — 0.5 Hz I2C poll of the IO extender's ADC.
+         * Internally gated by the "Battery Meter" toggle: when off, the
+         * call returns immediately without touching I2C, so it doesn't
+         * compete with MQTT-driven gauges or the 60 Hz redraw path for
+         * shared bus time. First reading after toggling on takes ~2s. */
+        static uint32_t battery_tick_ms = 0;
+        if (now - battery_tick_ms >= 2000) {
+            poll_battery_meter();
+            battery_tick_ms = now;
         }
 
         vTaskDelay(pdMS_TO_TICKS(5));

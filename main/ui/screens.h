@@ -34,6 +34,8 @@ typedef struct _objects_t {
     lv_obj_t *drive_status_bar__status_time;
     lv_obj_t *drive_status_bar__status_theme_toggle;
     lv_obj_t *drive_status_bar__status_theme_icon;
+    lv_obj_t *drive_status_bar__status_battery_icon;
+    lv_obj_t *drive_status_bar__status_battery_value;
     lv_obj_t *drive_body;
     lv_obj_t *drive_cab;
     lv_obj_t *drive_windshield;
@@ -129,6 +131,8 @@ typedef struct _objects_t {
     lv_obj_t *lights_status_bar__status_time;
     lv_obj_t *lights_status_bar__status_theme_toggle;
     lv_obj_t *lights_status_bar__status_theme_icon;
+    lv_obj_t *lights_status_bar__status_battery_icon;
+    lv_obj_t *lights_status_bar__status_battery_value;
     lv_obj_t *lights_header;
     lv_obj_t *lights_prev_btn;
     lv_obj_t *lights_prev_icon;
@@ -182,6 +186,8 @@ typedef struct _objects_t {
     lv_obj_t *alarms_status_bar__status_time;
     lv_obj_t *alarms_status_bar__status_theme_toggle;
     lv_obj_t *alarms_status_bar__status_theme_icon;
+    lv_obj_t *alarms_status_bar__status_battery_icon;
+    lv_obj_t *alarms_status_bar__status_battery_value;
     lv_obj_t *alarms_body;
     lv_obj_t *alarms_header;
     lv_obj_t *alarms_title;
@@ -489,6 +495,8 @@ typedef struct _objects_t {
     lv_obj_t *setup_status_bar__status_time;
     lv_obj_t *setup_status_bar__status_theme_toggle;
     lv_obj_t *setup_status_bar__status_theme_icon;
+    lv_obj_t *setup_status_bar__status_battery_icon;
+    lv_obj_t *setup_status_bar__status_battery_value;
     lv_obj_t *setup_body;
     lv_obj_t *setup_axle_title;
     lv_obj_t *setup_axle_single;
@@ -521,6 +529,11 @@ typedef struct _objects_t {
     lv_obj_t *setup_info_banner;
     lv_obj_t *setup_info_icon;
     lv_obj_t *setup_info_text;
+    lv_obj_t *setup_battery_meter_row;
+    lv_obj_t *setup_battery_meter_icon;
+    lv_obj_t *setup_battery_meter_name;
+    lv_obj_t *setup_battery_meter_desc;
+    lv_obj_t *setup_battery_meter_sw;
     lv_obj_t *setup_reset_conn_title;
     lv_obj_t *setup_reset_conn_btn;
     lv_obj_t *setup_reset_conn_btn_lbl;

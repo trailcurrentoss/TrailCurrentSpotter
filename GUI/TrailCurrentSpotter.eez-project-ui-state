@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/0",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/2",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
@@ -197,10 +197,31 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 67.83235194784253,
-              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
+                {
+                  "type": "tab",
+                  "id": "#4db42a8e-c4ce-4d8b-9510-0334a6f77936",
+                  "name": "PageAlarms",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/2",
+                    "permanent": false
+                  },
+                  "icon": "svg:page"
+                },
+                {
+                  "type": "tab",
+                  "id": "#a6942f7e-090f-4446-8290-7fe494fd8c1d",
+                  "name": "PageClockMode",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/9",
+                    "permanent": true
+                  },
+                  "icon": "svg:page"
+                },
                 {
                   "type": "tab",
                   "id": "#79eb2875-2222-4985-ba90-d65eb5bd785c",
@@ -1058,7 +1079,8 @@
             "31": {},
             "32": {},
             "36": {},
-            "39": {}
+            "39": {},
+            "49": {}
           },
           "2": {}
         }
@@ -1119,7 +1141,7 @@
           "x": -251.55528237432048,
           "y": -118.3600451257237
         },
-        "scale": 0.75
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1133,17 +1155,16 @@
         "0": {
           "0": {},
           "1": {
-            "0": {},
-            "17": {}
+            "0": {}
           }
         }
       },
       "transform": {
         "translate": {
-          "x": -400,
-          "y": -255
+          "x": -579,
+          "y": -354
         },
-        "scale": 0.75
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1223,9 +1244,10 @@
           "2": {},
           "3": {},
           "4": {},
-          "11": {
+          "9": {
             "$selected": true
-          }
+          },
+          "11": {}
         }
       },
       "transform": {
@@ -1331,13 +1353,15 @@
       }
     },
     "[TrailCurrentSpotter.eez-project]:/userPages/9[flow-state]": {
-      "selection": {},
+      "selection": {
+        "0": {}
+      },
       "transform": {
         "translate": {
-          "x": -400,
-          "y": -240
+          "x": -577,
+          "y": -317
         },
-        "scale": 1
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,

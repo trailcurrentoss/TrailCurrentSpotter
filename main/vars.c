@@ -236,6 +236,21 @@ static bool user_settings_changed;
 bool get_var_user_settings_changed(void) { return user_settings_changed; }
 void set_var_user_settings_changed(bool value) { user_settings_changed = value; }
 
+/* Top-bar battery gauge — flow-less mirror of the runtime state held in
+ * actions.c. Setters here are called by the action handlers and hardware
+ * reader; the gauge widget visibility/text is updated separately. */
+static bool battery_meter_enabled;
+bool get_var_battery_meter_enabled(void) { return battery_meter_enabled; }
+void set_var_battery_meter_enabled(bool value) { battery_meter_enabled = value; }
+
+static int32_t battery_percent;
+int32_t get_var_battery_percent(void) { return battery_percent; }
+void set_var_battery_percent(int32_t value) { battery_percent = value; }
+
+static bool battery_charging;
+bool get_var_battery_charging(void) { return battery_charging; }
+void set_var_battery_charging(bool value) { battery_charging = value; }
+
 static int32_t selected_theme;
 int32_t get_var_selected_theme(void) { return selected_theme; }
 void set_var_selected_theme(int32_t value) {

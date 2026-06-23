@@ -47,6 +47,7 @@ extern void action_go_setup_from_clock(lv_event_t * e);
 extern void action_toggle_clock_format(lv_event_t * e);
 extern void action_retry_connection(lv_event_t * e);
 extern void action_toggle_theme(lv_event_t * e);
+extern void action_toggle_battery_meter(lv_event_t * e);
 
 
 #ifdef __cplusplus
