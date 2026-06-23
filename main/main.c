@@ -456,13 +456,12 @@ void spotter_clock_paint_mode(bool force)
     if (objects.digit_mm) lv_label_set_text(objects.digit_mm, buf);
 
     if (objects.clock_date_label) {
-        char date_buf[40];
-        /* "Saturday, June 22" — %e leaves a leading space on single-digit
-         * days so we strip it; %B / %A are local-week / month names. */
-        strftime(date_buf, sizeof(date_buf), "%A, %B %e", &ti);
-        for (char *p = date_buf; *p; p++) {
-            if (*p == ' ' && *(p + 1) == ' ') { memmove(p, p + 1, strlen(p)); }
-        }
+        /* clock_date_label uses LabelDataValue48 (roboto_mono_48) which
+         * carries only digits + dash + period + space + colon — no
+         * letters. Render the date in numeric MM-DD-YYYY form so every
+         * glyph is in the font's subset. */
+        char date_buf[16];
+        strftime(date_buf, sizeof(date_buf), "%m-%d-%Y", &ti);
         lv_label_set_text(objects.clock_date_label, date_buf);
     }
 }
