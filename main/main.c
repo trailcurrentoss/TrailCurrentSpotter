@@ -1186,11 +1186,28 @@ static void lvgl_init(void)
     disp_drv.direct_mode = 1;
     lv_disp_drv_register(&disp_drv);
 
-    /* Touch input */
+    /* Touch input — defaults tuned for the 4.3" cap-touch panel.
+     *
+     *   scroll_limit (default 10 px): how far the finger has to move before
+     *   LVGL gives up on "this press belongs to the widget" and transfers it
+     *   to the parent's scroll. Default 10 is too low — when a user drags
+     *   to scroll PageSetup, the slider or switch under their finger has
+     *   already captured the press and updated its value before LVGL
+     *   recognises the gesture as a scroll. 20 px keeps deliberate slider
+     *   adjustments working (a focused horizontal nudge is well over 20 px)
+     *   while letting "swipe up to scroll" win cleanly.
+     *
+     *   scroll_throw (default 10): velocity decay per frame, as a percent.
+     *   At 10 a single swipe dies down quickly so the user has to keep
+     *   stroking to get anywhere. Drop to 5 for ~2× more momentum per
+     *   swipe; scrolling a 1100-px-tall settings page takes 2 flicks
+     *   instead of 4. */
     static lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = lvgl_touch_read_cb;
+    indev_drv.scroll_limit = 20;
+    indev_drv.scroll_throw = 5;
     lv_indev_drv_register(&indev_drv);
 
     ESP_LOGI(TAG, "LVGL initialized (direct mode)");
