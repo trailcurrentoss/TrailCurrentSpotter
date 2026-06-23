@@ -1110,10 +1110,16 @@ void app_main(void)
         if (rr == ESP_OK) {
             int year = rtc_utc.tm_year + 1900;
             if (year >= 2025 && year < 2099) {
-                /* Treat RTC fields as UTC: temporarily switch TZ to UTC
-                 * for mktime so it doesn't apply a local offset, then
-                 * restore the user's TZ from NVS later in
-                 * restore_user_settings → clock_set_timezone_index. */
+                /* Treat RTC fields as UTC: temporarily switch TZ to UTC for
+                 * mktime so it doesn't apply a local offset, then restore
+                 * a sane local TZ immediately so any caller of localtime_r
+                 * between now and restore_user_settings (PageClockMode
+                 * paints, top-bar clock, etc.) doesn't see UTC.
+                 * clock_apply_user_tz uses s_tz_index, which is initialised
+                 * to NY (5); restore_user_settings later overrides with the
+                 * persisted tzIndex from NVS. Without this restore, the
+                 * clock face renders in UTC whenever NVS doesn't (yet)
+                 * carry user-settings — e.g. fresh install. */
                 setenv("TZ", "UTC0", 1);
                 tzset();
                 rtc_utc.tm_isdst = 0;
@@ -1127,6 +1133,7 @@ void app_main(void)
                              year, rtc_utc.tm_mon + 1, rtc_utc.tm_mday,
                              rtc_utc.tm_hour, rtc_utc.tm_min, rtc_utc.tm_sec);
                 }
+                clock_apply_user_tz();
             } else {
                 ESP_LOGW(TAG, "RTC year out of range (%d) — ignoring", year);
             }
