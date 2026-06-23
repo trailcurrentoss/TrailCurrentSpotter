@@ -149,6 +149,11 @@ void connectivity_alarm_set_mqtt(bool connected)
     reevaluate();
 }
 
+void connectivity_alarm_evaluate(void)
+{
+    reevaluate();
+}
+
 /* Called from actions.c when the user taps the gear icon on PageClockMode
  * to access settings. We clear our internal "we put them here" flag so the
  * auto-restore-on-reconnect doesn't bounce them off PageSetup. */

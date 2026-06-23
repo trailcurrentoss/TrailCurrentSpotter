@@ -37,6 +37,15 @@ void connectivity_alarm_init(void);
 void connectivity_alarm_set_wifi(bool connected);
 void connectivity_alarm_set_mqtt(bool connected);
 
+/* Re-evaluate the current wifi/mqtt state without requiring an edge.
+ * Call once when the app first reaches APP_STATE_READY so a cold boot
+ * with saved creds but no reachable trailer falls through to
+ * PageClockMode (after the standard debounce) instead of sitting on the
+ * dashboard with placeholder data. set_wifi/set_mqtt early-return on
+ * no-state-change, which means a cold boot — where the link was never
+ * up to begin with — never triggers the swap on its own. */
+void connectivity_alarm_evaluate(void);
+
 /* Tell the connectivity-alarm subsystem the user navigated away from
  * PageClockMode on their own (e.g. tapped the gear-icon settings shortcut).
  * Clears the auto-restore-on-reconnect bookkeeping so reconnect does not

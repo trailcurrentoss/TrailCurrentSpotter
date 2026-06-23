@@ -366,6 +366,11 @@ void app_state_set(app_state_t next)
     case APP_STATE_READY:
         load_screen(objects.page_drive);
         spotter_set_active_tab(0);
+        /* Kick the connectivity alarm so a cold boot with no reachable
+         * trailer falls through to PageClockMode after the standard
+         * debounce. If WiFi+MQTT come up before debounce expires, the
+         * normal state callbacks cancel it and the dashboard stays. */
+        connectivity_alarm_evaluate();
         break;
     default:
         break;
