@@ -43,6 +43,8 @@ extern void action_toggle_device_invert(lv_event_t * e);
 extern void action_open_rename_device(lv_event_t * e);
 extern void action_volume_changed(lv_event_t * e);
 extern void action_brightness_changed(lv_event_t * e);
+extern void action_go_setup_from_clock(lv_event_t * e);
+extern void action_toggle_clock_format(lv_event_t * e);
 
 
 #ifdef __cplusplus

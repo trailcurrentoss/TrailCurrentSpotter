@@ -16,6 +16,7 @@ typedef struct _objects_t {
     lv_obj_t *page_mqtt_setup;
     lv_obj_t *page_mqtt_connecting;
     lv_obj_t *page_rename_sensor;
+    lv_obj_t *page_clock_mode;
     lv_obj_t *drive_status_bar;
     lv_obj_t *drive_status_bar__root;
     lv_obj_t *drive_status_bar__status_brand_icon;
@@ -457,6 +458,19 @@ typedef struct _objects_t {
     lv_obj_t *setup_brightness_slider;
     lv_obj_t *setup_timezone_title;
     lv_obj_t *setup_timezone_dropdown;
+    lv_obj_t *setup_date_row;
+    lv_obj_t *setup_date_icon;
+    lv_obj_t *setup_date_name;
+    lv_obj_t *setup_date_value;
+    lv_obj_t *setup_time_row;
+    lv_obj_t *setup_time_icon;
+    lv_obj_t *setup_time_name;
+    lv_obj_t *setup_time_value;
+    lv_obj_t *setup_clock_format_row;
+    lv_obj_t *setup_clock_format_icon;
+    lv_obj_t *setup_clock_format_name;
+    lv_obj_t *setup_clock_format_desc;
+    lv_obj_t *setup_clock_format_sw;
     lv_obj_t *setup_dock;
     lv_obj_t *setup_dock__root;
     lv_obj_t *setup_dock__dock_btn_drive;
@@ -599,6 +613,19 @@ typedef struct _objects_t {
     lv_obj_t *rename_cancel_lbl;
     lv_obj_t *rename_save_btn;
     lv_obj_t *rename_save_lbl;
+    lv_obj_t *clock_warning_strip;
+    lv_obj_t *clock_warning_icon;
+    lv_obj_t *clock_warning_text;
+    lv_obj_t *clock_date;
+    lv_obj_t *panel_hh;
+    lv_obj_t *digit_hh;
+    lv_obj_t *panel_mm;
+    lv_obj_t *digit_mm;
+    lv_obj_t *clock_ampm_panel;
+    lv_obj_t *clock_ampm;
+    lv_obj_t *clock_settings_btn;
+    lv_obj_t *clock_settings_icon;
+    lv_obj_t *clock_date_label;
 } objects_t;
 
 extern objects_t objects;
@@ -612,6 +639,7 @@ enum ScreensEnum {
     SCREEN_ID_PAGE_MQTT_SETUP = 6,
     SCREEN_ID_PAGE_MQTT_CONNECTING = 7,
     SCREEN_ID_PAGE_RENAME_SENSOR = 8,
+    SCREEN_ID_PAGE_CLOCK_MODE = 9,
 };
 
 void create_screen_page_drive();
@@ -637,6 +665,9 @@ void tick_screen_page_mqtt_connecting();
 
 void create_screen_page_rename_sensor();
 void tick_screen_page_rename_sensor();
+
+void create_screen_page_clock_mode();
+void tick_screen_page_clock_mode();
 
 void create_user_widget_top_status_bar(lv_obj_t *parent_obj, int startWidgetIndex);
 void tick_user_widget_top_status_bar(int startWidgetIndex);

@@ -4,53 +4,75 @@
 #include "lvgl.h"
 
 #include "app_state.h"
-#include "spotter_alarm.h"
+#include "ui/screens.h"
 
 /* Defined in actions.c — wipes every MQTT-fed widget back to its placeholder
  * ("--", "-- V", "-- left", "No data"). Called here on any down-transition so
  * stale values aren't mistaken for live ones while the link is broken. */
 extern void spotter_paint_placeholders(void);
 
+/* Defined in main.c — paints the full-screen clock widgets (clock_value,
+ * clock_ampm, clock_date). Called immediately on entering clock mode so the
+ * screen is up-to-date before the next 2 Hz tick fires. */
+extern void spotter_clock_paint_mode(bool force);
+
 static const char *TAG = "conn_alarm";
 
-typedef enum {
-    ALARM_KIND_NONE = 0,
-    ALARM_KIND_WIFI,
-    ALARM_KIND_MQTT,
-} alarm_kind_t;
+/* The connectivity "alarm" no longer raises a red pulsing overlay with a
+ * chime — that was noisy in the powered-on-but-not-towing case (the user is
+ * driving without the trailer attached, WiFi is intentionally out of range,
+ * and the device should just sit quietly and be useful as a clock).
+ *
+ * Behaviour now: when WiFi or MQTT goes down past the debounce window we
+ * swap the active screen to PageClockMode, which carries a non-pulsing
+ * warning strip ("No TrailCurrent Connection") and a large monospaced clock
+ * fed from the RTC. The screen the user was on before is restored on
+ * reconnect. No chime, no pulse, no acknowledge-required modal.
+ *
+ * Real alarms — switchback sensor trips, device-relay state changes — still
+ * raise the full alarm overlay (with chime) via spotter_alarm_raise(). Only
+ * connectivity loss is routed through PageClockMode. */
 
-static bool          s_wifi_ok   = false;
-static bool          s_mqtt_ok   = false;
-static bool          s_raised    = false;        /* our overlay is currently showing */
-static alarm_kind_t  s_kind      = ALARM_KIND_NONE;
-static lv_timer_t   *s_debounce  = NULL;
+static bool         s_wifi_ok           = false;
+static bool         s_mqtt_ok           = false;
+static bool         s_in_clock_mode     = false;  /* PageClockMode is loaded by us */
+static lv_obj_t    *s_prev_screen       = NULL;   /* screen to restore on reconnect */
+static lv_timer_t  *s_debounce          = NULL;
 
 /* ----- internal --------------------------------------------------------- */
 
-static alarm_kind_t desired_alarm(void)
+static bool desired_clock_mode(void) { return !s_wifi_ok || !s_mqtt_ok; }
+
+static void enter_clock_mode(void)
 {
-    if (!s_wifi_ok) return ALARM_KIND_WIFI;
-    if (!s_mqtt_ok) return ALARM_KIND_MQTT;
-    return ALARM_KIND_NONE;
+    if (s_in_clock_mode) return;
+    if (!objects.page_clock_mode) {
+        ESP_LOGW(TAG, "PageClockMode not exported yet — staying on current screen");
+        return;
+    }
+    lv_obj_t *cur = lv_scr_act();
+    if (cur != objects.page_clock_mode) {
+        s_prev_screen = cur;
+        lv_scr_load(objects.page_clock_mode);
+    }
+    s_in_clock_mode = true;
+    spotter_clock_paint_mode(true);
+    ESP_LOGI(TAG, "Connectivity lost — switched to PageClockMode");
 }
 
-static void raise_for(alarm_kind_t kind)
+static void exit_clock_mode(void)
 {
-    if (kind == ALARM_KIND_WIFI) {
-        spotter_alarm_raise(
-            "Lost WiFi Connection",
-            "Network unreachable.\nAlarms cannot be received until connection is restored.",
-            0 /* no auto-dismiss — sticks until user ack or reconnect */);
-        ESP_LOGW(TAG, "Raised: Lost WiFi Connection");
-    } else if (kind == ALARM_KIND_MQTT) {
-        spotter_alarm_raise(
-            "Lost TrailCurrent Connection",
-            "Broker unreachable.\nAlarms cannot be received until connection is restored.",
-            0);
-        ESP_LOGW(TAG, "Raised: Lost TrailCurrent Connection");
+    if (!s_in_clock_mode) {
+        s_prev_screen = NULL;
+        return;
     }
-    s_kind   = kind;
-    s_raised = (kind != ALARM_KIND_NONE);
+    s_in_clock_mode = false;
+    if (objects.page_clock_mode && lv_scr_act() == objects.page_clock_mode) {
+        lv_obj_t *target = s_prev_screen ? s_prev_screen : objects.page_drive;
+        if (target) lv_scr_load(target);
+    }
+    s_prev_screen = NULL;
+    ESP_LOGI(TAG, "Connectivity restored — clock mode dismissed");
 }
 
 static void cancel_debounce(void)
@@ -65,13 +87,12 @@ static void debounce_fire_cb(lv_timer_t *t)
 {
     (void)t;
     s_debounce = NULL;
-    /* Only fire if we've reached the main dashboard. During setup the device
-     * is intentionally not yet connected, so an alarm there would be noise. */
+    /* Only enter clock mode once the device is past setup — during WiFi /
+     * MQTT setup the user is intentionally not yet connected, and bouncing
+     * them off the setup screen mid-typing would be hostile. */
     if (app_state_get() != APP_STATE_READY) return;
-    alarm_kind_t want = desired_alarm();
-    if (want == ALARM_KIND_NONE) return;          /* recovered during debounce */
-    if (s_raised && s_kind == want) return;       /* already showing the right one */
-    raise_for(want);
+    if (!desired_clock_mode()) return;          /* recovered during debounce */
+    enter_clock_mode();
 }
 
 static void schedule_debounce(void)
@@ -84,43 +105,25 @@ static void schedule_debounce(void)
 
 static void reevaluate(void)
 {
-    alarm_kind_t want = desired_alarm();
-
-    if (want == ALARM_KIND_NONE) {
-        /* All good. Cancel any pending debounce and tear down our overlay. */
+    if (!desired_clock_mode()) {
+        /* All links up. Cancel pending debounce, restore previous screen. */
         cancel_debounce();
-        if (s_raised) {
-            spotter_alarm_force_dismiss();
-            s_raised = false;
-            s_kind   = ALARM_KIND_NONE;
-            ESP_LOGI(TAG, "Connectivity restored — alarm dismissed");
-        }
+        exit_clock_mode();
         return;
     }
-
-    if (s_raised) {
-        /* We're already showing an alarm. If the situation escalated
-         * (MQTT-only → WiFi-also-down), swap to the higher-priority message
-         * immediately — no second debounce window. */
-        if (s_kind != want) {
-            raise_for(want);
-        }
-        return;
-    }
-
-    /* Not raised yet — start (or leave running) the debounce timer. */
-    schedule_debounce();
+    /* Not yet in clock mode — start (or leave running) the debounce timer. */
+    if (!s_in_clock_mode) schedule_debounce();
 }
 
 /* ----- public ----------------------------------------------------------- */
 
 void connectivity_alarm_init(void)
 {
-    s_wifi_ok  = false;
-    s_mqtt_ok  = false;
-    s_raised   = false;
-    s_kind     = ALARM_KIND_NONE;
-    s_debounce = NULL;
+    s_wifi_ok       = false;
+    s_mqtt_ok       = false;
+    s_in_clock_mode = false;
+    s_prev_screen   = NULL;
+    s_debounce      = NULL;
 }
 
 void connectivity_alarm_set_wifi(bool connected)
@@ -139,4 +142,13 @@ void connectivity_alarm_set_mqtt(bool connected)
     ESP_LOGI(TAG, "wifi=%d mqtt=%d", (int)s_wifi_ok, (int)s_mqtt_ok);
     if (!connected) spotter_paint_placeholders();
     reevaluate();
+}
+
+/* Called from actions.c when the user taps the gear icon on PageClockMode
+ * to access settings. We clear our internal "we put them here" flag so the
+ * auto-restore-on-reconnect doesn't bounce them off PageSetup. */
+void connectivity_clock_user_left(void)
+{
+    s_in_clock_mode = false;
+    s_prev_screen   = NULL;
 }

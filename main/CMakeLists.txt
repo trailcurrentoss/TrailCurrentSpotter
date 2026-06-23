@@ -7,6 +7,7 @@ idf_component_register(
         "spoor_alarms.c"
         "device_alarms.c"
         "connectivity_alarm.c"
+        "rtc_pcf85063.c"
         "lv_mem_psram.c"
         "ui/ui.c"
         "ui/screens.c"
@@ -18,6 +19,7 @@ idf_component_register(
         "ui/ui_font_roboto_mono_32.c"
         "ui/ui_font_roboto_mono_36.c"
         "ui/ui_font_roboto_mono_48.c"
+        "ui/ui_font_roboto_mono_128.c"
         "ui/ui_image_trailer_back.c"
         "ui/ui_image_trailer_side.c"
     INCLUDE_DIRS

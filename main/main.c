@@ -27,6 +27,7 @@
 #include "app_mqtt.h"
 #include "sd_config.h"
 #include "audio.h"
+#include "rtc_pcf85063.h"
 
 static const char *TAG = "spotter";
 
@@ -244,6 +245,10 @@ static void handle_screen_timeout(void)
 void    clock_set_timezone_index(int32_t idx);
 int32_t clock_get_timezone_index(void);
 
+/* Defined in the Clock section below; declared up here because
+ * restore_user_settings writes to it on boot. */
+static bool s_clock_format_24h;
+
 static void restore_user_settings(void)
 {
     nvs_handle_t nvs;
@@ -276,6 +281,14 @@ static void restore_user_settings(void)
         lv_dropdown_set_selected(objects.setup_timezone_dropdown, (uint16_t)tz_idx);
     }
 
+    uint8_t fmt24 = 0;
+    nvs_get_u8(nvs, "clockFmt24h", &fmt24);
+    s_clock_format_24h = (fmt24 != 0);
+    if (objects.setup_clock_format_sw) {
+        if (s_clock_format_24h) lv_obj_add_state(objects.setup_clock_format_sw,   LV_STATE_CHECKED);
+        else                    lv_obj_clear_state(objects.setup_clock_format_sw, LV_STATE_CHECKED);
+    }
+
     nvs_close(nvs);
     ESP_LOGI(TAG, "User settings restored (theme=%d, timeout=%d)", (int)theme, (int)timeout);
 }
@@ -305,6 +318,11 @@ static const char *TIMEZONE_POSIX[] = {
 static int32_t s_tz_index = 5;         /* New York default */
 static bool    s_system_time_set = false;
 static int     s_last_clock_min  = -1;
+/* s_clock_format_24h is declared near restore_user_settings (it's read at
+ * boot from NVS). Lives in this section logically — the 12 / 24-hour mode
+ * affects both the top-bar clock and the full-screen PageClockMode shown
+ * while TrailCurrent connectivity is lost. Persisted in NVS under
+ * "clockFmt24h". Default = 12-hour (bool's zero-init). */
 
 static void clock_apply_user_tz(void)
 {
@@ -315,8 +333,23 @@ static void clock_apply_user_tz(void)
     set_var_current_time_zone_string(TIMEZONE_POSIX[idx]);
 }
 
-/* Push HH:MM AM/PM into all three TopStatusBar instances. Memoizes on
- * the minute so unchanged ticks are no-ops. */
+/* Push HH:MM AM/PM (or HH:MM in 24-hour mode) into all three TopStatusBar
+ * instances, then repaint the full-screen clock if it's currently shown.
+ * Memoizes on the minute so unchanged ticks are no-ops. */
+static void clock_format_top_bar(const struct tm *ti, char *buf, size_t n)
+{
+    if (s_clock_format_24h) {
+        snprintf(buf, n, "%02d:%02d", ti->tm_hour, ti->tm_min);
+    } else {
+        int h12 = ti->tm_hour % 12;
+        if (h12 == 0) h12 = 12;
+        snprintf(buf, n, "%d:%02d %s",
+                 h12, ti->tm_min, ti->tm_hour >= 12 ? "PM" : "AM");
+    }
+}
+
+void spotter_clock_paint_mode(bool force);
+
 static void clock_update_toolbar(bool force)
 {
     if (!s_system_time_set) return;
@@ -329,11 +362,8 @@ static void clock_update_toolbar(bool force)
     if (!force && ti.tm_min == s_last_clock_min) return;
     s_last_clock_min = ti.tm_min;
 
-    int h12 = ti.tm_hour % 12;
-    if (h12 == 0) h12 = 12;
     char buf[12];
-    snprintf(buf, sizeof(buf), "%d:%02d %s",
-             h12, ti.tm_min, ti.tm_hour >= 12 ? "PM" : "AM");
+    clock_format_top_bar(&ti, buf, sizeof(buf));
 
     lv_obj_t *labels[] = {
         objects.drive_status_bar__status_time,
@@ -343,7 +373,110 @@ static void clock_update_toolbar(bool force)
     for (size_t i = 0; i < sizeof(labels) / sizeof(*labels); i++) {
         if (labels[i]) lv_label_set_text(labels[i], buf);
     }
+
+    /* Date / Time info rows on PageSetup. The same formatted time string
+     * from above goes into setup_time_value (e.g. "9:43 AM" in 12-hour
+     * mode or "21:43" in 24-hour mode). Date is rendered separately as
+     * "Sat, Jun 22, 2026" with the leading-space fix for %e. */
+    if (objects.setup_time_value) {
+        lv_label_set_text(objects.setup_time_value, buf);
+    }
+    if (objects.setup_date_value) {
+        char date_buf[40];
+        strftime(date_buf, sizeof(date_buf), "%a, %b %e, %Y", &ti);
+        for (char *p = date_buf; *p; p++) {
+            if (*p == ' ' && *(p + 1) == ' ') { memmove(p, p + 1, strlen(p)); }
+        }
+        lv_label_set_text(objects.setup_date_value, date_buf);
+    }
+
+    /* The full-screen PageClockMode (shown while TrailCurrent connectivity
+     * is lost) needs the same once-per-minute repaint. Its label set is
+     * different (huge hero clock + AM/PM + date), hence a separate painter. */
+    spotter_clock_paint_mode(force);
 }
+
+/* Paint the full-screen clock-mode display. Called on every minute tick from
+ * clock_update_toolbar (which is itself the 2 Hz tick in app_main). Safe to
+ * call whether or not PageClockMode is currently the active screen — the
+ * label writes are cheap and do nothing visible until the screen is loaded.
+ *
+ * The clock face is two labels (digit_hh, digit_mm) each carrying a two-digit
+ * pair inside its own panel, plus a separate AM/PM chip.  Leading-zero
+ * formatting keeps both panels populated in both 12-hour and 24-hour modes
+ * so the layout doesn't collapse on single-digit hours. */
+void spotter_clock_paint_mode(bool force)
+{
+    (void)force;
+    if (!objects.page_clock_mode) return;
+
+    /* Hide the AM/PM CHIP (panel) — not the inner label — when there's no
+     * time yet or in 24-hour mode, so an empty rectangle doesn't sit
+     * next to the digit panels.  The panel-level flag cascades visually. */
+    lv_obj_t *ampm_chip = objects.clock_ampm_panel;
+
+    /* The original clock_date label has been replaced in the page by
+     * clock_date_label (user reworked the layout). Force the orphan to
+     * empty in case any prior text remains visible behind the new clock. */
+    if (objects.clock_date) lv_label_set_text(objects.clock_date, "");
+
+    if (!s_system_time_set) {
+        if (objects.digit_hh) lv_label_set_text(objects.digit_hh, "--");
+        if (objects.digit_mm) lv_label_set_text(objects.digit_mm, "--");
+        if (ampm_chip)        lv_obj_add_flag(ampm_chip, LV_OBJ_FLAG_HIDDEN);
+        if (objects.clock_date_label) lv_label_set_text(objects.clock_date_label, "");
+        return;
+    }
+
+    time_t now;
+    time(&now);
+    struct tm ti;
+    localtime_r(&now, &ti);
+
+    int h, m = ti.tm_min;
+    if (s_clock_format_24h) {
+        h = ti.tm_hour;
+        if (ampm_chip) lv_obj_add_flag(ampm_chip, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        h = ti.tm_hour % 12;
+        if (h == 0) h = 12;
+        if (ampm_chip) {
+            lv_obj_clear_flag(ampm_chip, LV_OBJ_FLAG_HIDDEN);
+            if (objects.clock_ampm) {
+                lv_label_set_text(objects.clock_ampm,
+                                  ti.tm_hour >= 12 ? "PM" : "AM");
+            }
+        }
+    }
+
+    char buf[4];
+    snprintf(buf, sizeof(buf), "%02d", h);
+    if (objects.digit_hh) lv_label_set_text(objects.digit_hh, buf);
+    snprintf(buf, sizeof(buf), "%02d", m);
+    if (objects.digit_mm) lv_label_set_text(objects.digit_mm, buf);
+
+    if (objects.clock_date_label) {
+        char date_buf[40];
+        /* "Saturday, June 22" — %e leaves a leading space on single-digit
+         * days so we strip it; %B / %A are local-week / month names. */
+        strftime(date_buf, sizeof(date_buf), "%A, %B %e", &ti);
+        for (char *p = date_buf; *p; p++) {
+            if (*p == ' ' && *(p + 1) == ' ') { memmove(p, p + 1, strlen(p)); }
+        }
+        lv_label_set_text(objects.clock_date_label, date_buf);
+    }
+}
+
+/* Public hooks for actions.c — flip the 12/24 setting and force an immediate
+ * repaint of both the top-bar and the full-screen clock. */
+void clock_set_format_24h(bool on)
+{
+    s_clock_format_24h = on;
+    s_last_clock_min = -1;
+    clock_update_toolbar(true);
+}
+
+bool clock_get_format_24h(void) { return s_clock_format_24h; }
 
 /* Called from vars.c whenever Bearing's UTC datetime lands. ISO format:
  * "YYYY-MM-DD HH:MM:SS". First call seeds the clock with settimeofday();
@@ -379,6 +512,13 @@ void spotter_clock_set_from_iso_utc(const char *iso_utc)
     s_system_time_set = true;
     s_last_clock_min = -1;
     clock_update_toolbar(true);
+
+    /* Persist to the battery-backed RTC so the next power-on (even
+     * without TrailCurrent reachable) starts from this fresh sync.
+     * tm_utc was normalised by the earlier mktime() call — same UTC
+     * instant, broken-down fields valid. */
+    esp_err_t we = rtc_pcf85063_write(&tm_utc);
+    if (we != ESP_OK) ESP_LOGW(TAG, "RTC write failed: %s", esp_err_to_name(we));
 }
 
 /* Public entry points so actions.c can drive TZ changes. */
@@ -406,6 +546,7 @@ static void persist_user_settings(void)
     nvs_set_u8(nvs, "onWhileDriving", get_var_keep_screen_on_while_driving() ? 1 : 0);
     nvs_set_u8(nvs, "brightness", get_backlight());
     nvs_set_i32(nvs, "tzIndex", clock_get_timezone_index());
+    nvs_set_u8(nvs, "clockFmt24h", s_clock_format_24h ? 1 : 0);
     nvs_commit(nvs);
     nvs_close(nvs);
 
@@ -737,6 +878,46 @@ void app_main(void)
     /* Hardware init */
     ch422g_init();
     log_heap("after ch422g_init");
+
+    /* Battery-backed RTC (PCF85063A at 0x51) — attach to the shared I2C
+     * bus and, if the chip is holding a valid time, seed the system clock
+     * immediately so the device shows the correct time even without
+     * connectivity. The chip's coin-cell keeps the oscillator running
+     * across power cycles. */
+    if (rtc_pcf85063_init(i2c_bus) == ESP_OK) {
+        struct tm rtc_utc;
+        esp_err_t rr = rtc_pcf85063_read(&rtc_utc);
+        if (rr == ESP_OK) {
+            int year = rtc_utc.tm_year + 1900;
+            if (year >= 2025 && year < 2099) {
+                /* Treat RTC fields as UTC: temporarily switch TZ to UTC
+                 * for mktime so it doesn't apply a local offset, then
+                 * restore the user's TZ from NVS later in
+                 * restore_user_settings → clock_set_timezone_index. */
+                setenv("TZ", "UTC0", 1);
+                tzset();
+                rtc_utc.tm_isdst = 0;
+                time_t epoch = mktime(&rtc_utc);
+                if (epoch > 0) {
+                    struct timeval tv = { .tv_sec = epoch, .tv_usec = 0 };
+                    settimeofday(&tv, NULL);
+                    s_system_time_set = true;
+                    s_last_clock_min = -1;
+                    ESP_LOGI(TAG, "RTC seeded system clock: %04d-%02d-%02d %02d:%02d:%02d UTC",
+                             year, rtc_utc.tm_mon + 1, rtc_utc.tm_mday,
+                             rtc_utc.tm_hour, rtc_utc.tm_min, rtc_utc.tm_sec);
+                }
+            } else {
+                ESP_LOGW(TAG, "RTC year out of range (%d) — ignoring", year);
+            }
+        } else if (rr == ESP_ERR_INVALID_STATE) {
+            ESP_LOGW(TAG, "RTC oscillator stopped — first boot or dead coin cell. "
+                          "Waiting for TrailCurrent UTC to seed the clock.");
+        } else {
+            ESP_LOGW(TAG, "RTC read failed: %s", esp_err_to_name(rr));
+        }
+    }
+    log_heap("after rtc_init");
 
     /* SD card config (reads config.env, stores to NVS) */
     bool sd_config_found = sd_config_read();

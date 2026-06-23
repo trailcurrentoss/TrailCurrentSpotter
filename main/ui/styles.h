@@ -248,6 +248,27 @@ lv_style_t *get_style_label_data_value48_MAIN_DEFAULT();
 void add_style_label_data_value48(lv_obj_t *obj);
 void remove_style_label_data_value48(lv_obj_t *obj);
 
+// Style: PanelWarningRibbon
+lv_style_t *get_style_panel_warning_ribbon_MAIN_DEFAULT();
+void add_style_panel_warning_ribbon(lv_obj_t *obj);
+void remove_style_panel_warning_ribbon(lv_obj_t *obj);
+
+// Style: LabelWarningText
+lv_style_t *get_style_label_warning_text_MAIN_DEFAULT();
+void add_style_label_warning_text(lv_obj_t *obj);
+void remove_style_label_warning_text(lv_obj_t *obj);
+
+// Style: LabelClockHero
+lv_style_t *get_style_label_clock_hero_MAIN_DEFAULT();
+void add_style_label_clock_hero(lv_obj_t *obj);
+void remove_style_label_clock_hero(lv_obj_t *obj);
+
+// Style: ButtonClockSettings
+lv_style_t *get_style_button_clock_settings_MAIN_DEFAULT();
+lv_style_t *get_style_button_clock_settings_MAIN_PRESSED();
+void add_style_button_clock_settings(lv_obj_t *obj);
+void remove_style_button_clock_settings(lv_obj_t *obj);
+
 
 
 #ifdef __cplusplus

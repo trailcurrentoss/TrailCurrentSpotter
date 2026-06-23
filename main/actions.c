@@ -18,6 +18,7 @@
 #include "pendant_config.h"
 #include "spoor_alarms.h"
 #include "device_alarms.h"
+#include "connectivity_alarm.h"
 
 static const char *TAG = "ACTIONS";
 
@@ -148,6 +149,35 @@ void action_timezone_change(lv_event_t *e)
     if ((int32_t)idx >= clock_get_timezone_count()) return;
     clock_set_timezone_index((int32_t)idx);
     set_var_user_settings_changed(true);
+}
+
+/* Defined in main.c — flips between 12h and 24h clock display and forces
+ * an immediate repaint of every clock surface (top bar, setup-page Date/Time
+ * rows, full-screen PageClockMode). */
+extern void clock_set_format_24h(bool on);
+
+void action_toggle_clock_format(lv_event_t *e)
+{
+    (void)e;
+    if (!objects.setup_clock_format_sw) return;
+    bool on = lv_obj_has_state(objects.setup_clock_format_sw, LV_STATE_CHECKED);
+    clock_set_format_24h(on);
+    set_var_user_settings_changed(true);
+    ESP_LOGI(TAG, "Clock format = %s", on ? "24-hour" : "12-hour");
+}
+
+/* Gear-icon shortcut on PageClockMode — jump to the Setup tab so the user
+ * can correct the timezone / clock format. We tell connectivity_alarm to
+ * stop tracking us in clock mode so a subsequent reconnect doesn't yank the
+ * user off PageSetup mid-edit. */
+void action_go_setup_from_clock(lv_event_t *e)
+{
+    (void)e;
+    connectivity_clock_user_left();
+    if (objects.page_setup) {
+        lv_scr_load(objects.page_setup);
+        spotter_set_active_tab(2);
+    }
 }
 
 /* ============================================================================

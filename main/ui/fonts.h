@@ -13,6 +13,7 @@ extern const lv_font_t ui_font_roboto_mono_18;
 extern const lv_font_t ui_font_roboto_mono_32;
 extern const lv_font_t ui_font_roboto_mono_36;
 extern const lv_font_t ui_font_roboto_mono_48;
+extern const lv_font_t ui_font_roboto_mono_128;
 
 
 #ifdef __cplusplus
