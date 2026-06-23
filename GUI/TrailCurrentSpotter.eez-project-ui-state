@@ -1,11 +1,12 @@
 {
   "navigation": {
     "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/8",
-    "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/1",
+    "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
     "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
     "selectedFontObject": "[TrailCurrentSpotter.eez-project]:/fonts/1",
+    "selectedBitmapObject": "[TrailCurrentSpotter.eez-project]:/bitmaps/0",
     "subnavigationSelectedItems": {
       "variables-tab/sub-navigation/selected-item": "Global"
     }
@@ -28,8 +29,8 @@
           },
           {
             "type": "border",
-            "selected": 2,
-            "size": 240,
+            "selected": 3,
+            "size": 309.5,
             "location": "right",
             "children": [
               {
@@ -124,7 +125,7 @@
             {
               "type": "row",
               "id": "#d6c884b2-25c1-4039-8bcc-681f4af7693d",
-              "weight": 20.89208809155997,
+              "weight": 14.752252729193557,
               "children": [
                 {
                   "type": "tabset",
@@ -195,18 +196,29 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 53.72251223543992,
-              "selected": 2,
+              "weight": 67.83235194784253,
+              "selected": 3,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
                 {
                   "type": "tab",
-                  "id": "#d9210d26-78d1-4679-bf2d-c24f7252b42e",
-                  "name": "PageSetup",
+                  "id": "#79eb2875-2222-4985-ba90-d65eb5bd785c",
+                  "name": "fa16",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/2",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/fonts/0",
+                    "permanent": true
+                  },
+                  "icon": "material:font_download"
+                },
+                {
+                  "type": "tab",
+                  "id": "#d9210d26-78d1-4679-bf2d-c24f7252b42e",
+                  "name": "PageDrive",
+                  "component": "editor",
+                  "config": {
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/0",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -273,7 +285,7 @@
             {
               "type": "row",
               "id": "#32fab2d9-179b-4fde-a96b-abcfc1296ac2",
-              "weight": 25.38539967300011,
+              "weight": 17.415395322963946,
               "children": [
                 {
                   "type": "tabset",
@@ -1053,9 +1065,9 @@
       "transform": {
         "translate": {
           "x": -284.0546875,
-          "y": -199
+          "y": -439
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1205,12 +1217,10 @@
     "[TrailCurrentSpotter.eez-project]:/userWidgets/0[flow-state]": {
       "selection": {
         "0": {
-          "0": {},
           "1": {},
           "2": {},
           "3": {},
-          "4": {},
-          "$selected": true
+          "4": {}
         }
       },
       "transform": {
@@ -1218,7 +1228,7 @@
           "x": -195.15176671792437,
           "y": -50.81345685753707
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1270,21 +1280,23 @@
       "selection": {
         "0": {
           "0": {},
+          "1": {},
           "2": {},
           "3": {},
           "4": {},
           "5": {},
-          "6": {
-            "$selected": true
-          }
+          "6": {},
+          "9": {},
+          "10": {},
+          "11": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -400,
-          "y": -240
+          "x": -173,
+          "y": -272
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1309,7 +1321,7 @@
           "x": -400,
           "y": -33
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1341,6 +1353,6 @@
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 0.75,
+  "flowZoom": 1,
   "implementationLanguage": "C"
 }

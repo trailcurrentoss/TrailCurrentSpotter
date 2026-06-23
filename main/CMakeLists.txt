@@ -18,10 +18,9 @@ idf_component_register(
         "ui/ui_font_roboto_mono_18.c"
         "ui/ui_font_roboto_mono_32.c"
         "ui/ui_font_roboto_mono_36.c"
-        "ui/ui_font_roboto_mono_48.c"
         "ui/ui_font_roboto_mono_128.c"
-        "ui/ui_image_trailer_back.c"
-        "ui/ui_image_trailer_side.c"
+        "ui/ui_image_spotter_logo_18.c"
+        "ui/ui_image_spotter_logo_22.c"
     INCLUDE_DIRS
         "."
         "ui"

@@ -349,6 +349,7 @@ static void clock_format_top_bar(const struct tm *ti, char *buf, size_t n)
 }
 
 void spotter_clock_paint_mode(bool force);
+void spotter_clock_paint_stats(void);
 
 static void clock_update_toolbar(bool force)
 {
@@ -405,26 +406,25 @@ static void clock_update_toolbar(bool force)
  * pair inside its own panel, plus a separate AM/PM chip.  Leading-zero
  * formatting keeps both panels populated in both 12-hour and 24-hour modes
  * so the layout doesn't collapse on single-digit hours. */
+/* Day-of-week names (Sunday=0). Matches struct tm.tm_wday. */
+static const char *const DAY_NAMES_UPPER[7] = {
+    "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY",
+    "THURSDAY", "FRIDAY", "SATURDAY",
+};
+
 void spotter_clock_paint_mode(bool force)
 {
-    (void)force;
     if (!objects.page_clock_mode) return;
 
-    /* Hide the AM/PM CHIP (panel) — not the inner label — when there's no
-     * time yet or in 24-hour mode, so an empty rectangle doesn't sit
-     * next to the digit panels.  The panel-level flag cascades visually. */
-    lv_obj_t *ampm_chip = objects.clock_ampm_panel;
-
-    /* The original clock_date label has been replaced in the page by
-     * clock_date_label (user reworked the layout). Force the orphan to
-     * empty in case any prior text remains visible behind the new clock. */
-    if (objects.clock_date) lv_label_set_text(objects.clock_date, "");
+    lv_obj_t *ampm_lbl = objects.clock_ampm;
 
     if (!s_system_time_set) {
-        if (objects.digit_hh) lv_label_set_text(objects.digit_hh, "--");
-        if (objects.digit_mm) lv_label_set_text(objects.digit_mm, "--");
-        if (ampm_chip)        lv_obj_add_flag(ampm_chip, LV_OBJ_FLAG_HIDDEN);
-        if (objects.clock_date_label) lv_label_set_text(objects.clock_date_label, "");
+        if (objects.digit_hh)   lv_label_set_text(objects.digit_hh, "--");
+        if (objects.digit_mm)   lv_label_set_text(objects.digit_mm, "--");
+        if (objects.clock_dow)  lv_label_set_text(objects.clock_dow, "--");
+        if (objects.clock_seconds) lv_label_set_text(objects.clock_seconds, "");
+        if (ampm_lbl)           lv_obj_add_flag(ampm_lbl, LV_OBJ_FLAG_HIDDEN);
+        if (objects.clock_date_label) lv_label_set_text(objects.clock_date_label, "--");
         return;
     }
 
@@ -433,37 +433,238 @@ void spotter_clock_paint_mode(bool force)
     struct tm ti;
     localtime_r(&now, &ti);
 
+    /* Day-of-week (e.g. "MONDAY") above the time. */
+    if (objects.clock_dow && ti.tm_wday >= 0 && ti.tm_wday <= 6) {
+        lv_label_set_text(objects.clock_dow, DAY_NAMES_UPPER[ti.tm_wday]);
+    }
+
     int h, m = ti.tm_min;
+    int sec = ti.tm_sec;
     if (s_clock_format_24h) {
         h = ti.tm_hour;
-        if (ampm_chip) lv_obj_add_flag(ampm_chip, LV_OBJ_FLAG_HIDDEN);
+        if (ampm_lbl) lv_obj_add_flag(ampm_lbl, LV_OBJ_FLAG_HIDDEN);
     } else {
         h = ti.tm_hour % 12;
         if (h == 0) h = 12;
-        if (ampm_chip) {
-            lv_obj_clear_flag(ampm_chip, LV_OBJ_FLAG_HIDDEN);
-            if (objects.clock_ampm) {
-                lv_label_set_text(objects.clock_ampm,
-                                  ti.tm_hour >= 12 ? "PM" : "AM");
-            }
+        if (ampm_lbl) {
+            lv_obj_clear_flag(ampm_lbl, LV_OBJ_FLAG_HIDDEN);
+            lv_label_set_text(ampm_lbl, ti.tm_hour >= 12 ? "PM" : "AM");
         }
     }
 
     char buf[4];
-    snprintf(buf, sizeof(buf), "%02d", h);
+    /* 12-hour hours 1-9 render as a single digit (no leading zero) to
+     * match the mockup's "7:50 PM" look. 24-hour mode zero-pads. */
+    if (s_clock_format_24h) snprintf(buf, sizeof(buf), "%02d", h);
+    else                    snprintf(buf, sizeof(buf), "%d",   h);
     if (objects.digit_hh) lv_label_set_text(objects.digit_hh, buf);
     snprintf(buf, sizeof(buf), "%02d", m);
     if (objects.digit_mm) lv_label_set_text(objects.digit_mm, buf);
 
+    /* Seconds subscript — small mono digits, updated once per second by
+     * spotter_clock_tick_seconds() below.  Repaint here so the value is
+     * fresh whenever a minute tick fires too. */
+    if (objects.clock_seconds) {
+        snprintf(buf, sizeof(buf), "%02d", sec);
+        lv_label_set_text(objects.clock_seconds, buf);
+    }
+
     if (objects.clock_date_label) {
-        /* clock_date_label uses LabelDataValue48 (roboto_mono_48) which
-         * carries only digits + dash + period + space + colon — no
-         * letters. Render the date in numeric MM-DD-YYYY form so every
-         * glyph is in the font's subset. */
-        char date_buf[16];
-        strftime(date_buf, sizeof(date_buf), "%m-%d-%Y", &ti);
+        char date_buf[40];
+        /* Long-form date matches the mockup: "June 22, 2026". The label
+         * was renamed off LabelDataValue48 in the new layout so letters
+         * render now. */
+        strftime(date_buf, sizeof(date_buf), "%B %e, %Y", &ti);
+        /* %e leaves a leading space on 1-digit days — collapse it. */
+        for (char *p = date_buf; *p; p++) {
+            if (*p == ' ' && *(p + 1) == ' ') { memmove(p, p + 1, strlen(p)); }
+        }
         lv_label_set_text(objects.clock_date_label, date_buf);
     }
+
+    /* Refresh the three stat cards + the "X min ago" timestamp on the same
+     * cadence as the clock minute tick. The painter reads cached values
+     * from vars.c (battery / solar) so we never lose the most recent
+     * MQTT-delivered reading. */
+    spotter_clock_paint_stats();
+
+    (void)force;
+}
+
+/* ----------------------------------------------------------------------------
+ * Seconds tick + colon blink
+ *
+ * The connectivity-alarm subsystem owns the page-load transition, but the
+ * clock-mode painters above only fire once per minute via clock_update_toolbar.
+ * The seconds subscript and the colon-blink animation need higher-frequency
+ * updates, so we run a dedicated 500 ms LVGL timer.
+ *   - Every tick: flip the text-opacity of clock_colon (the ":" between HH and
+ *     MM) so the colon appears to blink.
+ *   - Every other tick (i.e. once per second): refresh clock_seconds.
+ * The timer runs unconditionally — when PageClockMode is not the active
+ * screen the label writes are cheap and invisible.
+ * --------------------------------------------------------------------------*/
+static lv_timer_t *s_clock_blink_timer = NULL;
+static bool        s_colon_visible     = true;
+static int         s_last_sec_painted  = -1;
+
+static void clock_blink_cb(lv_timer_t *t)
+{
+    (void)t;
+    /* Toggle colon visibility */
+    s_colon_visible = !s_colon_visible;
+    uint8_t opa = s_colon_visible ? 255 : 46; /* per spec: 1.0 -> 0.18 */
+    if (objects.clock_colon) {
+        lv_obj_set_style_text_opa(objects.clock_colon, opa,
+                                  LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+
+    /* Once-per-second seconds-label refresh (only when system time is
+     * valid; otherwise the seconds label stays at its placeholder). */
+    if (s_system_time_set && objects.clock_seconds) {
+        time_t now;
+        time(&now);
+        struct tm ti;
+        localtime_r(&now, &ti);
+        if (ti.tm_sec != s_last_sec_painted) {
+            s_last_sec_painted = ti.tm_sec;
+            char buf[4];
+            snprintf(buf, sizeof(buf), "%02d", ti.tm_sec);
+            lv_label_set_text(objects.clock_seconds, buf);
+        }
+    }
+}
+
+void spotter_clock_blink_start(void)
+{
+    if (s_clock_blink_timer) return;
+    s_clock_blink_timer = lv_timer_create(clock_blink_cb, 500, NULL);
+}
+
+/* ----------------------------------------------------------------------------
+ * Frozen-data card painters for PageClockMode
+ *
+ * The three stat cards (Battery, Solar, Fresh) on the clock screen show the
+ * most recent values that arrived over MQTT before connectivity dropped.
+ * They re-paint on every minute tick (cheap label writes) and on entry to
+ * clock mode so the user sees fresh data immediately.
+ *
+ * Fresh tank data is not currently delivered from any TrailCurrent device,
+ * so that card stays as a "No tank data" placeholder until the relevant
+ * MQTT topics get wired through vars.c.
+ * --------------------------------------------------------------------------*/
+
+/* Map raw solar status string to a short human-readable phrase. Mirrors the
+ * lookup table in vars.c::set_var_solar_status() — kept in sync. */
+static const char *solar_status_short(const char *raw)
+{
+    if (!raw || !*raw)                          return "--";
+    if (strcmp(raw, "solar") == 0)              return "Charging, solar";
+    if (strcmp(raw, "shore") == 0)              return "Shore power";
+    if (strcmp(raw, "not_charging") == 0)       return "Not charging";
+    if (strcmp(raw, "float") == 0)              return "Charging, float";
+    if (strcmp(raw, "absorption") == 0)         return "Charging, absorption";
+    if (strcmp(raw, "bulk") == 0)               return "Charging, bulk";
+    return raw;
+}
+
+/* Format "X min ago" / "Xh Ym ago" / "Just now" / "--" depending on age.
+ * Buffer must be at least 16 bytes. */
+static void format_ago(char *buf, size_t n, time_t last, time_t now)
+{
+    if (last <= 0)         { snprintf(buf, n, "--");           return; }
+    long age = (long)(now - last);
+    if (age < 0) age = 0;
+    if (age < 45)          { snprintf(buf, n, "Just now");     return; }
+    if (age < 90)          { snprintf(buf, n, "1 min ago");    return; }
+    long mins = (age + 30) / 60;
+    if (mins < 60)         { snprintf(buf, n, "%ld min ago", mins);          return; }
+    long hours = mins / 60;
+    long rem   = mins % 60;
+    if (hours < 24)        { snprintf(buf, n, "%ldh %ldm ago", hours, rem);  return; }
+    long days = hours / 24;
+    snprintf(buf, n, "%ld day%s ago", days, days == 1 ? "" : "s");
+}
+
+extern time_t spotter_last_data_time(void);
+
+void spotter_clock_paint_stats(void)
+{
+    if (!objects.page_clock_mode) return;
+
+    time_t now;
+    time(&now);
+    time_t last = spotter_last_data_time();
+    bool   have_data = (last > 0);
+
+    /* ---- "X min ago" header label ---- */
+    if (objects.clock_ago_label) {
+        char buf[20];
+        format_ago(buf, sizeof(buf), last, now);
+        lv_label_set_text(objects.clock_ago_label, buf);
+    }
+
+    /* ---- Battery card ----
+     * Each value is guarded individually so a partial sync (voltage came
+     * in but SoC hasn't yet, etc.) doesn't render "0%" or "0.0 V". */
+    int32_t bat_pct  = get_var_battery_soc_percentage();
+    float   bat_v    = get_var_battery_voltage();
+    bool    have_pct = (bat_pct > 0);
+    bool    have_v   = (bat_v   > 0.5f);    /* anything < 0.5 V is "no reading" */
+
+    if (objects.clock_bat_value) {
+        if (have_pct) {
+            int pct = (int)bat_pct;
+            if (pct < 0)   pct = 0;
+            if (pct > 100) pct = 100;
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%d", pct);
+            lv_label_set_text(objects.clock_bat_value, buf);
+        } else {
+            lv_label_set_text(objects.clock_bat_value, "--");
+        }
+    }
+    if (objects.clock_bat_sub) {
+        if (have_v) {
+            char buf[32];
+            snprintf(buf, sizeof(buf), "%.1f V, house bank", bat_v);
+            lv_label_set_text(objects.clock_bat_sub, buf);
+        } else if (have_data) {
+            lv_label_set_text(objects.clock_bat_sub, "house bank");
+        } else {
+            lv_label_set_text(objects.clock_bat_sub, "Waiting for data");
+        }
+    }
+
+    /* ---- Solar card ---- */
+    int32_t     sol_w        = get_var_solar_wattage();
+    const char *sol_status   = get_var_solar_status();
+    bool        have_solar_w = (sol_w != 0) || have_data;     /* 0 W IS a valid reading once we've ever seen data */
+    bool        have_status  = (sol_status != NULL && sol_status[0] != '\0');
+
+    if (objects.clock_sol_value) {
+        if (have_solar_w) {
+            char buf[8];
+            snprintf(buf, sizeof(buf), "%d", (int)sol_w);
+            lv_label_set_text(objects.clock_sol_value, buf);
+        } else {
+            lv_label_set_text(objects.clock_sol_value, "--");
+        }
+    }
+    if (objects.clock_sol_sub) {
+        if (have_status) {
+            lv_label_set_text(objects.clock_sol_sub,
+                              solar_status_short(sol_status));
+        } else if (have_data) {
+            lv_label_set_text(objects.clock_sol_sub, "--");
+        } else {
+            lv_label_set_text(objects.clock_sol_sub, "Waiting for data");
+        }
+    }
+
+    /* ---- Fresh card ---- placeholder until tank MQTT topics are wired ---- */
+    if (objects.clock_fresh_value) lv_label_set_text(objects.clock_fresh_value, "--");
+    if (objects.clock_fresh_sub)   lv_label_set_text(objects.clock_fresh_sub,   "No tank data");
 }
 
 /* Public hooks for actions.c — flip the 12/24 setting and force an immediate
@@ -941,6 +1142,12 @@ void app_main(void)
     /* EEZ Studio UI */
     ui_init();
     create_dimming_overlay();
+
+    /* Start the 500 ms clock-mode blink timer (drives the HH:MM colon
+     * dot animation + seconds-subscript refresh on PageClockMode). Runs
+     * unconditionally — when the page isn't active the label writes are
+     * cheap and invisible. */
+    spotter_clock_blink_start();
 
     /* Paint placeholders ("--", "Waiting for data...", etc.) into every
      * widget that's supposed to show data from TrailCurrent. Replaced by

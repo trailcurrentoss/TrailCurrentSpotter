@@ -11,12 +11,27 @@
  * triggers the top-toolbar clock to repaint. */
 extern void spotter_clock_set_from_iso_utc(const char *iso_utc);
 
+/* Last-known timestamp (wall-clock epoch seconds) of an MQTT-delivered
+ * sensor reading. PageClockMode's "X min ago" label is computed against
+ * this. Updated by every battery / solar setter below. Read via
+ * spotter_last_data_time() from main.c's clock-mode painter. */
+static time_t s_last_data_time = 0;
+time_t spotter_last_data_time(void) { return s_last_data_time; }
+static void mark_data_received(void) {
+    time_t now;
+    time(&now);
+    /* Reject pre-sync nonsense (system clock not yet set). The painter
+     * treats 0 as "no data yet" and displays "--" instead of "55y ago". */
+    if (now > 1735689600) s_last_data_time = now;   /* 2025-01-01 cutoff */
+}
+
 /* --- Solar --- */
 
 static int32_t solar_wattage;
 int32_t get_var_solar_wattage(void) { return solar_wattage; }
 void set_var_solar_wattage(int32_t value) {
     solar_wattage = value;
+    mark_data_received();
     if (objects.drive_solar_value) {
         char buf[8];
         snprintf(buf, sizeof(buf), "%d", (int)value);
@@ -37,6 +52,7 @@ const char *get_var_solar_status(void) { return solar_status; }
 void set_var_solar_status(const char *value) {
     strncpy(solar_status, value, sizeof(solar_status) - 1);
     solar_status[sizeof(solar_status) - 1] = '\0';
+    mark_data_received();
     /* Map raw status strings to UI-friendly text shown under the solar arc. */
     if (objects.drive_solar_pct) {
         const char *display;
@@ -66,6 +82,7 @@ static float battery_voltage;
 float get_var_battery_voltage(void) { return battery_voltage; }
 void set_var_battery_voltage(float value) {
     battery_voltage = value;
+    mark_data_received();
     if (objects.drive_bat_volts) {
         char buf[8];
         snprintf(buf, sizeof(buf), "%.1f", value);
@@ -77,6 +94,7 @@ static int32_t battery_soc_percentage;
 int32_t get_var_battery_soc_percentage(void) { return battery_soc_percentage; }
 void set_var_battery_soc_percentage(int32_t value) {
     battery_soc_percentage = value;
+    mark_data_received();
     if (objects.drive_bat_value) {
         char buf[8];
         snprintf(buf, sizeof(buf), "%d", (int)value);

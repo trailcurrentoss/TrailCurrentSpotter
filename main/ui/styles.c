@@ -1793,35 +1793,6 @@ void remove_style_label_data_value36(lv_obj_t *obj) {
 };
 
 //
-// Style: LabelDataValue48
-//
-
-void init_style_label_data_value48_MAIN_DEFAULT(lv_style_t *style) {
-    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][9]));
-    lv_style_set_text_font(style, &ui_font_roboto_mono_48);
-};
-
-lv_style_t *get_style_label_data_value48_MAIN_DEFAULT() {
-    static lv_style_t *style;
-    if (!style) {
-        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
-        lv_style_init(style);
-        init_style_label_data_value48_MAIN_DEFAULT(style);
-    }
-    return style;
-};
-
-void add_style_label_data_value48(lv_obj_t *obj) {
-    (void)obj;
-    lv_obj_add_style(obj, get_style_label_data_value48_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
-};
-
-void remove_style_label_data_value48(lv_obj_t *obj) {
-    (void)obj;
-    lv_obj_remove_style(obj, get_style_label_data_value48_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
-};
-
-//
 // Style: PanelWarningRibbon
 //
 
@@ -1975,6 +1946,473 @@ void remove_style_button_clock_settings(lv_obj_t *obj) {
 };
 
 //
+// Style: ClockScreen
+//
+
+void init_style_clock_screen_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][13]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_width(style, 0);
+    lv_style_set_border_opa(style, 0);
+    lv_style_set_radius(style, 0);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][17]));
+    lv_style_set_text_font(style, &lv_font_montserrat_14);
+};
+
+lv_style_t *get_style_clock_screen_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_screen_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_screen(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_screen_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_screen(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_screen_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockHeaderBar
+//
+
+void init_style_clock_header_bar_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][14]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_color(style, lv_color_hex(theme_colors[active_theme_index][15]));
+    lv_style_set_border_width(style, 1);
+    lv_style_set_border_opa(style, 255);
+    lv_style_set_border_side(style, LV_BORDER_SIDE_BOTTOM);
+    lv_style_set_radius(style, 0);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_header_bar_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_header_bar_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_header_bar(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_header_bar_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_header_bar(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_header_bar_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockFooterBar
+//
+
+void init_style_clock_footer_bar_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][14]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_color(style, lv_color_hex(theme_colors[active_theme_index][15]));
+    lv_style_set_border_width(style, 1);
+    lv_style_set_border_opa(style, 255);
+    lv_style_set_border_side(style, LV_BORDER_SIDE_TOP);
+    lv_style_set_radius(style, 0);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_footer_bar_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_footer_bar_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_footer_bar(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_footer_bar_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_footer_bar(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_footer_bar_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockDivider
+//
+
+void init_style_clock_divider_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][16]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_width(style, 0);
+    lv_style_set_border_opa(style, 0);
+    lv_style_set_radius(style, 0);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_divider_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_divider_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_divider(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_divider_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_divider(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_divider_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockStatusPill
+//
+
+void init_style_clock_status_pill_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][27]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_color(style, lv_color_hex(theme_colors[active_theme_index][28]));
+    lv_style_set_border_width(style, 1);
+    lv_style_set_border_opa(style, 255);
+    lv_style_set_radius(style, 32);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_status_pill_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_status_pill_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_status_pill(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_status_pill_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_status_pill(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_status_pill_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockPillDotStyle
+//
+
+void init_style_clock_pill_dot_style_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][30]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_width(style, 0);
+    lv_style_set_border_opa(style, 0);
+    lv_style_set_radius(style, 32);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_pill_dot_style_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_pill_dot_style_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_pill_dot_style(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_pill_dot_style_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_pill_dot_style(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_pill_dot_style_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockStaleDotStyle
+//
+
+void init_style_clock_stale_dot_style_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][31]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_width(style, 0);
+    lv_style_set_border_opa(style, 0);
+    lv_style_set_radius(style, 32);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_stale_dot_style_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_stale_dot_style_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_stale_dot_style(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_stale_dot_style_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_stale_dot_style(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_stale_dot_style_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockThemeToggleBtn
+//
+
+void init_style_clock_theme_toggle_btn_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][14]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_color(style, lv_color_hex(theme_colors[active_theme_index][15]));
+    lv_style_set_border_width(style, 1);
+    lv_style_set_border_opa(style, 255);
+    lv_style_set_radius(style, 32);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][20]));
+    lv_style_set_text_font(style, &lv_font_montserrat_18);
+};
+
+lv_style_t *get_style_clock_theme_toggle_btn_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_theme_toggle_btn_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void init_style_clock_theme_toggle_btn_MAIN_PRESSED(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][15]));
+    lv_style_set_bg_opa(style, 255);
+};
+
+lv_style_t *get_style_clock_theme_toggle_btn_MAIN_PRESSED() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_theme_toggle_btn_MAIN_PRESSED(style);
+    }
+    return style;
+};
+
+void add_style_clock_theme_toggle_btn(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_theme_toggle_btn_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_style(obj, get_style_clock_theme_toggle_btn_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+void remove_style_clock_theme_toggle_btn(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_theme_toggle_btn_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_remove_style(obj, get_style_clock_theme_toggle_btn_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+//
+// Style: ClockCardPanel
+//
+
+void init_style_clock_card_panel_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][22]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_color(style, lv_color_hex(theme_colors[active_theme_index][23]));
+    lv_style_set_border_width(style, 1);
+    lv_style_set_border_opa(style, 255);
+    lv_style_set_radius(style, 12);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+};
+
+lv_style_t *get_style_clock_card_panel_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_card_panel_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void add_style_clock_card_panel(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_card_panel_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+void remove_style_clock_card_panel(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_card_panel_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+};
+
+//
+// Style: ClockRetryButton
+//
+
+void init_style_clock_retry_button_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][20]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_width(style, 0);
+    lv_style_set_border_opa(style, 0);
+    lv_style_set_radius(style, 10);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+    lv_style_set_shadow_color(style, lv_color_hex(theme_colors[active_theme_index][20]));
+    lv_style_set_shadow_opa(style, 77);
+    lv_style_set_shadow_width(style, 15);
+    lv_style_set_shadow_spread(style, 0);
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][32]));
+    lv_style_set_text_font(style, &lv_font_montserrat_16);
+};
+
+lv_style_t *get_style_clock_retry_button_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_retry_button_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void init_style_clock_retry_button_MAIN_PRESSED(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][21]));
+    lv_style_set_bg_opa(style, 255);
+};
+
+lv_style_t *get_style_clock_retry_button_MAIN_PRESSED() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_retry_button_MAIN_PRESSED(style);
+    }
+    return style;
+};
+
+void add_style_clock_retry_button(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_retry_button_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_style(obj, get_style_clock_retry_button_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+void remove_style_clock_retry_button(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_retry_button_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_remove_style(obj, get_style_clock_retry_button_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+//
+// Style: ClockSettingsButton
+//
+
+void init_style_clock_settings_button_MAIN_DEFAULT(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][14]));
+    lv_style_set_bg_opa(style, 255);
+    lv_style_set_border_color(style, lv_color_hex(theme_colors[active_theme_index][15]));
+    lv_style_set_border_width(style, 1);
+    lv_style_set_border_opa(style, 255);
+    lv_style_set_radius(style, 10);
+    lv_style_set_pad_top(style, 0);
+    lv_style_set_pad_bottom(style, 0);
+    lv_style_set_pad_left(style, 0);
+    lv_style_set_pad_right(style, 0);
+    lv_style_set_text_color(style, lv_color_hex(theme_colors[active_theme_index][18]));
+    lv_style_set_text_font(style, &lv_font_montserrat_14);
+};
+
+lv_style_t *get_style_clock_settings_button_MAIN_DEFAULT() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_settings_button_MAIN_DEFAULT(style);
+    }
+    return style;
+};
+
+void init_style_clock_settings_button_MAIN_PRESSED(lv_style_t *style) {
+    lv_style_set_bg_color(style, lv_color_hex(theme_colors[active_theme_index][15]));
+    lv_style_set_bg_opa(style, 255);
+};
+
+lv_style_t *get_style_clock_settings_button_MAIN_PRESSED() {
+    static lv_style_t *style;
+    if (!style) {
+        style = (lv_style_t *)lv_mem_alloc(sizeof(lv_style_t));
+        lv_style_init(style);
+        init_style_clock_settings_button_MAIN_PRESSED(style);
+    }
+    return style;
+};
+
+void add_style_clock_settings_button(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_add_style(obj, get_style_clock_settings_button_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_style(obj, get_style_clock_settings_button_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+void remove_style_clock_settings_button(lv_obj_t *obj) {
+    (void)obj;
+    lv_obj_remove_style(obj, get_style_clock_settings_button_MAIN_DEFAULT(), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_remove_style(obj, get_style_clock_settings_button_MAIN_PRESSED(), LV_PART_MAIN | LV_STATE_PRESSED);
+};
+
+//
 //
 //
 
@@ -2023,11 +2461,21 @@ void add_style(lv_obj_t *obj, int32_t styleIndex) {
         add_style_label_data_value18,
         add_style_label_data_value32,
         add_style_label_data_value36,
-        add_style_label_data_value48,
         add_style_panel_warning_ribbon,
         add_style_label_warning_text,
         add_style_label_clock_hero,
         add_style_button_clock_settings,
+        add_style_clock_screen,
+        add_style_clock_header_bar,
+        add_style_clock_footer_bar,
+        add_style_clock_divider,
+        add_style_clock_status_pill,
+        add_style_clock_pill_dot_style,
+        add_style_clock_stale_dot_style,
+        add_style_clock_theme_toggle_btn,
+        add_style_clock_card_panel,
+        add_style_clock_retry_button,
+        add_style_clock_settings_button,
     };
     add_style_funcs[styleIndex](obj);
 }
@@ -2077,11 +2525,21 @@ void remove_style(lv_obj_t *obj, int32_t styleIndex) {
         remove_style_label_data_value18,
         remove_style_label_data_value32,
         remove_style_label_data_value36,
-        remove_style_label_data_value48,
         remove_style_panel_warning_ribbon,
         remove_style_label_warning_text,
         remove_style_label_clock_hero,
         remove_style_button_clock_settings,
+        remove_style_clock_screen,
+        remove_style_clock_header_bar,
+        remove_style_clock_footer_bar,
+        remove_style_clock_divider,
+        remove_style_clock_status_pill,
+        remove_style_clock_pill_dot_style,
+        remove_style_clock_stale_dot_style,
+        remove_style_clock_theme_toggle_btn,
+        remove_style_clock_card_panel,
+        remove_style_clock_retry_button,
+        remove_style_clock_settings_button,
     };
     remove_style_funcs[styleIndex](obj);
 }

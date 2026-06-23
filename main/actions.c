@@ -166,6 +166,41 @@ void action_toggle_clock_format(lv_event_t *e)
     ESP_LOGI(TAG, "Clock format = %s", on ? "24-hour" : "12-hour");
 }
 
+/* Theme-toggle round button in the PageClockMode header. Reads the current
+ * selected_theme variable (0=light, 1=dark) and flips it via the same path
+ * as the explicit theme buttons on PageSetup, which keeps the checked-state
+ * of those buttons in sync as a side effect. */
+void action_toggle_theme(lv_event_t *e)
+{
+    (void)e;
+    int next = (get_var_selected_theme() == 0) ? 1 : 0;
+    set_var_selected_theme(next);
+    set_var_user_settings_changed(true);
+    /* Keep the explicit theme buttons in sync if the user later visits
+     * PageSetup — mirrors the body of action_change_theme. */
+    if (objects.setup_theme_light) {
+        if (next == 0) lv_obj_add_state(objects.setup_theme_light, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(objects.setup_theme_light, LV_STATE_CHECKED);
+    }
+    if (objects.setup_theme_dark) {
+        if (next == 1) lv_obj_add_state(objects.setup_theme_dark, LV_STATE_CHECKED);
+        else           lv_obj_clear_state(objects.setup_theme_dark, LV_STATE_CHECKED);
+    }
+    ESP_LOGI(TAG, "ToggleTheme -> %d", next);
+}
+
+/* Retry-connection primary button on PageClockMode. The wifi_setup module
+ * already keeps a persistent reconnect loop running in the background, but
+ * if the user wants an immediate retry we can kick the MQTT side. For now
+ * this is a stub that just logs — once we expose a force-reconnect API
+ * from wifi_setup / mqtt_client this becomes a 2-liner. */
+void action_retry_connection(lv_event_t *e)
+{
+    (void)e;
+    ESP_LOGI(TAG, "RetryConnection — user requested manual reconnect");
+    /* TODO: wifi_setup_reconnect_now(); mqtt_client_reconnect(); */
+}
+
 /* Gear-icon shortcut on PageClockMode — jump to the Setup tab so the user
  * can correct the timezone / clock format. We tell connectivity_alarm to
  * stop tracking us in clock mode so a subsequent reconnect doesn't yank the

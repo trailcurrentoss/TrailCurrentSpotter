@@ -16,6 +16,10 @@ extern void spotter_paint_placeholders(void);
  * screen is up-to-date before the next 2 Hz tick fires. */
 extern void spotter_clock_paint_mode(bool force);
 
+/* Defined in main.c — paints the three frozen-data stat cards on
+ * PageClockMode (battery / solar / fresh) plus the "X min ago" label. */
+extern void spotter_clock_paint_stats(void);
+
 static const char *TAG = "conn_alarm";
 
 /* The connectivity "alarm" no longer raises a red pulsing overlay with a
@@ -57,6 +61,7 @@ static void enter_clock_mode(void)
     }
     s_in_clock_mode = true;
     spotter_clock_paint_mode(true);
+    spotter_clock_paint_stats();
     ESP_LOGI(TAG, "Connectivity lost — switched to PageClockMode");
 }
 

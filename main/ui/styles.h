@@ -243,11 +243,6 @@ lv_style_t *get_style_label_data_value36_MAIN_DEFAULT();
 void add_style_label_data_value36(lv_obj_t *obj);
 void remove_style_label_data_value36(lv_obj_t *obj);
 
-// Style: LabelDataValue48
-lv_style_t *get_style_label_data_value48_MAIN_DEFAULT();
-void add_style_label_data_value48(lv_obj_t *obj);
-void remove_style_label_data_value48(lv_obj_t *obj);
-
 // Style: PanelWarningRibbon
 lv_style_t *get_style_panel_warning_ribbon_MAIN_DEFAULT();
 void add_style_panel_warning_ribbon(lv_obj_t *obj);
@@ -268,6 +263,64 @@ lv_style_t *get_style_button_clock_settings_MAIN_DEFAULT();
 lv_style_t *get_style_button_clock_settings_MAIN_PRESSED();
 void add_style_button_clock_settings(lv_obj_t *obj);
 void remove_style_button_clock_settings(lv_obj_t *obj);
+
+// Style: ClockScreen
+lv_style_t *get_style_clock_screen_MAIN_DEFAULT();
+void add_style_clock_screen(lv_obj_t *obj);
+void remove_style_clock_screen(lv_obj_t *obj);
+
+// Style: ClockHeaderBar
+lv_style_t *get_style_clock_header_bar_MAIN_DEFAULT();
+void add_style_clock_header_bar(lv_obj_t *obj);
+void remove_style_clock_header_bar(lv_obj_t *obj);
+
+// Style: ClockFooterBar
+lv_style_t *get_style_clock_footer_bar_MAIN_DEFAULT();
+void add_style_clock_footer_bar(lv_obj_t *obj);
+void remove_style_clock_footer_bar(lv_obj_t *obj);
+
+// Style: ClockDivider
+lv_style_t *get_style_clock_divider_MAIN_DEFAULT();
+void add_style_clock_divider(lv_obj_t *obj);
+void remove_style_clock_divider(lv_obj_t *obj);
+
+// Style: ClockStatusPill
+lv_style_t *get_style_clock_status_pill_MAIN_DEFAULT();
+void add_style_clock_status_pill(lv_obj_t *obj);
+void remove_style_clock_status_pill(lv_obj_t *obj);
+
+// Style: ClockPillDotStyle
+lv_style_t *get_style_clock_pill_dot_style_MAIN_DEFAULT();
+void add_style_clock_pill_dot_style(lv_obj_t *obj);
+void remove_style_clock_pill_dot_style(lv_obj_t *obj);
+
+// Style: ClockStaleDotStyle
+lv_style_t *get_style_clock_stale_dot_style_MAIN_DEFAULT();
+void add_style_clock_stale_dot_style(lv_obj_t *obj);
+void remove_style_clock_stale_dot_style(lv_obj_t *obj);
+
+// Style: ClockThemeToggleBtn
+lv_style_t *get_style_clock_theme_toggle_btn_MAIN_DEFAULT();
+lv_style_t *get_style_clock_theme_toggle_btn_MAIN_PRESSED();
+void add_style_clock_theme_toggle_btn(lv_obj_t *obj);
+void remove_style_clock_theme_toggle_btn(lv_obj_t *obj);
+
+// Style: ClockCardPanel
+lv_style_t *get_style_clock_card_panel_MAIN_DEFAULT();
+void add_style_clock_card_panel(lv_obj_t *obj);
+void remove_style_clock_card_panel(lv_obj_t *obj);
+
+// Style: ClockRetryButton
+lv_style_t *get_style_clock_retry_button_MAIN_DEFAULT();
+lv_style_t *get_style_clock_retry_button_MAIN_PRESSED();
+void add_style_clock_retry_button(lv_obj_t *obj);
+void remove_style_clock_retry_button(lv_obj_t *obj);
+
+// Style: ClockSettingsButton
+lv_style_t *get_style_clock_settings_button_MAIN_DEFAULT();
+lv_style_t *get_style_clock_settings_button_MAIN_PRESSED();
+void add_style_clock_settings_button(lv_obj_t *obj);
+void remove_style_clock_settings_button(lv_obj_t *obj);
 
 
 

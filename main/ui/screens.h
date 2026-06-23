@@ -19,7 +19,6 @@ typedef struct _objects_t {
     lv_obj_t *page_clock_mode;
     lv_obj_t *drive_status_bar;
     lv_obj_t *drive_status_bar__root;
-    lv_obj_t *drive_status_bar__status_brand_icon;
     lv_obj_t *drive_status_bar__status_brand_text;
     lv_obj_t *drive_status_bar__status_link_dot;
     lv_obj_t *drive_status_bar__status_link_label;
@@ -97,7 +96,6 @@ typedef struct _objects_t {
     lv_obj_t *drive_dock__dock_btn_setup_label;
     lv_obj_t *alarms_status_bar;
     lv_obj_t *alarms_status_bar__root;
-    lv_obj_t *alarms_status_bar__status_brand_icon;
     lv_obj_t *alarms_status_bar__status_brand_text;
     lv_obj_t *alarms_status_bar__status_link_dot;
     lv_obj_t *alarms_status_bar__status_link_label;
@@ -397,7 +395,6 @@ typedef struct _objects_t {
     lv_obj_t *alarms_dock__dock_btn_setup_label;
     lv_obj_t *setup_status_bar;
     lv_obj_t *setup_status_bar__root;
-    lv_obj_t *setup_status_bar__status_brand_icon;
     lv_obj_t *setup_status_bar__status_brand_text;
     lv_obj_t *setup_status_bar__status_link_dot;
     lv_obj_t *setup_status_bar__status_link_label;
@@ -613,19 +610,54 @@ typedef struct _objects_t {
     lv_obj_t *rename_cancel_lbl;
     lv_obj_t *rename_save_btn;
     lv_obj_t *rename_save_lbl;
-    lv_obj_t *clock_warning_strip;
-    lv_obj_t *clock_warning_icon;
+    lv_obj_t *header_bar;
+    lv_obj_t *clock_brand_icon;
+    lv_obj_t *clock_brand_text;
+    lv_obj_t *clock_brand_divider;
+    lv_obj_t *clock_brand_subtitle;
+    lv_obj_t *clock_warning_pill;
+    lv_obj_t *clock_warning_dot;
     lv_obj_t *clock_warning_text;
-    lv_obj_t *clock_date;
-    lv_obj_t *panel_hh;
+    lv_obj_t *clock_theme_btn;
+    lv_obj_t *clock_theme_icon;
+    lv_obj_t *clock_dow;
     lv_obj_t *digit_hh;
-    lv_obj_t *panel_mm;
+    lv_obj_t *clock_colon;
     lv_obj_t *digit_mm;
-    lv_obj_t *clock_ampm_panel;
     lv_obj_t *clock_ampm;
+    lv_obj_t *clock_seconds;
+    lv_obj_t *clock_date_label;
+    lv_obj_t *clock_last_header;
+    lv_obj_t *clock_ago_icon;
+    lv_obj_t *clock_ago_label;
+    lv_obj_t *clock_bat_card;
+    lv_obj_t *clock_bat_icon;
+    lv_obj_t *clock_bat_title;
+    lv_obj_t *clock_bat_dot;
+    lv_obj_t *clock_bat_value;
+    lv_obj_t *clock_bat_unit;
+    lv_obj_t *clock_bat_sub;
+    lv_obj_t *clock_sol_card;
+    lv_obj_t *clock_sol_icon;
+    lv_obj_t *clock_sol_title;
+    lv_obj_t *clock_sol_dot;
+    lv_obj_t *clock_sol_value;
+    lv_obj_t *clock_sol_unit;
+    lv_obj_t *clock_sol_sub;
+    lv_obj_t *clock_fresh_card;
+    lv_obj_t *clock_fresh_icon;
+    lv_obj_t *clock_fresh_title;
+    lv_obj_t *clock_fresh_dot;
+    lv_obj_t *clock_fresh_value;
+    lv_obj_t *clock_fresh_unit;
+    lv_obj_t *clock_fresh_sub;
+    lv_obj_t *footer_bar;
+    lv_obj_t *clock_retry_btn;
+    lv_obj_t *clock_retry_icon;
+    lv_obj_t *clock_retry_label;
     lv_obj_t *clock_settings_btn;
     lv_obj_t *clock_settings_icon;
-    lv_obj_t *clock_date_label;
+    lv_obj_t *clock_settings_label;
 } objects_t;
 
 extern objects_t objects;
@@ -693,9 +725,29 @@ enum Colors {
     COLOR_ID_SECONDARY_TEXT_COLOR,
     COLOR_ID_SUCCESS,
     COLOR_ID_WARNING,
+    COLOR_ID_CLOCK_SCREEN_BG,
+    COLOR_ID_CLOCK_CHROME_BG,
+    COLOR_ID_CLOCK_BAR_BORDER,
+    COLOR_ID_CLOCK_DIVIDER_COLOR,
+    COLOR_ID_CLOCK_TEXT_PRIMARY,
+    COLOR_ID_CLOCK_TEXT_SECONDARY,
+    COLOR_ID_CLOCK_TEXT_MUTED,
+    COLOR_ID_CLOCK_ACCENT,
+    COLOR_ID_CLOCK_ACCENT_SOFT,
+    COLOR_ID_CLOCK_CARD_BG,
+    COLOR_ID_CLOCK_CARD_BORDER,
+    COLOR_ID_CLOCK_VALUE_MUTED,
+    COLOR_ID_CLOCK_UNIT_COLOR,
+    COLOR_ID_CLOCK_SUB_COLOR,
+    COLOR_ID_CLOCK_PILL_BG,
+    COLOR_ID_CLOCK_PILL_BORDER,
+    COLOR_ID_CLOCK_PILL_TEXT,
+    COLOR_ID_CLOCK_PILL_DOT,
+    COLOR_ID_CLOCK_STALE_DOT,
+    COLOR_ID_CLOCK_RETRY_TEXT,
 };
 void change_color_theme(uint32_t themeIndex);
-extern uint32_t theme_colors[2][13];
+extern uint32_t theme_colors[2][33];
 extern uint32_t active_theme_index;
 
 void tick_screen_by_id(enum ScreensEnum screenId);
