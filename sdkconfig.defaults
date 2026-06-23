@@ -93,7 +93,16 @@ CONFIG_LV_DRAW_COMPLEX=y
 CONFIG_LV_USE_LOG=y
 CONFIG_LV_LOG_LEVEL_WARN=y
 
-# LVGL fonts
+# LVGL fonts — sizes used by the dashboard manifest:
+#   8/10 → tire sub, lamp labels, captions, BREAKAWAY, "TIRE PSI - TARGET 65"
+#   12/14 → status text, body labels, advisory text
+#   18 → tire PSI numbers
+#   22 → header speed value
+#   36 → solar W value
+#   40 → battery % value
+# (16/24/32 retained for other screens; 14 is the LVGL default font.)
+CONFIG_LV_FONT_MONTSERRAT_8=y
+CONFIG_LV_FONT_MONTSERRAT_10=y
 CONFIG_LV_FONT_MONTSERRAT_12=y
 CONFIG_LV_FONT_MONTSERRAT_14=y
 CONFIG_LV_FONT_MONTSERRAT_16=y
@@ -101,6 +110,9 @@ CONFIG_LV_FONT_MONTSERRAT_18=y
 CONFIG_LV_FONT_MONTSERRAT_22=y
 CONFIG_LV_FONT_MONTSERRAT_24=y
 CONFIG_LV_FONT_MONTSERRAT_32=y
+CONFIG_LV_FONT_MONTSERRAT_36=y
+CONFIG_LV_FONT_MONTSERRAT_40=y
+CONFIG_LV_FONT_MONTSERRAT_48=y
 CONFIG_LV_FONT_DEFAULT_MONTSERRAT_14=y
 
 # LVGL widgets

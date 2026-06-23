@@ -9,6 +9,7 @@ extern "C" {
 
 typedef struct _objects_t {
     lv_obj_t *page_drive;
+    lv_obj_t *page_lights;
     lv_obj_t *page_alarms;
     lv_obj_t *page_setup;
     lv_obj_t *page_wifi_setup;
@@ -19,55 +20,45 @@ typedef struct _objects_t {
     lv_obj_t *page_clock_mode;
     lv_obj_t *drive_status_bar;
     lv_obj_t *drive_status_bar__root;
+    lv_obj_t *drive_status_bar__status_brand_icon;
     lv_obj_t *drive_status_bar__status_brand_text;
+    lv_obj_t *drive_status_bar__status_div_1;
     lv_obj_t *drive_status_bar__status_link_dot;
     lv_obj_t *drive_status_bar__status_link_label;
+    lv_obj_t *drive_status_bar__status_wifi_icon;
     lv_obj_t *drive_status_bar__status_signal_left;
     lv_obj_t *drive_status_bar__status_signal_right;
+    lv_obj_t *drive_status_bar__status_div_2;
     lv_obj_t *drive_status_bar__status_speed_value;
     lv_obj_t *drive_status_bar__status_speed_unit;
     lv_obj_t *drive_status_bar__status_time;
-    lv_obj_t *drive_status_bar__status_wifi_icon;
+    lv_obj_t *drive_status_bar__status_theme_toggle;
+    lv_obj_t *drive_status_bar__status_theme_icon;
     lv_obj_t *drive_body;
-    lv_obj_t *drive_card_bat;
-    lv_obj_t *drive_batt_icon_1;
-    lv_obj_t *drive_bat_arc;
-    lv_obj_t *drive_bat_value;
-    lv_obj_t *drive_bat_pct_sym;
-    lv_obj_t *drive_bat_volts;
-    lv_obj_t *drive_bat_remain;
-    lv_obj_t *drive_bat_volts_unit;
-    lv_obj_t *drive_card_tires;
-    lv_obj_t *drive_tire_title;
-    lv_obj_t *drive_tire_sub;
+    lv_obj_t *drive_cab;
+    lv_obj_t *drive_windshield;
+    lv_obj_t *drive_mirror_l;
+    lv_obj_t *drive_mirror_r;
+    lv_obj_t *drive_hitch_aframe;
+    lv_obj_t *drive_hitch_dot;
+    lv_obj_t *drive_breakaway;
+    lv_obj_t *drive_trailer_body;
+    lv_obj_t *drive_ac;
+    lv_obj_t *drive_axle1_bar;
     lv_obj_t *drive_tire_l1;
-    lv_obj_t *drive_tire_l1_psi;
-    lv_obj_t *drive_tire_l1_lbl;
     lv_obj_t *drive_tire_r1;
+    lv_obj_t *drive_tire_l1_psi;
     lv_obj_t *drive_tire_r1_psi;
-    lv_obj_t *drive_tire_r1_lbl;
+    lv_obj_t *drive_axle2_bar;
     lv_obj_t *drive_tire_l2;
-    lv_obj_t *drive_tire_l2_psi;
-    lv_obj_t *drive_tire_l2_lbl;
     lv_obj_t *drive_tire_r2;
+    lv_obj_t *drive_tire_l2_psi;
     lv_obj_t *drive_tire_r2_psi;
-    lv_obj_t *drive_tire_r2_lbl;
+    lv_obj_t *drive_axle3_bar;
     lv_obj_t *drive_tire_l3;
-    lv_obj_t *drive_tire_l3_psi;
-    lv_obj_t *drive_tire_l3_lbl;
     lv_obj_t *drive_tire_r3;
+    lv_obj_t *drive_tire_l3_psi;
     lv_obj_t *drive_tire_r3_psi;
-    lv_obj_t *drive_tire_r3_lbl;
-    lv_obj_t *drive_bsm_warning;
-    lv_obj_t *drive_bsm_warn_icon;
-    lv_obj_t *drive_bsm_warn_text;
-    lv_obj_t *drive_card_solar;
-    lv_obj_t *drive_solar_arc;
-    lv_obj_t *drive_solar_icon;
-    lv_obj_t *drive_solar_value;
-    lv_obj_t *drive_solar_unit_sym;
-    lv_obj_t *drive_solar_units_label;
-    lv_obj_t *drive_solar_pct;
     lv_obj_t *drive_chip_run;
     lv_obj_t *drive_chip_run_icon;
     lv_obj_t *drive_chip_run_lbl;
@@ -83,28 +74,113 @@ typedef struct _objects_t {
     lv_obj_t *drive_chip_rev;
     lv_obj_t *drive_chip_rev_icon;
     lv_obj_t *drive_chip_rev_lbl;
+    lv_obj_t *drive_bat_arc;
+    lv_obj_t *drive_bat_dial;
+    lv_obj_t *drive_bat_icon;
+    lv_obj_t *drive_bat_value;
+    lv_obj_t *drive_bat_volts;
+    lv_obj_t *drive_bat_remain;
+    lv_obj_t *drive_solar_arc;
+    lv_obj_t *drive_solar_dial;
+    lv_obj_t *drive_solar_icon;
+    lv_obj_t *drive_solar_value;
+    lv_obj_t *drive_solar_unit;
+    lv_obj_t *drive_solar_pct;
+    lv_obj_t *drive_bsm_l_a1;
+    lv_obj_t *drive_bsm_l_a2;
+    lv_obj_t *drive_bsm_l_a3;
+    lv_obj_t *drive_bsm_r_a1;
+    lv_obj_t *drive_bsm_r_a2;
+    lv_obj_t *drive_bsm_r_a3;
+    lv_obj_t *drive_bsm_l_car;
+    lv_obj_t *drive_bsm_r_car;
+    lv_obj_t *drive_bsm_warning;
+    lv_obj_t *drive_bsm_warn_text;
+    lv_obj_t *drive_solar_w;
+    lv_obj_t *drive_sol_icon;
     lv_obj_t *drive_dock;
     lv_obj_t *drive_dock__root;
     lv_obj_t *drive_dock__dock_btn_drive;
     lv_obj_t *drive_dock__dock_btn_drive_icon;
     lv_obj_t *drive_dock__dock_btn_drive_label;
+    lv_obj_t *drive_dock__dock_btn_lights;
+    lv_obj_t *drive_dock__dock_btn_lights_icon;
+    lv_obj_t *drive_dock__dock_btn_lights_label;
     lv_obj_t *drive_dock__dock_btn_alarms;
     lv_obj_t *drive_dock__dock_btn_alarms_icon;
     lv_obj_t *drive_dock__dock_btn_alarms_label;
     lv_obj_t *drive_dock__dock_btn_setup;
     lv_obj_t *drive_dock__dock_btn_setup_icon;
     lv_obj_t *drive_dock__dock_btn_setup_label;
+    lv_obj_t *lights_status_bar;
+    lv_obj_t *lights_status_bar__root;
+    lv_obj_t *lights_status_bar__status_brand_icon;
+    lv_obj_t *lights_status_bar__status_brand_text;
+    lv_obj_t *lights_status_bar__status_div_1;
+    lv_obj_t *lights_status_bar__status_link_dot;
+    lv_obj_t *lights_status_bar__status_link_label;
+    lv_obj_t *lights_status_bar__status_wifi_icon;
+    lv_obj_t *lights_status_bar__status_signal_left;
+    lv_obj_t *lights_status_bar__status_signal_right;
+    lv_obj_t *lights_status_bar__status_div_2;
+    lv_obj_t *lights_status_bar__status_speed_value;
+    lv_obj_t *lights_status_bar__status_speed_unit;
+    lv_obj_t *lights_status_bar__status_time;
+    lv_obj_t *lights_status_bar__status_theme_toggle;
+    lv_obj_t *lights_status_bar__status_theme_icon;
+    lv_obj_t *lights_header;
+    lv_obj_t *lights_prev_btn;
+    lv_obj_t *lights_prev_icon;
+    lv_obj_t *lights_next_btn;
+    lv_obj_t *lights_next_icon;
+    lv_obj_t *lights_zone_title;
+    lv_obj_t *lights_zone_sub;
+    lv_obj_t *lights_body;
+    lv_obj_t *lights_body_placeholder;
+    lv_obj_t *lights_footer;
+    lv_obj_t *lights_all_on_btn;
+    lv_obj_t *lights_all_on_lbl;
+    lv_obj_t *lights_all_off_btn;
+    lv_obj_t *lights_all_off_lbl;
+    lv_obj_t *lights_zone_dots;
+    lv_obj_t *lights_zone_dot_0;
+    lv_obj_t *lights_zone_dot_1;
+    lv_obj_t *lights_zone_dot_2;
+    lv_obj_t *lights_zone_dot_3;
+    lv_obj_t *lights_zone_dot_4;
+    lv_obj_t *lights_zone_dot_5;
+    lv_obj_t *lights_off_all_btn;
+    lv_obj_t *lights_off_all_lbl;
+    lv_obj_t *lights_dock;
+    lv_obj_t *lights_dock__root;
+    lv_obj_t *lights_dock__dock_btn_drive;
+    lv_obj_t *lights_dock__dock_btn_drive_icon;
+    lv_obj_t *lights_dock__dock_btn_drive_label;
+    lv_obj_t *lights_dock__dock_btn_lights;
+    lv_obj_t *lights_dock__dock_btn_lights_icon;
+    lv_obj_t *lights_dock__dock_btn_lights_label;
+    lv_obj_t *lights_dock__dock_btn_alarms;
+    lv_obj_t *lights_dock__dock_btn_alarms_icon;
+    lv_obj_t *lights_dock__dock_btn_alarms_label;
+    lv_obj_t *lights_dock__dock_btn_setup;
+    lv_obj_t *lights_dock__dock_btn_setup_icon;
+    lv_obj_t *lights_dock__dock_btn_setup_label;
     lv_obj_t *alarms_status_bar;
     lv_obj_t *alarms_status_bar__root;
+    lv_obj_t *alarms_status_bar__status_brand_icon;
     lv_obj_t *alarms_status_bar__status_brand_text;
+    lv_obj_t *alarms_status_bar__status_div_1;
     lv_obj_t *alarms_status_bar__status_link_dot;
     lv_obj_t *alarms_status_bar__status_link_label;
+    lv_obj_t *alarms_status_bar__status_wifi_icon;
     lv_obj_t *alarms_status_bar__status_signal_left;
     lv_obj_t *alarms_status_bar__status_signal_right;
+    lv_obj_t *alarms_status_bar__status_div_2;
     lv_obj_t *alarms_status_bar__status_speed_value;
     lv_obj_t *alarms_status_bar__status_speed_unit;
     lv_obj_t *alarms_status_bar__status_time;
-    lv_obj_t *alarms_status_bar__status_wifi_icon;
+    lv_obj_t *alarms_status_bar__status_theme_toggle;
+    lv_obj_t *alarms_status_bar__status_theme_icon;
     lv_obj_t *alarms_body;
     lv_obj_t *alarms_header;
     lv_obj_t *alarms_title;
@@ -387,6 +463,9 @@ typedef struct _objects_t {
     lv_obj_t *alarms_dock__dock_btn_drive;
     lv_obj_t *alarms_dock__dock_btn_drive_icon;
     lv_obj_t *alarms_dock__dock_btn_drive_label;
+    lv_obj_t *alarms_dock__dock_btn_lights;
+    lv_obj_t *alarms_dock__dock_btn_lights_icon;
+    lv_obj_t *alarms_dock__dock_btn_lights_label;
     lv_obj_t *alarms_dock__dock_btn_alarms;
     lv_obj_t *alarms_dock__dock_btn_alarms_icon;
     lv_obj_t *alarms_dock__dock_btn_alarms_label;
@@ -395,15 +474,20 @@ typedef struct _objects_t {
     lv_obj_t *alarms_dock__dock_btn_setup_label;
     lv_obj_t *setup_status_bar;
     lv_obj_t *setup_status_bar__root;
+    lv_obj_t *setup_status_bar__status_brand_icon;
     lv_obj_t *setup_status_bar__status_brand_text;
+    lv_obj_t *setup_status_bar__status_div_1;
     lv_obj_t *setup_status_bar__status_link_dot;
     lv_obj_t *setup_status_bar__status_link_label;
+    lv_obj_t *setup_status_bar__status_wifi_icon;
     lv_obj_t *setup_status_bar__status_signal_left;
     lv_obj_t *setup_status_bar__status_signal_right;
+    lv_obj_t *setup_status_bar__status_div_2;
     lv_obj_t *setup_status_bar__status_speed_value;
     lv_obj_t *setup_status_bar__status_speed_unit;
     lv_obj_t *setup_status_bar__status_time;
-    lv_obj_t *setup_status_bar__status_wifi_icon;
+    lv_obj_t *setup_status_bar__status_theme_toggle;
+    lv_obj_t *setup_status_bar__status_theme_icon;
     lv_obj_t *setup_body;
     lv_obj_t *setup_axle_title;
     lv_obj_t *setup_axle_single;
@@ -473,6 +557,9 @@ typedef struct _objects_t {
     lv_obj_t *setup_dock__dock_btn_drive;
     lv_obj_t *setup_dock__dock_btn_drive_icon;
     lv_obj_t *setup_dock__dock_btn_drive_label;
+    lv_obj_t *setup_dock__dock_btn_lights;
+    lv_obj_t *setup_dock__dock_btn_lights_icon;
+    lv_obj_t *setup_dock__dock_btn_lights_label;
     lv_obj_t *setup_dock__dock_btn_alarms;
     lv_obj_t *setup_dock__dock_btn_alarms_icon;
     lv_obj_t *setup_dock__dock_btn_alarms_label;
@@ -664,18 +751,22 @@ extern objects_t objects;
 
 enum ScreensEnum {
     SCREEN_ID_PAGE_DRIVE = 1,
-    SCREEN_ID_PAGE_ALARMS = 2,
-    SCREEN_ID_PAGE_SETUP = 3,
-    SCREEN_ID_PAGE_WIFI_SETUP = 4,
-    SCREEN_ID_PAGE_WIFI_CONNECTING = 5,
-    SCREEN_ID_PAGE_MQTT_SETUP = 6,
-    SCREEN_ID_PAGE_MQTT_CONNECTING = 7,
-    SCREEN_ID_PAGE_RENAME_SENSOR = 8,
-    SCREEN_ID_PAGE_CLOCK_MODE = 9,
+    SCREEN_ID_PAGE_LIGHTS = 2,
+    SCREEN_ID_PAGE_ALARMS = 3,
+    SCREEN_ID_PAGE_SETUP = 4,
+    SCREEN_ID_PAGE_WIFI_SETUP = 5,
+    SCREEN_ID_PAGE_WIFI_CONNECTING = 6,
+    SCREEN_ID_PAGE_MQTT_SETUP = 7,
+    SCREEN_ID_PAGE_MQTT_CONNECTING = 8,
+    SCREEN_ID_PAGE_RENAME_SENSOR = 9,
+    SCREEN_ID_PAGE_CLOCK_MODE = 10,
 };
 
 void create_screen_page_drive();
 void tick_screen_page_drive();
+
+void create_screen_page_lights();
+void tick_screen_page_lights();
 
 void create_screen_page_alarms();
 void tick_screen_page_alarms();
@@ -745,9 +836,36 @@ enum Colors {
     COLOR_ID_CLOCK_PILL_DOT,
     COLOR_ID_CLOCK_STALE_DOT,
     COLOR_ID_CLOCK_RETRY_TEXT,
+    COLOR_ID_CHROME_BORDER,
+    COLOR_ID_PANEL_BORDER,
+    COLOR_ID_SURFACE_SUNK,
+    COLOR_ID_MUTED_TEXT_COLOR,
+    COLOR_ID_TRACK_COLOR,
+    COLOR_ID_GAUGE_INNER_TOP,
+    COLOR_ID_GAUGE_INNER_BOT,
+    COLOR_ID_OK_DIM,
+    COLOR_ID_GREEN_TILE_BG,
+    COLOR_ID_GREEN_TILE_BD,
+    COLOR_ID_GREEN_LABEL,
+    COLOR_ID_RED_TILE_BG,
+    COLOR_ID_RED_TILE_BD,
+    COLOR_ID_RED_LABEL,
+    COLOR_ID_METAL_TOP,
+    COLOR_ID_METAL_BOT,
+    COLOR_ID_METAL_BD,
+    COLOR_ID_TIRE_MID,
+    COLOR_ID_TIRE_EDGE,
+    COLOR_ID_TIRE_OK_BD,
+    COLOR_ID_TIRE_OK_TEXT,
+    COLOR_ID_WINDSHIELD,
+    COLOR_ID_WINDSHIELD_BD,
+    COLOR_ID_AMBER_TEXT,
+    COLOR_ID_ALARM_BG_TOP,
+    COLOR_ID_ALARM_BG_BOT,
+    COLOR_ID_ALARM_BTN_TEXT,
 };
 void change_color_theme(uint32_t themeIndex);
-extern uint32_t theme_colors[2][33];
+extern uint32_t theme_colors[2][60];
 extern uint32_t active_theme_index;
 
 void tick_screen_by_id(enum ScreensEnum screenId);

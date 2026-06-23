@@ -333,10 +333,28 @@ static void clock_apply_user_tz(void)
     set_var_current_time_zone_string(TIMEZONE_POSIX[idx]);
 }
 
-/* Push HH:MM AM/PM (or HH:MM in 24-hour mode) into all three TopStatusBar
- * instances, then repaint the full-screen clock if it's currently shown.
- * Memoizes on the minute so unchanged ticks are no-ops. */
+/* Two formats, one source of truth.
+ *
+ * clock_format_top_bar (toolbar chip): "HH:MM" only — the 36 px chip can't
+ * fit "HH:MM AM/PM" at MONTSERRAT_14 (would need ~58 px and clip on the
+ * left at runtime).
+ *
+ * clock_format_full (Setup-page row + anywhere else with room): "HH:MM"
+ * in 24-hour mode, "H:MM AM/PM" in 12-hour mode.
+ *
+ * Both memoize via the caller (one strftime per minute). */
 static void clock_format_top_bar(const struct tm *ti, char *buf, size_t n)
+{
+    if (s_clock_format_24h) {
+        snprintf(buf, n, "%02d:%02d", ti->tm_hour, ti->tm_min);
+    } else {
+        int h12 = ti->tm_hour % 12;
+        if (h12 == 0) h12 = 12;
+        snprintf(buf, n, "%d:%02d", h12, ti->tm_min);
+    }
+}
+
+static void clock_format_full(const struct tm *ti, char *buf, size_t n)
 {
     if (s_clock_format_24h) {
         snprintf(buf, n, "%02d:%02d", ti->tm_hour, ti->tm_min);
@@ -375,12 +393,14 @@ static void clock_update_toolbar(bool force)
         if (labels[i]) lv_label_set_text(labels[i], buf);
     }
 
-    /* Date / Time info rows on PageSetup. The same formatted time string
-     * from above goes into setup_time_value (e.g. "9:43 AM" in 12-hour
-     * mode or "21:43" in 24-hour mode). Date is rendered separately as
-     * "Sat, Jun 22, 2026" with the leading-space fix for %e. */
+    /* Date / Time info rows on PageSetup — uses the FULL format
+     * ("9:43 AM" in 12-hour mode, "21:43" in 24-hour mode). The Setup row
+     * has horizontal room, unlike the toolbar chip. Date is rendered
+     * separately as "Sat, Jun 22, 2026" with the leading-space fix for %e. */
     if (objects.setup_time_value) {
-        lv_label_set_text(objects.setup_time_value, buf);
+        char full_buf[12];
+        clock_format_full(&ti, full_buf, sizeof(full_buf));
+        lv_label_set_text(objects.setup_time_value, full_buf);
     }
     if (objects.setup_date_value) {
         char date_buf[40];

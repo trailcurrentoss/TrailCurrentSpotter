@@ -1,11 +1,11 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/8",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/0",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
     "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
-    "selectedFontObject": "[TrailCurrentSpotter.eez-project]:/fonts/1",
+    "selectedFontObject": "[TrailCurrentSpotter.eez-project]:/fonts/0",
     "selectedBitmapObject": "[TrailCurrentSpotter.eez-project]:/bitmaps/0",
     "subnavigationSelectedItems": {
       "variables-tab/sub-navigation/selected-item": "Global"
@@ -197,7 +197,7 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 67.83235194784253,
-              "selected": 3,
+              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -219,7 +219,7 @@
                   "component": "editor",
                   "config": {
                     "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/0",
-                    "permanent": false
+                    "permanent": true
                   },
                   "icon": "svg:page"
                 },
@@ -1053,21 +1053,23 @@
         "0": {
           "0": {},
           "1": {
-            "0": {
-              "2": {},
-              "4": {}
-            },
-            "2": {}
+            "0": {},
+            "2": {},
+            "31": {},
+            "32": {},
+            "36": {},
+            "39": {},
+            "$selected": true
           },
           "2": {}
         }
       },
       "transform": {
         "translate": {
-          "x": -284.0546875,
-          "y": -439
+          "x": -620.0546875,
+          "y": -382
         },
-        "scale": 1
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1217,18 +1219,22 @@
     "[TrailCurrentSpotter.eez-project]:/userWidgets/0[flow-state]": {
       "selection": {
         "0": {
+          "0": {},
           "1": {},
           "2": {},
           "3": {},
-          "4": {}
+          "4": {},
+          "11": {
+            "$selected": true
+          }
         }
       },
       "transform": {
         "translate": {
-          "x": -195.15176671792437,
-          "y": -50.81345685753707
+          "x": -897.1517667179244,
+          "y": -9.813456857537062
         },
-        "scale": 1
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1283,12 +1289,7 @@
           "1": {},
           "2": {},
           "3": {},
-          "4": {},
-          "5": {},
-          "6": {},
-          "9": {},
-          "10": {},
-          "11": {}
+          "4": {}
         }
       },
       "transform": {
@@ -1296,7 +1297,7 @@
           "x": -173,
           "y": -272
         },
-        "scale": 1
+        "scale": 1.5
       },
       "timeline": {
         "isEditorActive": false,
@@ -1321,6 +1322,22 @@
           "x": -400,
           "y": -33
         },
+        "scale": 1.5
+      },
+      "timeline": {
+        "isEditorActive": false,
+        "position": 0,
+        "secondToPx": 200,
+        "scrollLeft": 0
+      }
+    },
+    "[TrailCurrentSpotter.eez-project]:/userPages/9[flow-state]": {
+      "selection": {},
+      "transform": {
+        "translate": {
+          "x": -400,
+          "y": -240
+        },
         "scale": 1
       },
       "timeline": {
@@ -1343,7 +1360,7 @@
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
-  "lvglState": "DEFAULT",
+  "lvglState": "SCROLLED",
   "lvglExpandedPropertiesGroup": [
     "POSITION AND SIZE",
     "MISCELLANEOUS",
@@ -1353,6 +1370,6 @@
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 1,
+  "flowZoom": 1.5,
   "implementationLanguage": "C"
 }

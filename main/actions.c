@@ -23,18 +23,19 @@
 static const char *TAG = "ACTIONS";
 
 /* ============================================================================
- * Screen navigation — 3-tab dock (Drive / Alarms / Setup).
- * Tab indices wired in the .eez-project as ChangeScreen userData = 0..2.
+ * Screen navigation — 4-tab dock (Drive / Lights / Alarms / Setup).
+ * Tab indices wired in the .eez-project as ChangeScreen userData = 0..3.
  *
- * Each page has its own BottomTabBar instance, so the dock buttons are
- * per-instance objects (drive_dock__dock_btn_drive, alarms_dock__dock_btn_drive,
- * etc.). After loading the target screen we set LV_STATE_CHECKED on the
- * active tab of THAT screen's dock and clear it on the other two so the
- * highlight reflects the current page.
+ * Each page hosts its own BottomTabBar instance, so the dock buttons are
+ * per-instance objects (drive_dock__dock_btn_drive, lights_dock__dock_btn_drive,
+ * alarms_dock__dock_btn_drive, etc.). After loading the target screen we set
+ * LV_STATE_CHECKED on the active tab of THAT screen's dock and clear it on
+ * the other three so the highlight tracks the current page.
  * ============================================================================ */
 typedef struct {
     lv_obj_t *page;
     lv_obj_t *btn_drive;
+    lv_obj_t *btn_lights;
     lv_obj_t *btn_alarms;
     lv_obj_t *btn_setup;
 } dock_set_t;
@@ -46,24 +47,32 @@ void spotter_set_active_tab(int index) { _do_set_tab_checked(index); }
 
 static void _do_set_tab_checked(int index)
 {
-    dock_set_t docks[3] = {
+    dock_set_t docks[4] = {
         { objects.page_drive,
           objects.drive_dock__dock_btn_drive,
+          objects.drive_dock__dock_btn_lights,
           objects.drive_dock__dock_btn_alarms,
           objects.drive_dock__dock_btn_setup },
+        { objects.page_lights,
+          objects.lights_dock__dock_btn_drive,
+          objects.lights_dock__dock_btn_lights,
+          objects.lights_dock__dock_btn_alarms,
+          objects.lights_dock__dock_btn_setup },
         { objects.page_alarms,
           objects.alarms_dock__dock_btn_drive,
+          objects.alarms_dock__dock_btn_lights,
           objects.alarms_dock__dock_btn_alarms,
           objects.alarms_dock__dock_btn_setup },
         { objects.page_setup,
           objects.setup_dock__dock_btn_drive,
+          objects.setup_dock__dock_btn_lights,
           objects.setup_dock__dock_btn_alarms,
           objects.setup_dock__dock_btn_setup },
     };
-    if (index < 0 || index > 2) return;
+    if (index < 0 || index > 3) return;
     const dock_set_t *d = &docks[index];
-    lv_obj_t *btns[3] = { d->btn_drive, d->btn_alarms, d->btn_setup };
-    for (int i = 0; i < 3; i++) {
+    lv_obj_t *btns[4] = { d->btn_drive, d->btn_lights, d->btn_alarms, d->btn_setup };
+    for (int i = 0; i < 4; i++) {
         if (!btns[i]) continue;
         if (i == index) lv_obj_add_state(btns[i], LV_STATE_CHECKED);
         else            lv_obj_clear_state(btns[i], LV_STATE_CHECKED);
@@ -76,8 +85,9 @@ void action_change_screen(lv_event_t *e)
     lv_obj_t *target = NULL;
     switch (screen_index) {
     case 0: target = objects.page_drive;  break;
-    case 1: target = objects.page_alarms; break;
-    case 2: target = objects.page_setup;  break;
+    case 1: target = objects.page_lights; break;
+    case 2: target = objects.page_alarms; break;
+    case 3: target = objects.page_setup;  break;
     default:
         ESP_LOGW(TAG, "ChangeScreen: unknown index %d", screen_index);
         return;
@@ -211,7 +221,7 @@ void action_go_setup_from_clock(lv_event_t *e)
     connectivity_clock_user_left();
     if (objects.page_setup) {
         lv_scr_load(objects.page_setup);
-        spotter_set_active_tab(2);
+        spotter_set_active_tab(3);
     }
 }
 
@@ -361,30 +371,46 @@ void spotter_apply_axle_count(int axles)
     /* 2. Top status-bar label — fans out across all 4 page-instances. */
     refresh_top_label();
 
-    /* 3. Tire card subtitle. */
-    if (objects.drive_tire_sub) {
-        const char *sub =
-            (axles == 1) ? "Single | Target 65 PSI" :
-            (axles == 2) ? "Tandem | Target 65 PSI" : "Triple | Target 65 PSI";
-        lv_label_set_text(objects.drive_tire_sub, sub);
-    }
+    /* 3. (Tire caption "TIRE PSI - TARGET 65" was removed in the 4.3" decluttering
+     *     pass — no caption widget to update anymore.) */
 
-    /* 4. Show/hide tire cells.
-     *    axles=1 (single):  L1,R1 visible; L2,R2,L3,R3 hidden
-     *    axles=2 (tandem):  L1,R1,L2,R2 visible; L3,R3 hidden
-     *    axles=3 (triple):  all 6 visible
+    /* 4. Show/hide tires AND their PSI labels AND their axle bars.
+     *
+     * Rear-anchored numbering — axle index encodes position from the REAR:
+     *   axle 1 = rear (always visible, carries the WARN tire on rear-right)
+     *   axle 2 = middle (visible at tandem + triple)
+     *   axle 3 = front  (visible only at triple)
+     *
+     * Rule: axle_idx visible iff axles >= axle_idx.
      */
-    struct { lv_obj_t *cell; int min_axles; } tires[] = {
-        { objects.drive_tire_l1, 1 }, { objects.drive_tire_r1, 1 },
-        { objects.drive_tire_l2, 2 }, { objects.drive_tire_r2, 2 },
-        { objects.drive_tire_l3, 3 }, { objects.drive_tire_r3, 3 },
+    /* The per-tire _sub labels (e.g. drive_tire_l1_sub "L1 - 88F") were
+     * removed in EEZ Studio — only the PSI numbers remain for legibility on
+     * the 4.3" screen, so we hide tire panels + PSI labels + axle bars only. */
+    struct { lv_obj_t *w; int axle_idx; } cells[] = {
+        /* axle 1 (rear) — always visible */
+        { objects.drive_tire_l1,        1 },
+        { objects.drive_tire_r1,        1 },
+        { objects.drive_tire_l1_psi,    1 },
+        { objects.drive_tire_r1_psi,    1 },
+        { objects.drive_axle1_bar,      1 },
+        /* axle 2 (middle) — visible at tandem+triple */
+        { objects.drive_tire_l2,        2 },
+        { objects.drive_tire_r2,        2 },
+        { objects.drive_tire_l2_psi,    2 },
+        { objects.drive_tire_r2_psi,    2 },
+        { objects.drive_axle2_bar,      2 },
+        /* axle 3 (front) — visible only at triple */
+        { objects.drive_tire_l3,        3 },
+        { objects.drive_tire_r3,        3 },
+        { objects.drive_tire_l3_psi,    3 },
+        { objects.drive_tire_r3_psi,    3 },
+        { objects.drive_axle3_bar,      3 },
     };
-    for (size_t i = 0; i < sizeof(tires)/sizeof(*tires); i++) {
-        if (!tires[i].cell) continue;
-        if (axles >= tires[i].min_axles)
-            lv_obj_clear_flag(tires[i].cell, LV_OBJ_FLAG_HIDDEN);
-        else
-            lv_obj_add_flag(tires[i].cell, LV_OBJ_FLAG_HIDDEN);
+    for (size_t i = 0; i < sizeof(cells)/sizeof(*cells); i++) {
+        if (!cells[i].w) continue;
+        bool visible = (axles >= cells[i].axle_idx);
+        if (visible) lv_obj_clear_flag(cells[i].w, LV_OBJ_FLAG_HIDDEN);
+        else         lv_obj_add_flag(cells[i].w, LV_OBJ_FLAG_HIDDEN);
     }
 }
 
