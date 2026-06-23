@@ -98,6 +98,7 @@ typedef struct _objects_t {
     lv_obj_t *drive_bsm_warn_text;
     lv_obj_t *drive_solar_w;
     lv_obj_t *drive_sol_icon;
+    lv_obj_t *obj0;
     lv_obj_t *drive_dock;
     lv_obj_t *drive_dock__root;
     lv_obj_t *drive_dock__dock_btn_drive;

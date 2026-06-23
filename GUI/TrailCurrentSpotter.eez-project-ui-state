@@ -1058,8 +1058,7 @@
             "31": {},
             "32": {},
             "36": {},
-            "39": {},
-            "$selected": true
+            "39": {}
           },
           "2": {}
         }
@@ -1360,7 +1359,7 @@
   "logsPanelFilter": "all",
   "selectedStylePropertyName": "",
   "lvglPart": "MAIN",
-  "lvglState": "SCROLLED",
+  "lvglState": "DEFAULT",
   "lvglExpandedPropertiesGroup": [
     "POSITION AND SIZE",
     "MISCELLANEOUS",

@@ -2120,7 +2120,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf111",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -2287,7 +2287,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf060",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -2454,7 +2454,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf111",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -2621,7 +2621,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf061",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -2788,7 +2788,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf111",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "CLIP",
                       "recolor": false
@@ -3061,7 +3061,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf240",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -3123,10 +3123,10 @@
                 {
                   "objID": "280f5bfe-dca5-c555-5ba3-2396844f2f9d",
                   "type": "LVGLLabelWidget",
-                  "left": 47,
-                  "top": 184,
-                  "width": 170,
-                  "height": 16,
+                  "left": 100,
+                  "top": 182,
+                  "width": 41,
+                  "height": 30,
                   "customInputs": [],
                   "customOutputs": [],
                   "style": {
@@ -3160,9 +3160,9 @@
                     "definition": {
                       "MAIN": {
                         "DEFAULT": {
-                          "text_font": "MONTSERRAT_12",
+                          "text_font": "MONTSERRAT_18",
                           "text_color": "SecondaryTextColor",
-                          "text_align": "CENTER"
+                          "text_align": "RIGHT"
                         }
                       }
                     }
@@ -3406,7 +3406,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf185",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -4083,7 +4083,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf1b9",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -4136,7 +4136,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf1b9",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -4361,6 +4361,106 @@
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
+                },
+                {
+                  "objID": "021c0763-f05b-4fdf-d690-4a15ba6add20",
+                  "type": "LVGLLabelWidget",
+                  "left": 168,
+                  "top": 120,
+                  "width": 40,
+                  "height": 52,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "7ff54074-576e-48ae-97a6-4fd95ea95171",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "content",
+                  "heightUnit": "content",
+                  "children": [],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "hiddenFlagType": "literal",
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "useStyle": "LabelSecondary",
+                  "localStyles": {
+                    "objID": "4ca9daa5-6707-4da5-e53d-87256736995f",
+                    "definition": {
+                      "MAIN": {
+                        "DEFAULT": {
+                          "text_font": "MONTSERRAT_48"
+                        }
+                      }
+                    }
+                  },
+                  "group": "",
+                  "groupIndex": 0,
+                  "text": "%",
+                  "textType": "literal",
+                  "longMode": "WRAP",
+                  "recolor": false
+                },
+                {
+                  "objID": "cbea7e0f-ff7c-411c-9de2-9f1cb0495dfa",
+                  "type": "LVGLLabelWidget",
+                  "left": 149,
+                  "top": 183,
+                  "width": 13,
+                  "height": 21,
+                  "customInputs": [],
+                  "customOutputs": [],
+                  "style": {
+                    "objID": "f58d72f1-3889-406e-edb0-81e6e24b0da6",
+                    "useStyle": "default",
+                    "conditionalStyles": [],
+                    "childStyles": []
+                  },
+                  "timeline": [],
+                  "eventHandlers": [],
+                  "leftUnit": "px",
+                  "topUnit": "px",
+                  "widthUnit": "content",
+                  "heightUnit": "content",
+                  "children": [],
+                  "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
+                  "hiddenFlagType": "literal",
+                  "clickableFlagType": "literal",
+                  "flagScrollbarMode": "",
+                  "flagScrollDirection": "",
+                  "scrollSnapX": "",
+                  "scrollSnapY": "",
+                  "checkedStateType": "literal",
+                  "disabledStateType": "literal",
+                  "states": "",
+                  "localStyles": {
+                    "objID": "f35c0afc-f56f-40cc-fb48-fd47b72cbfa6",
+                    "definition": {
+                      "MAIN": {
+                        "DEFAULT": {
+                          "text_font": "MONTSERRAT_18",
+                          "text_color": "AccentColor"
+                        }
+                      }
+                    }
+                  },
+                  "group": "",
+                  "groupIndex": 0,
+                  "text": "V",
+                  "textType": "literal",
+                  "longMode": "WRAP",
+                  "recolor": false
                 }
               ],
               "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
@@ -4439,56 +4539,6 @@
                 "objID": "9676798e-9f44-b19e-cbb8-7597d013b6ca",
                 "values": {}
               }
-            },
-            {
-              "objID": "021c0763-f05b-4fdf-d690-4a15ba6add20",
-              "type": "LVGLLabelWidget",
-              "left": 168,
-              "top": 167,
-              "width": 40,
-              "height": 52,
-              "customInputs": [],
-              "customOutputs": [],
-              "style": {
-                "objID": "7ff54074-576e-48ae-97a6-4fd95ea95171",
-                "useStyle": "default",
-                "conditionalStyles": [],
-                "childStyles": []
-              },
-              "timeline": [],
-              "eventHandlers": [],
-              "leftUnit": "px",
-              "topUnit": "px",
-              "widthUnit": "content",
-              "heightUnit": "content",
-              "children": [],
-              "widgetFlags": "CLICK_FOCUSABLE|GESTURE_BUBBLE|PRESS_LOCK|SCROLLABLE|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_WITH_ARROW|SNAPPABLE",
-              "hiddenFlagType": "literal",
-              "clickableFlagType": "literal",
-              "flagScrollbarMode": "",
-              "flagScrollDirection": "",
-              "scrollSnapX": "",
-              "scrollSnapY": "",
-              "checkedStateType": "literal",
-              "disabledStateType": "literal",
-              "states": "",
-              "useStyle": "LabelSecondary",
-              "localStyles": {
-                "objID": "4ca9daa5-6707-4da5-e53d-87256736995f",
-                "definition": {
-                  "MAIN": {
-                    "DEFAULT": {
-                      "text_font": "MONTSERRAT_48"
-                    }
-                  }
-                }
-              },
-              "group": "",
-              "groupIndex": 0,
-              "text": "%",
-              "textType": "literal",
-              "longMode": "WRAP",
-              "recolor": false
             }
           ],
           "widgetFlags": "CLICKABLE|PRESS_LOCK|CLICK_FOCUSABLE|GESTURE_BUBBLE|SNAPPABLE|SCROLLABLE|SCROLL_ELASTIC|SCROLL_MOMENTUM|SCROLL_CHAIN_HOR|SCROLL_CHAIN_VER",
@@ -4680,7 +4730,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf053",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -4791,7 +4841,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf054",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -6171,7 +6221,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf0f3",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -6540,7 +6590,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -6813,7 +6863,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7086,7 +7136,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7359,7 +7409,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7632,7 +7682,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -7905,7 +7955,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8178,7 +8228,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8451,7 +8501,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -8724,7 +8774,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -9047,7 +9097,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -9370,7 +9420,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -9693,7 +9743,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10016,7 +10066,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10339,7 +10389,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10662,7 +10712,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -10985,7 +11035,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11406,7 +11456,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11679,7 +11729,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -11952,7 +12002,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -12225,7 +12275,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -12498,7 +12548,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -12771,7 +12821,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13044,7 +13094,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13317,7 +13367,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13590,7 +13640,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -13913,7 +13963,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -14236,7 +14286,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -14559,7 +14609,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -14882,7 +14932,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15205,7 +15255,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15528,7 +15578,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -15851,7 +15901,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -16272,7 +16322,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -16545,7 +16595,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -16818,7 +16868,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17091,7 +17141,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17364,7 +17414,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17637,7 +17687,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -17910,7 +17960,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -18183,7 +18233,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -18456,7 +18506,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -18779,7 +18829,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -19102,7 +19152,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -19425,7 +19475,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -19748,7 +19798,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -20071,7 +20121,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -20394,7 +20444,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -20717,7 +20767,7 @@
                               },
                               "group": "",
                               "groupIndex": 0,
-                              "text": "\uf303",
+                              "text": "",
                               "textType": "literal",
                               "longMode": "WRAP",
                               "recolor": false
@@ -21839,7 +21889,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf013",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -22108,7 +22158,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf0c1",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -22440,7 +22490,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf185",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -22620,7 +22670,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf04d",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -22792,7 +22842,7 @@
                       },
                       "group": "",
                       "groupIndex": 0,
-                      "text": "\uf05a",
+                      "text": "",
                       "textType": "literal",
                       "longMode": "WRAP",
                       "recolor": false
@@ -33190,7 +33240,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf186",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -33763,7 +33813,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "\uf017",
+              "text": "",
               "textType": "literal",
               "longMode": "CLIP",
               "recolor": false
@@ -33908,7 +33958,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf240",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -34296,7 +34346,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf185",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -34684,7 +34734,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf043",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -35121,7 +35171,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf2f9",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -35294,7 +35344,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf013",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -35761,7 +35811,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "\uf1eb",
+              "text": "",
               "textType": "literal",
               "longMode": "CLIP",
               "recolor": false
@@ -35814,7 +35864,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "\uf0d9",
+              "text": "",
               "textType": "literal",
               "longMode": "CLIP",
               "recolor": false
@@ -35867,7 +35917,7 @@
               },
               "group": "",
               "groupIndex": 0,
-              "text": "\uf0da",
+              "text": "",
               "textType": "literal",
               "longMode": "CLIP",
               "recolor": false
@@ -36164,7 +36214,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf186",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -36364,7 +36414,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf625",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -36547,7 +36597,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf0eb",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -36730,7 +36780,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf0f3",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
@@ -36913,7 +36963,7 @@
                   },
                   "group": "",
                   "groupIndex": 0,
-                  "text": "\uf1de",
+                  "text": "",
                   "textType": "literal",
                   "longMode": "CLIP",
                   "recolor": false
