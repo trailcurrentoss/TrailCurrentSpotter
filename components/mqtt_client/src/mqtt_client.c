@@ -325,8 +325,20 @@ void mqtt_client_connect(void) {
         .credentials.client_id = client_id,
         .credentials.username = s_username,
         .credentials.authentication.password = s_password,
-        .network.timeout_ms = 10000,
-        .session.keepalive = 30,
+        /* Connectivity tuning, post-trip-diagnosis 2026-06-26: the original
+         * 30s keepalive + 10s socket timeout was tearing the broker session
+         * down every ~31 seconds during in-trailer driving when a single
+         * PINGREQ packet was dropped by the WiFi link. Symptom in the broker
+         * logs: "connection closed by client" exactly 30s after each reconnect,
+         * never any wifi_down event in Spotter's queue (so WiFi held the whole
+         * time — only the MQTT keepalive was failing). Raise both:
+         *   - keepalive 60s: still detects a truly-dead broker within ~90s
+         *     (broker grace is 1.5x), but pings the wire half as often.
+         *   - network.timeout_ms 20s: tolerates one full TCP RTO doubling
+         *     cycle before declaring the socket dead, so a single lost
+         *     packet doesn't take the whole session with it. */
+        .network.timeout_ms = 20000,
+        .session.keepalive = 60,
         .buffer.size = 1024,
     };
     /* Intentionally NOT setting .broker.verification.certificate — leaving it
