@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/2",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/9",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
@@ -197,6 +197,7 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 67.83235194784253,
+              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
@@ -1090,7 +1091,7 @@
           "x": -620.0546875,
           "y": -382
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1164,7 +1165,7 @@
           "x": -579,
           "y": -354
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1255,7 +1256,7 @@
           "x": -897.1517667179244,
           "y": -9.813456857537062
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1318,7 +1319,7 @@
           "x": -173,
           "y": -272
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1343,7 +1344,7 @@
           "x": -400,
           "y": -33
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1354,14 +1355,22 @@
     },
     "[TrailCurrentSpotter.eez-project]:/userPages/9[flow-state]": {
       "selection": {
-        "0": {}
+        "0": {
+          "3": {},
+          "5": {},
+          "6": {},
+          "8": {
+            "$selected": true
+          },
+          "17": {}
+        }
       },
       "transform": {
         "translate": {
-          "x": -577,
-          "y": -317
+          "x": -312,
+          "y": -180
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1393,6 +1402,6 @@
   ],
   "showInactiveFlowsInDebugger": true,
   "globalFlowZoom": true,
-  "flowZoom": 1.5,
+  "flowZoom": 1,
   "implementationLanguage": "C"
 }

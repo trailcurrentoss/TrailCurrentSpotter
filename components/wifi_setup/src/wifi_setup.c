@@ -17,6 +17,7 @@ static const char *TAG = "wifi_setup";
 
 static wifi_setup_state_t        s_state       = WIFI_SETUP_STATE_IDLE;
 static wifi_setup_state_cb_t     s_state_cb    = NULL;
+static wifi_setup_link_event_cb_t s_link_cb    = NULL;
 static void                     *s_user_ctx    = NULL;
 static esp_netif_t              *s_sta_netif   = NULL;
 static uint32_t                  s_ip          = 0;
@@ -154,6 +155,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t base, int32_t id, voi
             int raw_reason = e ? e->reason : -1;
             ESP_LOGW(TAG, "STA disconnected, reason=%d (state=%d retries=%u ever_connected=%d persistent=%d)",
                      raw_reason, (int)s_state, (unsigned)s_retries, (int)s_was_ever_connected, (int)s_persistent_retry);
+            if (s_link_cb) s_link_cb(0 /* wifi_down */, raw_reason);
             s_ip = 0;
             if (s_was_ever_connected || s_persistent_retry) {
                 /* Post-IP drop. The state machine flips to CONNECTING so the
@@ -187,8 +189,26 @@ static void wifi_event_handler(void *arg, esp_event_base_t base, int32_t id, voi
         s_fail_reason = WIFI_SETUP_FAIL_NONE;
         s_was_ever_connected = true;
         ESP_LOGI(TAG, "got IP " IPSTR, IP2STR(&e->ip_info.ip));
+        if (s_link_cb) s_link_cb(1 /* wifi_up */, 0);
         set_state(WIFI_SETUP_STATE_CONNECTED);
     }
+}
+
+void wifi_setup_set_link_event_callback(wifi_setup_link_event_cb_t cb)
+{
+    s_link_cb = cb;
+}
+
+esp_err_t wifi_setup_get_link_info(int8_t *rssi, uint8_t bssid[6], uint8_t *channel)
+{
+    if (s_state != WIFI_SETUP_STATE_CONNECTED) return ESP_ERR_INVALID_STATE;
+    wifi_ap_record_t info = {0};
+    esp_err_t err = esp_wifi_sta_get_ap_info(&info);
+    if (err != ESP_OK) return err;
+    if (rssi)    *rssi    = info.rssi;
+    if (channel) *channel = info.primary;
+    if (bssid)   memcpy(bssid, info.bssid, 6);
+    return ESP_OK;
 }
 
 wifi_setup_fail_reason_t wifi_setup_get_last_failure_reason(void)

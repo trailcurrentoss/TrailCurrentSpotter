@@ -1258,6 +1258,9 @@ extern void spotter_paint_brightness(void);
 #include "spoor_alarms.h"
 #include "device_alarms.h"
 #include "connectivity_alarm.h"
+#include "discovery.h"
+#include "ota.h"
+#include "telemetry.h"
 
 /* fix_keyboard_alignment used to live here and force keyboard geometry from
  * C. It was the canonical example of canvas-device divergence: any time the
@@ -1440,6 +1443,20 @@ void app_main(void)
     spoor_alarms_init();
     device_alarms_init();
 
+    /* Discovery + OTA — register as MQTT-trigger handlers. Actual mDNS bring-up
+     * runs from app_state once WiFi has an IP. */
+    discovery_init();
+    ota_init();
+
+    /* Connectivity telemetry: heartbeat to local/spotter/<host>/telemetry every
+     * 10s once MQTT is up, plus an event per WiFi/MQTT state transition with
+     * reason codes and the last-known RSSI. Events that occur while MQTT is
+     * down are queued in RAM and drained on the next mqtt_up. Subscribe with:
+     *   mosquitto_sub -h <broker> -p 8883 -u <u> -P <p> --insecure --cafile /dev/null \
+     *     -t 'local/spotter/+/telemetry' -t 'local/spotter/+/events' -v
+     */
+    telemetry_init();
+
     last_activity_time = (uint32_t)(esp_timer_get_time() / 1000);
 
     ESP_LOGI(TAG, "Setup complete (MQTT config: %s)", has_mqtt ? "yes" : "no");
@@ -1473,6 +1490,11 @@ void app_main(void)
             clock_update_toolbar(false);
             clock_tick_ms = now;
         }
+
+        /* Connectivity telemetry heartbeat — internally rate-limited to once
+         * every 10 s and a no-op when MQTT is down, so calling at the main-loop
+         * cadence is safe. */
+        telemetry_tick();
 
         /* Battery gauge — 0.5 Hz I2C poll of the IO extender's ADC.
          * Internally gated by the "Battery Meter" toggle: when off, the

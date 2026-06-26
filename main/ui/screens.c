@@ -9538,8 +9538,8 @@ void create_screen_page_clock_mode() {
             // clock_dow
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.clock_dow = obj;
-            lv_obj_set_pos(obj, 360, 57);
-            lv_obj_set_size(obj, 80, 18);
+            lv_obj_set_pos(obj, 291, 65);
+            lv_obj_set_size(obj, 200, 18);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
             add_style_label_default(obj);
@@ -9560,8 +9560,8 @@ void create_screen_page_clock_mode() {
             // digit_hh
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.digit_hh = obj;
-            lv_obj_set_pos(obj, 227, 91);
-            lv_obj_set_size(obj, 90, 138);
+            lv_obj_set_pos(obj, 182, 91);
+            lv_obj_set_size(obj, 180, 138);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
             add_style_label_clock_hero(obj);
@@ -9582,7 +9582,7 @@ void create_screen_page_clock_mode() {
             // clock_colon
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.clock_colon = obj;
-            lv_obj_set_pos(obj, 309, 91);
+            lv_obj_set_pos(obj, 362, 91);
             lv_obj_set_size(obj, 44, 138);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -9603,7 +9603,7 @@ void create_screen_page_clock_mode() {
             // digit_mm
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.digit_mm = obj;
-            lv_obj_set_pos(obj, 353, 91);
+            lv_obj_set_pos(obj, 406, 91);
             lv_obj_set_size(obj, 165, 138);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -9625,7 +9625,7 @@ void create_screen_page_clock_mode() {
             // clock_ampm
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.clock_ampm = obj;
-            lv_obj_set_pos(obj, 530, 109);
+            lv_obj_set_pos(obj, 583, 109);
             lv_obj_set_size(obj, 50, 30);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -9646,7 +9646,7 @@ void create_screen_page_clock_mode() {
             // clock_seconds
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.clock_seconds = obj;
-            lv_obj_set_pos(obj, 530, 153);
+            lv_obj_set_pos(obj, 583, 153);
             lv_obj_set_size(obj, 50, 36);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
@@ -9667,8 +9667,8 @@ void create_screen_page_clock_mode() {
             // clock_date_label
             lv_obj_t *obj = lv_label_create(parent_obj);
             objects.clock_date_label = obj;
-            lv_obj_set_pos(obj, 290, 239);
-            lv_obj_set_size(obj, 220, 28);
+            lv_obj_set_pos(obj, 255, 237);
+            lv_obj_set_size(obj, 300, 28);
             lv_label_set_long_mode(obj, LV_LABEL_LONG_CLIP);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
             add_style_label_default(obj);

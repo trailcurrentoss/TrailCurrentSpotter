@@ -38,6 +38,20 @@ extern void set_var_current_date_time(const char *value);
 extern void set_var_wifi_connected(bool value);
 extern void set_var_power_time_to_go_measurement(float value);
 
+/* Discovery / OTA trigger dispatch (implemented in main/) */
+extern void discovery_handle_trigger(void);
+extern void ota_handle_trigger(void);
+
+/* Connectivity telemetry (implemented in main/telemetry.c). Forward-declared
+ * here to avoid a REQUIRES cycle on the main archive. The disconnect event
+ * doesn't carry the underlying error codes; the MQTT stack emits a separate
+ * MQTT_EVENT_ERROR first. We pump every ERROR into telemetry so the next
+ * DISCONNECTED event carries useful detail. */
+extern void telemetry_on_mqtt_state(bool connected);
+extern void telemetry_on_mqtt_error(int error_type, int sock_errno,
+                                    int tls_last_esp_err, int tls_stack_err,
+                                    int connect_return_code);
+
 static const char *TAG = "MQTT";
 
 #define NVS_NAMESPACE "sd_config"
@@ -82,6 +96,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         ESP_LOGI(TAG, "Connected to broker");
         s_connected = true;
         if (s_state_cb) s_state_cb(true);
+        telemetry_on_mqtt_state(true);
 
         /* Subscribe to all data topics */
         esp_mqtt_client_subscribe(s_client, "local/energy/status", 0);
@@ -99,6 +114,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
          * (1..24). Headwaters publishes {"state": 0|1} per channel.
          * Feeds the device-alarm module (relay-state-driven alarms). */
         esp_mqtt_client_subscribe(s_client, "local/relays/+/status", 0);
+        /* Discovery + OTA triggers — Headwaters addresses these to a specific
+         * device hostname (esp32-XXXXXX) as the payload. Discovery additionally
+         * accepts "*" for broadcast. Spotter is wireless and never on CAN, so
+         * MQTT is the only OTA-trigger transport (unlike Solstice/Milepost). */
+        esp_mqtt_client_subscribe(s_client, "local/discovery/trigger", 0);
+        esp_mqtt_client_subscribe(s_client, "local/ota/trigger", 0);
         ESP_LOGI(TAG, "Subscribed to all topics");
         break;
 
@@ -106,6 +127,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         ESP_LOGW(TAG, "Disconnected from broker (was_connected=%d)", (int)s_connected);
         s_connected = false;
         if (s_state_cb) s_state_cb(false);
+        telemetry_on_mqtt_state(false);
         break;
 
     case MQTT_EVENT_BEFORE_CONNECT:
@@ -135,6 +157,26 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         msg.payload_len = data_len;
 
         ESP_LOGD(TAG, "RX: %s (%d bytes)", msg.topic, msg.payload_len);
+
+        /* Discovery / OTA triggers are dispatched directly from the MQTT task
+         * (they spawn their own worker tasks) rather than going through the
+         * LVGL main-loop queue. Payload is a hostname string (esp32-XXXXXX);
+         * discovery also accepts "*" broadcast. */
+        if (strcmp(msg.topic, "local/discovery/trigger") == 0 ||
+            strcmp(msg.topic, "local/ota/trigger") == 0) {
+            char my_host[16];
+            mqtt_client_hostname(my_host, sizeof(my_host));
+            bool is_discovery = (strcmp(msg.topic, "local/discovery/trigger") == 0);
+            bool broadcast = is_discovery && msg.payload_len == 1 && msg.payload[0] == '*';
+            if (broadcast || strncmp(msg.payload, my_host, msg.payload_len) == 0) {
+                if (is_discovery) discovery_handle_trigger();
+                else              ota_handle_trigger();
+            } else {
+                ESP_LOGD(TAG, "Trigger for %.*s — not us (%s)",
+                         msg.payload_len, msg.payload, my_host);
+            }
+            break;
+        }
 
         if (s_incoming_queue) {
             xQueueSend(s_incoming_queue, &msg, 0);
@@ -166,6 +208,11 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
                      (unsigned)esp_get_free_heap_size(),
                      (unsigned)heap_caps_get_free_size(MALLOC_CAP_INTERNAL),
                      (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL));
+            telemetry_on_mqtt_error(err->error_type,
+                                    err->esp_transport_sock_errno,
+                                    err->esp_tls_last_esp_err,
+                                    err->esp_tls_stack_err,
+                                    err->connect_return_code);
         }
         break;
 
@@ -335,6 +382,24 @@ int mqtt_client_publish(const char *topic, const char *payload, int payload_len)
     int msg_id = esp_mqtt_client_publish(s_client, topic, payload, payload_len, 0, 0);
     ESP_LOGI(TAG, "Published to %s (msg_id=%d)", topic, msg_id);
     return msg_id;
+}
+
+void mqtt_client_stop(void) {
+    if (s_client) {
+        esp_mqtt_client_stop(s_client);
+        esp_mqtt_client_destroy(s_client);
+        s_client = NULL;
+    }
+    s_connected = false;
+    if (s_state_cb) s_state_cb(false);
+    ESP_LOGI(TAG, "MQTT client stopped");
+}
+
+const char *mqtt_client_hostname(char *out, size_t out_len) {
+    uint8_t mac[6] = {0};
+    esp_wifi_get_mac(WIFI_IF_STA, mac);
+    snprintf(out, out_len, "esp32-%02X%02X%02X", mac[3], mac[4], mac[5]);
+    return out;
 }
 
 /* --- GNSS mode helper --- */

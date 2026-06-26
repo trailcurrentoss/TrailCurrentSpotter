@@ -8,6 +8,7 @@
 #include "pendant_config.h"
 #include "app_mqtt.h"
 #include "connectivity_alarm.h"
+#include "discovery.h"
 
 static const char *TAG = "app_state";
 static app_state_t s_state = APP_STATE_BOOT;
@@ -187,6 +188,14 @@ static void async_wifi_up_next(void *arg)
 {
     (void)arg;
     static bool s_mqtt_kicked = false;
+    static bool s_mdns_started = false;
+
+    /* mDNS resolver depends on WiFi/netif being up. Initialize once per boot
+     * the first time we observe a usable WiFi link. */
+    if (!s_mdns_started) {
+        discovery_mdns_init();
+        s_mdns_started = true;
+    }
 
     if (s_state == APP_STATE_READY) {
         if (!s_mqtt_kicked && pendant_config_has_mqtt()) {

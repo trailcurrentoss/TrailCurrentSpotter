@@ -9,6 +9,9 @@ idf_component_register(
         "connectivity_alarm.c"
         "rtc_pcf85063.c"
         "lv_mem_psram.c"
+        "discovery.c"
+        "ota.c"
+        "telemetry.c"
         "ui/ui.c"
         "ui/screens.c"
         "ui/styles.c"
@@ -38,6 +41,9 @@ idf_component_register(
         wifi_setup
         pendant_config
         audio
+        app_update
+        esp_http_server
+        mdns
     # WHOLE_ARCHIVE makes libmain.a fully included in the final link so the
     # spotter_lv_psram_* allocator symbols (referenced by lvgl__lvgl's
     # lv_mem.c via the -DLV_MEM_CUSTOM_ALLOC redirects in the top-level

@@ -2,6 +2,7 @@
 #define APP_MQTT_H
 
 #include <stdbool.h>
+#include <stddef.h>
 
 /**
  * Load MQTT settings from pendant_config first (the UI-driven NVS source),
@@ -42,5 +43,20 @@ bool mqtt_client_is_connected(void);
  * Returns message ID on success, -1 on failure.
  */
 int mqtt_client_publish(const char *topic, const char *payload, int payload_len);
+
+/**
+ * Stop and destroy the underlying esp_mqtt client. Used by the discovery/OTA
+ * paths to release the broker connection (and therefore the TLS socket / TCP
+ * port resources) before standing up the local HTTP server on port 80.
+ * Call mqtt_client_connect() again to resume normal operation.
+ */
+void mqtt_client_stop(void);
+
+/**
+ * Write the device's canonical hostname ("esp32-XXXXXX" using the last three
+ * MAC octets) into out. Returns out. Hostname is used for mDNS advertisement
+ * and as the addressing key for discovery/ota MQTT triggers.
+ */
+const char *mqtt_client_hostname(char *out, size_t out_len);
 
 #endif /* APP_MQTT_H */

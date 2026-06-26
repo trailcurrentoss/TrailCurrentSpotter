@@ -1,0 +1,45 @@
+#!/bin/bash
+# Build Spotter firmware and produce both output formats.
+#   build/spotter.bin         — app-only (for OTA via Headwaters)
+#   build/spotter_merged.bin  — merged  (for web flasher, full flash at 0x0)
+#
+# The app-only binary contains just the application image. Headwaters OTA
+# writes it to the inactive app partition via esp_ota_write, which validates
+# the image as an app. A merged binary would fail that validation because
+# it starts with the bootloader, not an app header.
+#
+# The merged binary combines bootloader + partition table + OTA data + app
+# into one file flashable at offset 0x0. The web flasher requires this
+# because it writes the entire flash from a single binary.
+set -e
+
+OUTPUT_DIR="build"
+
+echo "========================================"
+echo "Building Spotter ..."
+echo "========================================"
+idf.py build
+
+# Copy app-only binary with release name (for OTA)
+cp "$OUTPUT_DIR/trailcurrent_spotter.bin" "$OUTPUT_DIR/spotter.bin"
+
+# Create merged binary (for web flasher — flashable at 0x0)
+esptool.py --chip esp32s3 merge_bin -o "$OUTPUT_DIR/spotter_merged.bin" \
+    --flash_mode dio --flash_size 16MB \
+    0x0 "$OUTPUT_DIR/bootloader/bootloader.bin" \
+    0x8000 "$OUTPUT_DIR/partition_table/partition-table.bin" \
+    0xe000 "$OUTPUT_DIR/ota_data_initial.bin" \
+    0x10000 "$OUTPUT_DIR/trailcurrent_spotter.bin"
+
+echo ""
+echo "========================================"
+echo "Build complete"
+echo "========================================"
+echo ""
+echo "App-only binary (for OTA):"
+ls -lh "$OUTPUT_DIR/spotter.bin"
+echo ""
+echo "Merged binary (for web flasher):"
+ls -lh "$OUTPUT_DIR/spotter_merged.bin"
+echo ""
+echo "Attach BOTH to the GitHub release."

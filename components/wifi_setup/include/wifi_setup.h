@@ -107,6 +107,23 @@ uint32_t wifi_setup_get_ip(void);
 /* Print "192.168.4.1" form into buf. */
 void wifi_setup_format_ip(char *buf, size_t buf_sz);
 
+/* Read the current AP's RSSI (dBm) and BSSID/channel via
+ * esp_wifi_sta_get_ap_info(). Returns ESP_OK only when connected with a
+ * valid association. `rssi`, `bssid`, `channel` may be NULL. */
+esp_err_t wifi_setup_get_link_info(int8_t *rssi, uint8_t bssid[6], uint8_t *channel);
+
+/* Telemetry hook for the connectivity-debug module (main/telemetry.c). The
+ * wifi_setup driver invokes this on every raw STA_DISCONNECTED / GOT_IP
+ * transition with the underlying ESP-IDF reason code so telemetry can record
+ * link drops independently of the higher-level wifi_setup_state_t (which
+ * collapses many low-level transitions). Pass NULL to clear.
+ *
+ *   kind = 0 -> wifi_down, raw_reason = wifi_err_reason_t
+ *   kind = 1 -> wifi_up,   raw_reason = 0 (also fired on roam/reassoc → IP)
+ */
+typedef void (*wifi_setup_link_event_cb_t)(int kind, int raw_reason);
+void wifi_setup_set_link_event_callback(wifi_setup_link_event_cb_t cb);
+
 #ifdef __cplusplus
 }
 #endif
