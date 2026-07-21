@@ -5,15 +5,22 @@ CONFIG_IDF_TARGET="esp32s3"
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 
 # Flash (16MB on Waveshare ESP32-S3-Touch-LCD-4.3C)
+# Flash core clock must match PSRAM core clock (ESP-IDF static assert in
+# mspi_timing_tuning_configs.h). PSRAM dropped from 120→80 MHz for thermal
+# stability, so flash follows to 80 MHz.
 CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
-CONFIG_ESPTOOLPY_FLASHFREQ_120M=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
 
-# PSRAM (8MB OPI, 120MHz — must match flash freq)
+# PSRAM (8MB OPI, 80MHz — mainline-supported speed. 120MHz was experimental
+# (CONFIG_IDF_EXPERIMENTAL_FEATURES) and Espressif's own docs warn it is not
+# high-temperature stable — PSRAM/flash accesses can fail randomly after die
+# temp drifts >~20°C from boot. This manifested on Spotter as long-run RGB
+# LCD flicker (bounce-buffer refills reading corrupt PSRAM) that only
+# cleared with a power cycle.
 CONFIG_SPIRAM=y
 CONFIG_SPIRAM_MODE_OCT=y
-CONFIG_IDF_EXPERIMENTAL_FEATURES=y
-CONFIG_SPIRAM_SPEED_120M=y
+CONFIG_SPIRAM_SPEED_80M=y
 CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
 CONFIG_SPIRAM_RODATA=y
 CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y
@@ -30,15 +37,53 @@ CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 CONFIG_FREERTOS_HZ=1000
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
 
+# Pin the ESP-IDF "main" task (which runs app_main + our LVGL loop) to CPU1.
+# Two consequences:
+#   1. esp_lcd_new_rgb_panel + GDMA channel allocations happen on CPU1, so the
+#      RGB refill / GDMA ISRs run on CPU1 too. That takes them off CPU0 where
+#      the WiFi driver task lives by default (ESP_WIFI_TASK_PINNED_TO_CORE_0),
+#      so a WiFi burst can no longer starve the display bounce-refill ISR.
+#   2. The LVGL loop itself runs on CPU1, away from the WiFi + system event
+#      tasks. MQTT / WiFi event callbacks that need to touch the UI still
+#      bounce onto the LVGL thread via lv_async_call in app_state.c — that
+#      handoff is preserved on purpose.
+CONFIG_ESP_MAIN_TASK_AFFINITY_CPU1=y
+# CONFIG_ESP_MAIN_TASK_AFFINITY_CPU0 is not set
+# CONFIG_ESP_MAIN_TASK_AFFINITY_NO_AFFINITY is not set
+
 # System event loop task stack — default 2304 isn't enough for our WiFi event
 # handlers (wifi_setup's on_scan_done has a 960-byte stack-allocated buffer of
 # wifi_ap_record_t, plus the qsort + my app_state callbacks). FluidCNC pendant
 # uses the same value.
 CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=6144
 
-# WiFi
-CONFIG_ESP_WIFI_IRAM_OPT=n
-CONFIG_ESP_WIFI_RX_IRAM_OPT=n
+# WiFi — put the hot RX/TX paths in IRAM. Combined with the LCD/GDMA
+# IRAM-safe ISRs below, this keeps the WiFi stack from stalling display
+# interrupts during flash-cache-disable windows (every NVS commit is one),
+# and keeps WiFi from stalling under the same windows itself.
+CONFIG_ESP_WIFI_IRAM_OPT=y
+CONFIG_ESP_WIFI_RX_IRAM_OPT=y
+
+# RGB-panel latency hardening — root cause of long-run flicker on this
+# device is bounce-buffer underrun: the per-chunk refill ISR misses its
+# deadline because higher-priority code (WiFi/mbedTLS/flash-cache-disable)
+# runs on the same core. Two flags together:
+#
+#   LCD_RGB_ISR_IRAM_SAFE + GDMA_ISR_IRAM_SAFE — the display + DMA ISRs run
+#   even while flash cache is disabled (NVS commit, OTA write). Without
+#   this every NVS write is a dice-roll on a visible flicker.
+#
+#   LCD_RGB_RESTART_IN_VSYNC — if an underrun does happen, restart the
+#   frame from vsync so the glitch self-heals within one frame instead of
+#   staying visible until the next full-screen redraw.
+#
+# The three together remove the mechanism, not the symptom. Bounce-buffer
+# oversizing (SCREEN_WIDTH*20 in main/main.c lcd_init) was the symptom
+# fix; with these on, that oversizing can eventually be pared back if
+# soak testing shows zero flush timeouts.
+CONFIG_LCD_RGB_ISR_IRAM_SAFE=y
+CONFIG_LCD_RGB_RESTART_IN_VSYNC=y
+CONFIG_GDMA_ISR_IRAM_SAFE=y
 
 # TLS for MQTT
 CONFIG_ESP_TLS_INSECURE=y

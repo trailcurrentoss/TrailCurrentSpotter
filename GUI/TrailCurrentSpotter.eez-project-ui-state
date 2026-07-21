@@ -1,7 +1,7 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/9",
-    "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/0",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/3",
+    "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/1",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
     "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
     "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
@@ -197,17 +197,16 @@
               "type": "tabset",
               "id": "EDITORS",
               "weight": 67.83235194784253,
-              "selected": 1,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
                 {
                   "type": "tab",
                   "id": "#4db42a8e-c4ce-4d8b-9510-0334a6f77936",
-                  "name": "PageAlarms",
+                  "name": "PageSetup",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/2",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/3",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -259,7 +258,7 @@
                 {
                   "type": "tab",
                   "id": "#2c4c8c23-38a7-4ea6-b967-44d788b092d2",
-                  "name": "PageClockMode",
+                  "name": "PageRenameSensor",
                   "component": "editor",
                   "config": {
                     "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/8",
@@ -1142,7 +1141,7 @@
           "x": -251.55528237432048,
           "y": -118.3600451257237
         },
-        "scale": 1.5
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1157,6 +1156,9 @@
           "0": {},
           "1": {
             "0": {}
+          },
+          "2": {
+            "$selected": true
           }
         }
       },
@@ -1188,7 +1190,7 @@
           "x": -287.0975235894409,
           "y": -159.2190510056098
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1208,7 +1210,7 @@
           "x": -222.78737453913328,
           "y": -325.2494803770809
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1228,7 +1230,7 @@
           "x": -288.78483950638025,
           "y": -91.75462306333748
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1279,7 +1281,7 @@
           "x": -282,
           "y": -266
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1295,7 +1297,7 @@
           "x": -400,
           "y": -240
         },
-        "scale": 0.75
+        "scale": 1
       },
       "timeline": {
         "isEditorActive": false,
@@ -1331,11 +1333,13 @@
     "[TrailCurrentSpotter.eez-project]:/userWidgets/1[flow-state]": {
       "selection": {
         "0": {
-          "0": {},
-          "2": {
+          "0": {
             "0": {
               "$selected": true
             }
+          },
+          "2": {
+            "0": {}
           }
         }
       },

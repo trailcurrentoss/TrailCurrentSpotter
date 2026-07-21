@@ -148,6 +148,36 @@ A 3D-printable enclosure is included in the `CAD/` directory (FreeCAD format). T
 | SD / SPI | ESP32 Arduino built-in | SD card access for config.env and ca.crt |
 | WiFi | ESP32 Arduino built-in | WiFi connectivity |
 
+## Troubleshooting
+
+**Screen flickers, shows garbage pixels, or won't wake correctly after long idle periods.**
+
+*The symptom.* After the device has been powered on for a while — especially in a warm cabin — the screen may briefly flicker, show corrupt pixels, or fail to redraw after it goes to sleep. In the worst case only a full power cycle brings it back. Our sibling product Milepost hit an almost-identical problem in early 2026, so the diagnosis and fix are shared between them.
+
+*What was actually happening.* The ESP32-S3 uses an external memory chip called PSRAM as scratch space for the picture it draws to the screen, and it re-reads that memory hundreds of times per second to refill the display. On this hardware the PSRAM was being clocked at 120 MHz — the fastest advertised speed, but Espressif's own docs flag it as *experimental* and not thermally stable. As the chip warmed up during normal use, occasional reads came back corrupt. The display then painted garbage pixels or dropped a frame, which is the flicker you saw. A smaller secondary contributor: every time you save a setting, the flash chip briefly disables the instruction cache, and if the display's refill code happens to be paged out of on-chip memory at that instant, the panel underruns.
+
+*What was changed (2026-07-20).*
+
+1. **PSRAM slowed from 120 MHz to 80 MHz.** This is the mainline-supported speed and is stable across the full operating temperature range. Flash was slowed to match (they have to run at the same speed).
+2. **Display + DMA interrupt handlers pinned to on-chip memory** (`CONFIG_LCD_RGB_ISR_IRAM_SAFE`, `CONFIG_GDMA_ISR_IRAM_SAFE`). The display keeps refilling even during the brief flash-cache-disable windows that every settings save and OTA update produce.
+3. **Display told to self-heal from underruns** (`CONFIG_LCD_RGB_RESTART_IN_VSYNC`). If a refill ever misses its deadline, the panel restarts cleanly at the next frame boundary instead of latching a corrupted picture.
+4. **Main task and its interrupts moved to CPU1** (`CONFIG_ESP_MAIN_TASK_AFFINITY_CPU1`). WiFi lives on CPU0 and can generate long interrupt bursts, so putting the display on the quieter core removes that source of contention.
+5. **Safety net on the UI thread.** The frame-done wait in `lvgl_flush_cb` is bounded to 100 ms. If the display ever wedges, the UI logs an error and keeps running instead of freezing the whole app.
+6. **Boot banner and periodic diagnostics.** The first log line after any reboot now names exactly why the device restarted (`POWERON`, `PANIC`, `TASK_WDT`, `BROWNOUT`, etc.). Every 10 seconds the firmware prints a `[diag]` line with a display-refresh counter, an underrun counter, and heap-free numbers.
+
+*Confirmed by a 2 h serial log on 2026-07-20:* 720 diagnostic samples, the refresh counter (`vsync_d`) stayed locked at 390–391 per 10 s window (the panel's actual rate at the configured 14 MHz pixel clock), zero underrun events, zero errors, zero unexpected reboots.
+
+*If the symptom ever comes back — usually after an ESP-IDF or LVGL upgrade:*
+
+- Check `sdkconfig` still has all of these (some ESP-IDF version bumps regenerate `sdkconfig` from defaults and can silently drop options):
+  - `CONFIG_SPIRAM_SPEED_80M=y` — **not** `120M`
+  - `CONFIG_ESPTOOLPY_FLASHFREQ_80M=y`
+  - `CONFIG_LCD_RGB_ISR_IRAM_SAFE=y`
+  - `CONFIG_GDMA_ISR_IRAM_SAFE=y`
+  - `CONFIG_LCD_RGB_RESTART_IN_VSYNC=y`
+  - `CONFIG_ESP_MAIN_TASK_AFFINITY_CPU1=y`
+- Run a soak test and watch the `[diag]` line. `vsync_d` should be ~390 per 10 s window and `flush_to_d` should stay at 0. Any non-zero `flush_to_d`, or `vsync_d` dropping to 0 while the log keeps printing, means the fix has regressed.
+
 ## License
 
 MIT License - See LICENSE file for details.

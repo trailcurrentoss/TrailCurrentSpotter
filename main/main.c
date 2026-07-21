@@ -7,6 +7,8 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
+#include "esp_task_wdt.h"
+#include "esp_heap_caps.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_rgb.h"
 #include "esp_lcd_touch_gt911.h"
@@ -18,6 +20,7 @@
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_netif.h"
+#include "esp_system.h"
 #include "lvgl.h"
 
 #include "ui/ui.h"
@@ -30,6 +33,20 @@
 #include "rtc_pcf85063.h"
 
 static const char *TAG = "spotter";
+
+/* ============================================================================
+ * Diagnostic counters — long-runtime flicker / RGB-underrun instrumentation.
+ *
+ * Kept permanent so any future regression in latency-critical paths shows up
+ * in the periodic diag_log_cb without needing a rebuild. All three are
+ * incremented from a mix of ISR (vsync), LVGL thread (flush), and main
+ * thread (NVS commit) contexts, and read unlocked from the esp_timer task
+ * that drives diag_log_cb. Reads may race by ~1, which is harmless — we
+ * only care about deltas across the 10 s log window.
+ * ============================================================================ */
+static volatile uint32_t s_vsync_count = 0;
+static volatile uint32_t s_flush_timeout_count = 0;
+static volatile uint32_t s_nvs_commit_count = 0;
 
 /* ============================================================================
  * Display resolution
@@ -946,11 +963,18 @@ static void persist_user_settings(void)
     nvs_set_i32(nvs, "tzIndex", clock_get_timezone_index());
     nvs_set_u8(nvs, "clockFmt24h", s_clock_format_24h ? 1 : 0);
     nvs_set_u8(nvs, "battMeter", spotter_battery_meter_get_enabled() ? 1 : 0);
+    /* Count NVS commits so the diag log can correlate any concurrent flush
+     * timeout / vsync stall with a flash-cache-disable window. NVS writes on
+     * this device are user-driven (settings changes) rather than periodic, so
+     * a flicker spike that lines up with a bump here is strong evidence the
+     * LCD/GDMA ISRs were locked out by a flash operation. */
     nvs_commit(nvs);
+    s_nvs_commit_count++;
     nvs_close(nvs);
 
     set_var_user_settings_changed(false);
-    ESP_LOGI(TAG, "User settings persisted");
+    ESP_LOGI(TAG, "User settings persisted (nvs_commit total=%u)",
+             (unsigned)s_nvs_commit_count);
 }
 
 /* ============================================================================
@@ -963,6 +987,7 @@ static IRAM_ATTR bool on_vsync(esp_lcd_panel_handle_t panel,
                                 const esp_lcd_rgb_panel_event_data_t *edata,
                                 void *user_ctx)
 {
+    s_vsync_count++;
     BaseType_t woken = pdFALSE;
     xSemaphoreGiveFromISR(vsync_sem, &woken);
     return woken == pdTRUE;
@@ -1110,6 +1135,43 @@ static void touch_init(void)
 static lv_disp_draw_buf_t draw_buf;
 static lv_disp_drv_t disp_drv;
 
+/* Periodic (10 s) instrumentation dump for the RGB-underrun investigation.
+ * Prints the vsync delta (should be ~600 at 60 Hz — anything trending toward
+ * 0 while the UI is stalled means the panel/GDMA has wedged), the flush-
+ * timeout counter delta (any non-zero delta is a bounded-wait miss and
+ * strongly correlates with visible flicker), the NVS commit delta (to line
+ * flicker spikes up with flash-cache-disable windows), and free-heap trend
+ * (to rule out a slow leak masquerading as flicker). Runs from the esp_timer
+ * task so the log itself doesn't perturb the LVGL loop. */
+static void diag_log_cb(void *arg)
+{
+    (void)arg;
+    static uint32_t last_vsync = 0;
+    static uint32_t last_flush_to = 0;
+    static uint32_t last_nvs = 0;
+    static size_t min_free_internal = SIZE_MAX;
+
+    uint32_t v = s_vsync_count;
+    uint32_t ft = s_flush_timeout_count;
+    uint32_t nc = s_nvs_commit_count;
+
+    size_t free_internal = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    if (free_internal < min_free_internal) min_free_internal = free_internal;
+
+    ESP_LOGI(TAG,
+        "[diag] vsync_d=%u flush_to_d=%u nvs_d=%u internal_free=%u min=%u mqtt=%d",
+        (unsigned)(v - last_vsync),
+        (unsigned)(ft - last_flush_to),
+        (unsigned)(nc - last_nvs),
+        (unsigned)free_internal,
+        (unsigned)min_free_internal,
+        (int)mqtt_client_is_connected());
+
+    last_vsync = v;
+    last_flush_to = ft;
+    last_nvs = nc;
+}
+
 static void lvgl_tick_cb(void *arg)
 {
     (void)arg;
@@ -1131,7 +1193,24 @@ static void lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area,
     if (lv_disp_flush_is_last(drv)) {
         esp_lcd_panel_draw_bitmap(panel_handle, 0, 0,
                                   SCREEN_WIDTH, SCREEN_HEIGHT, color_map);
-        xSemaphoreTake(vsync_sem, portMAX_DELAY);
+        /* Bounded wait replaces portMAX_DELAY: if the panel/GDMA ever wedges
+         * (vsync stream dies mid-run — the Milepost mechanism) we log, count,
+         * and let LVGL continue instead of freezing the whole UI thread. The
+         * swap has already been queued via draw_bitmap; skipping the sem just
+         * means the next frame can start rendering into the same buffer, which
+         * is a cosmetic glitch, not a hang. 100 ms is ~6 frames at 60 Hz — well
+         * past any normal jitter. Log is throttled so a persistent stall
+         * doesn't flood the console. */
+        if (xSemaphoreTake(vsync_sem, pdMS_TO_TICKS(100)) != pdTRUE) {
+            s_flush_timeout_count++;
+            static uint32_t last_log_ms = 0;
+            uint32_t now_ms = (uint32_t)(esp_timer_get_time() / 1000);
+            if (now_ms - last_log_ms >= 1000) {
+                ESP_LOGE(TAG, "vsync sem timeout (count=%u)",
+                         (unsigned)s_flush_timeout_count);
+                last_log_ms = now_ms;
+            }
+        }
     }
     lv_disp_flush_ready(drv);
 }
@@ -1211,6 +1290,17 @@ static void lvgl_init(void)
     lv_indev_drv_register(&indev_drv);
 
     ESP_LOGI(TAG, "LVGL initialized (direct mode)");
+
+    /* Diagnostic dump every 10 s — see diag_log_cb. Independent of the LVGL
+     * loop; runs from the esp_timer task so a hang in the LVGL thread doesn't
+     * silence the log we'd need to see the hang. */
+    const esp_timer_create_args_t diag_args = {
+        .callback = diag_log_cb,
+        .name = "diag_log",
+    };
+    esp_timer_handle_t diag_timer;
+    ESP_ERROR_CHECK(esp_timer_create(&diag_args, &diag_timer));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(diag_timer, 10 * 1000 * 1000));
 }
 
 /* ============================================================================
@@ -1287,6 +1377,36 @@ static void log_heap(const char *where)
 
 void app_main(void)
 {
+    /* Boot banner — log reset reason FIRST, before any init. If Spotter
+     * ever reboots under load (silent panic, TWDT, brownout, etc.) this
+     * printf is the only reliable way to tell them apart afterward. Uses
+     * printf so it appears even if ESP_LOG isn't ready yet. Same pattern
+     * added to Milepost during the long-sleep-wake investigation. */
+    {
+        esp_reset_reason_t r = esp_reset_reason();
+        const char *name = "?";
+        switch (r) {
+            case ESP_RST_UNKNOWN:    name = "UNKNOWN";    break;
+            case ESP_RST_POWERON:    name = "POWERON";    break;
+            case ESP_RST_EXT:        name = "EXT_PIN";    break;
+            case ESP_RST_SW:         name = "SW";         break;
+            case ESP_RST_PANIC:      name = "PANIC";      break;
+            case ESP_RST_INT_WDT:    name = "INT_WDT";    break;
+            case ESP_RST_TASK_WDT:   name = "TASK_WDT";   break;
+            case ESP_RST_WDT:        name = "OTHER_WDT";  break;
+            case ESP_RST_DEEPSLEEP:  name = "DEEPSLEEP";  break;
+            case ESP_RST_BROWNOUT:   name = "BROWNOUT";   break;
+            case ESP_RST_SDIO:       name = "SDIO";       break;
+            case ESP_RST_USB:        name = "USB";        break;
+            case ESP_RST_JTAG:       name = "JTAG";       break;
+            case ESP_RST_EFUSE:      name = "EFUSE";      break;
+            case ESP_RST_PWR_GLITCH: name = "PWR_GLITCH"; break;
+            case ESP_RST_CPU_LOCKUP: name = "CPU_LOCKUP"; break;
+            default: break;
+        }
+        printf("\n\n[diag] ======== BOOT reset_reason=%d (%s) ========\n\n", (int)r, name);
+    }
+
     /* NVS */
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -1461,10 +1581,20 @@ void app_main(void)
 
     ESP_LOGI(TAG, "Setup complete (MQTT config: %s)", has_mqtt ? "yes" : "no");
 
+    /* Subscribe the main loop (LVGL + MQTT drain) to the task WDT. If any
+     * future call in the loop hangs (flush stall, blocking I2C, etc.) the
+     * WDT logs a backtrace of exactly this task instead of the whole UI
+     * silently freezing. Panic is disabled in sdkconfig, so the log is
+     * informational — we get the diagnostic and the device keeps running.
+     * The bounded-wait added to lvgl_flush_cb should keep us well under
+     * the 5 s timeout under all normal conditions. */
+    ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
+
     /* Main loop */
     uint32_t warning_check_time = 0;
 
     while (1) {
+        esp_task_wdt_reset();
         lv_timer_handler();
 
         /* Process MQTT messages */
