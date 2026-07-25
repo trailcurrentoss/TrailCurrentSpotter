@@ -85,6 +85,16 @@ CONFIG_LCD_RGB_ISR_IRAM_SAFE=y
 CONFIG_LCD_RGB_RESTART_IN_VSYNC=y
 CONFIG_GDMA_ISR_IRAM_SAFE=y
 
+# I2S must also be IRAM-safe or i2s_channel_init_std_mode fails at boot with
+# "gdma_register_tx_event_callbacks: user context not in internal RAM". The
+# I2S driver passes its channel handle to GDMA as user_data; without this
+# flag the handle can land in PSRAM, and GDMA_ISR_IRAM_SAFE (above) then
+# refuses to register the DMA callback. Result: audio init returns
+# ESP_ERR_INVALID_ARG at boot, s_inited stays false, and every subsequent
+# spotter_audio_chime_start() silently no-ops — the alarm overlay pulses
+# with no audible chime.
+CONFIG_I2S_ISR_IRAM_SAFE=y
+
 # TLS for MQTT
 CONFIG_ESP_TLS_INSECURE=y
 CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=y

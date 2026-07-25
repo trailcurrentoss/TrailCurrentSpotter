@@ -1,10 +1,11 @@
 {
   "navigation": {
-    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/3",
+    "selectedUserPageObject": "[TrailCurrentSpotter.eez-project]:/userPages/9",
     "selectedUserWidgetObject": "[TrailCurrentSpotter.eez-project]:/userWidgets/1",
+    "selectedActionObject": "[TrailCurrentSpotter.eez-project]:/actions/2",
     "selectedStyleObject": "[TrailCurrentSpotter.eez-project]:/lvglStyles/styles/38",
-    "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/0",
-    "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/11",
+    "selectedThemeObject": "[TrailCurrentSpotter.eez-project]:/themes/1",
+    "selectedThemeColorObject": "[TrailCurrentSpotter.eez-project]:/colors/36",
     "selectedFontObject": "[TrailCurrentSpotter.eez-project]:/fonts/0",
     "selectedBitmapObject": "[TrailCurrentSpotter.eez-project]:/bitmaps/0",
     "subnavigationSelectedItems": {
@@ -125,12 +126,13 @@
             {
               "type": "row",
               "id": "#d6c884b2-25c1-4039-8bcc-681f4af7693d",
-              "weight": 14.752252729193557,
+              "weight": 23.66896244842131,
               "children": [
                 {
                   "type": "tabset",
                   "id": "#07c8e6e0-186f-446c-ba27-7ec519d25f91",
                   "weight": 1,
+                  "selected": 1,
                   "enableClose": false,
                   "children": [
                     {
@@ -173,7 +175,8 @@
                       "enableClose": false,
                       "icon": "svg:hierarchy"
                     }
-                  ]
+                  ],
+                  "active": true
                 },
                 {
                   "type": "tabset",
@@ -196,17 +199,18 @@
             {
               "type": "tabset",
               "id": "EDITORS",
-              "weight": 67.83235194784253,
+              "weight": 58.91564222861477,
+              "selected": 4,
               "enableDeleteWhenEmpty": false,
               "enableClose": false,
               "children": [
                 {
                   "type": "tab",
                   "id": "#4db42a8e-c4ce-4d8b-9510-0334a6f77936",
-                  "name": "PageSetup",
+                  "name": "PageLights",
                   "component": "editor",
                   "config": {
-                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/3",
+                    "objectPath": "[TrailCurrentSpotter.eez-project]:/userPages/1",
                     "permanent": false
                   },
                   "icon": "svg:page"
@@ -300,8 +304,7 @@
                   },
                   "icon": "svg:user_widget"
                 }
-              ],
-              "active": true
+              ]
             },
             {
               "type": "row",
@@ -917,8 +920,7 @@
                       "component": "themes",
                       "enableClose": false
                     }
-                  ],
-                  "active": true
+                  ]
                 },
                 {
                   "type": "tabset",
@@ -934,7 +936,8 @@
                       "component": "colors",
                       "enableClose": false
                     }
-                  ]
+                  ],
+                  "active": true
                 }
               ]
             }
@@ -1247,16 +1250,15 @@
           "2": {},
           "3": {},
           "4": {},
-          "9": {
-            "$selected": true
-          },
-          "11": {}
+          "9": {},
+          "11": {},
+          "$selected": true
         }
       },
       "transform": {
         "translate": {
-          "x": -897.1517667179244,
-          "y": -9.813456857537062
+          "x": -411.1517667179244,
+          "y": -110.81345685753706
         },
         "scale": 1
       },
@@ -1334,19 +1336,16 @@
       "selection": {
         "0": {
           "0": {
-            "0": {
+            "1": {
               "$selected": true
             }
-          },
-          "2": {
-            "0": {}
           }
         }
       },
       "transform": {
         "translate": {
           "x": -400,
-          "y": -33
+          "y": 327
         },
         "scale": 1
       },
@@ -1372,7 +1371,7 @@
       "transform": {
         "translate": {
           "x": -312,
-          "y": -180
+          "y": -420
         },
         "scale": 1
       },
