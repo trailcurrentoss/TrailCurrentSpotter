@@ -8,6 +8,7 @@
 #include "ui/styles.h"
 #include "ui/vars.h"
 #include "ui/fonts.h"
+#include "ui_dedup.h"
 #include "audio.h"
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"
@@ -871,7 +872,7 @@ static void apply_battery_state(void)
         objects.setup_status_bar__status_battery_icon,
     };
     for (size_t i = 0; i < sizeof(icons)/sizeof(*icons); i++) {
-        if (icons[i]) lv_label_set_text(icons[i], icon);
+        label_set_text_if_changed(icons[i], icon);
     }
 
     /* Placeholder char-count matches the "85%" hero (3 chars) so the
@@ -889,7 +890,7 @@ static void apply_battery_state(void)
         objects.setup_status_bar__status_battery_value,
     };
     for (size_t i = 0; i < sizeof(vals)/sizeof(*vals); i++) {
-        if (vals[i]) lv_label_set_text(vals[i], buf);
+        label_set_text_if_changed(vals[i], buf);
     }
 }
 

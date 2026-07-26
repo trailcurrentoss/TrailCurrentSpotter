@@ -31,6 +31,7 @@
 #include "sd_config.h"
 #include "audio.h"
 #include "rtc_pcf85063.h"
+#include "ui_dedup.h"
 
 static const char *TAG = "spotter";
 
@@ -47,6 +48,7 @@ static const char *TAG = "spotter";
 static volatile uint32_t s_vsync_count = 0;
 static volatile uint32_t s_flush_timeout_count = 0;
 static volatile uint32_t s_nvs_commit_count = 0;
+static volatile uint32_t s_flush_count = 0;
 
 /* ============================================================================
  * Display resolution
@@ -475,10 +477,8 @@ static void restore_user_settings(void)
     uint8_t fmt24 = 0;
     nvs_get_u8(nvs, "clockFmt24h", &fmt24);
     s_clock_format_24h = (fmt24 != 0);
-    if (objects.setup_clock_format_sw) {
-        if (s_clock_format_24h) lv_obj_add_state(objects.setup_clock_format_sw,   LV_STATE_CHECKED);
-        else                    lv_obj_clear_state(objects.setup_clock_format_sw, LV_STATE_CHECKED);
-    }
+    state_set_if_changed(objects.setup_clock_format_sw,
+                         LV_STATE_CHECKED, s_clock_format_24h);
 
     uint8_t batt_meter = 0;
     nvs_get_u8(nvs, "battMeter", &batt_meter);
@@ -585,7 +585,7 @@ static void clock_update_toolbar(bool force)
         objects.setup_status_bar__status_time,
     };
     for (size_t i = 0; i < sizeof(labels) / sizeof(*labels); i++) {
-        if (labels[i]) lv_label_set_text(labels[i], buf);
+        label_set_text_if_changed(labels[i], buf);
     }
 
     /* Date / Time info rows on PageSetup — uses the FULL format
@@ -595,7 +595,7 @@ static void clock_update_toolbar(bool force)
     if (objects.setup_time_value) {
         char full_buf[12];
         clock_format_full(&ti, full_buf, sizeof(full_buf));
-        lv_label_set_text(objects.setup_time_value, full_buf);
+        label_set_text_if_changed(objects.setup_time_value, full_buf);
     }
     if (objects.setup_date_value) {
         char date_buf[40];
@@ -603,7 +603,7 @@ static void clock_update_toolbar(bool force)
         for (char *p = date_buf; *p; p++) {
             if (*p == ' ' && *(p + 1) == ' ') { memmove(p, p + 1, strlen(p)); }
         }
-        lv_label_set_text(objects.setup_date_value, date_buf);
+        label_set_text_if_changed(objects.setup_date_value, date_buf);
     }
 
     /* The full-screen PageClockMode (shown while TrailCurrent connectivity
@@ -634,12 +634,12 @@ void spotter_clock_paint_mode(bool force)
     lv_obj_t *ampm_lbl = objects.clock_ampm;
 
     if (!s_system_time_set) {
-        if (objects.digit_hh)   lv_label_set_text(objects.digit_hh, "--");
-        if (objects.digit_mm)   lv_label_set_text(objects.digit_mm, "--");
-        if (objects.clock_dow)  lv_label_set_text(objects.clock_dow, "--");
-        if (objects.clock_seconds) lv_label_set_text(objects.clock_seconds, "");
+        label_set_text_if_changed(objects.digit_hh, "--");
+        label_set_text_if_changed(objects.digit_mm, "--");
+        label_set_text_if_changed(objects.clock_dow, "--");
+        label_set_text_if_changed(objects.clock_seconds, "");
         if (ampm_lbl)           lv_obj_add_flag(ampm_lbl, LV_OBJ_FLAG_HIDDEN);
-        if (objects.clock_date_label) lv_label_set_text(objects.clock_date_label, "--");
+        label_set_text_if_changed(objects.clock_date_label, "--");
         return;
     }
 
@@ -650,7 +650,7 @@ void spotter_clock_paint_mode(bool force)
 
     /* Day-of-week (e.g. "MONDAY") above the time. */
     if (objects.clock_dow && ti.tm_wday >= 0 && ti.tm_wday <= 6) {
-        lv_label_set_text(objects.clock_dow, DAY_NAMES_UPPER[ti.tm_wday]);
+        label_set_text_if_changed(objects.clock_dow, DAY_NAMES_UPPER[ti.tm_wday]);
     }
 
     int h, m = ti.tm_min;
@@ -663,7 +663,7 @@ void spotter_clock_paint_mode(bool force)
         if (h == 0) h = 12;
         if (ampm_lbl) {
             lv_obj_clear_flag(ampm_lbl, LV_OBJ_FLAG_HIDDEN);
-            lv_label_set_text(ampm_lbl, ti.tm_hour >= 12 ? "PM" : "AM");
+            label_set_text_if_changed(ampm_lbl, ti.tm_hour >= 12 ? "PM" : "AM");
         }
     }
 
@@ -672,16 +672,16 @@ void spotter_clock_paint_mode(bool force)
      * match the mockup's "7:50 PM" look. 24-hour mode zero-pads. */
     if (s_clock_format_24h) snprintf(buf, sizeof(buf), "%02d", h);
     else                    snprintf(buf, sizeof(buf), "%d",   h);
-    if (objects.digit_hh) lv_label_set_text(objects.digit_hh, buf);
+    label_set_text_if_changed(objects.digit_hh, buf);
     snprintf(buf, sizeof(buf), "%02d", m);
-    if (objects.digit_mm) lv_label_set_text(objects.digit_mm, buf);
+    label_set_text_if_changed(objects.digit_mm, buf);
 
     /* Seconds subscript — small mono digits, updated once per second by
      * spotter_clock_tick_seconds() below.  Repaint here so the value is
      * fresh whenever a minute tick fires too. */
     if (objects.clock_seconds) {
         snprintf(buf, sizeof(buf), "%02d", sec);
-        lv_label_set_text(objects.clock_seconds, buf);
+        label_set_text_if_changed(objects.clock_seconds, buf);
     }
 
     if (objects.clock_date_label) {
@@ -694,7 +694,7 @@ void spotter_clock_paint_mode(bool force)
         for (char *p = date_buf; *p; p++) {
             if (*p == ' ' && *(p + 1) == ' ') { memmove(p, p + 1, strlen(p)); }
         }
-        lv_label_set_text(objects.clock_date_label, date_buf);
+        label_set_text_if_changed(objects.clock_date_label, date_buf);
     }
 
     /* Refresh the three stat cards + the "X min ago" timestamp on the same
@@ -745,7 +745,7 @@ static void clock_blink_cb(lv_timer_t *t)
             s_last_sec_painted = ti.tm_sec;
             char buf[4];
             snprintf(buf, sizeof(buf), "%02d", ti.tm_sec);
-            lv_label_set_text(objects.clock_seconds, buf);
+            label_set_text_if_changed(objects.clock_seconds, buf);
         }
     }
 }
@@ -816,7 +816,7 @@ void spotter_clock_paint_stats(void)
     if (objects.clock_ago_label) {
         char buf[20];
         format_ago(buf, sizeof(buf), last, now);
-        lv_label_set_text(objects.clock_ago_label, buf);
+        label_set_text_if_changed(objects.clock_ago_label, buf);
     }
 
     /* ---- Battery card ----
@@ -834,20 +834,20 @@ void spotter_clock_paint_stats(void)
             if (pct > 100) pct = 100;
             char buf[8];
             snprintf(buf, sizeof(buf), "%d", pct);
-            lv_label_set_text(objects.clock_bat_value, buf);
+            label_set_text_if_changed(objects.clock_bat_value, buf);
         } else {
-            lv_label_set_text(objects.clock_bat_value, "--");
+            label_set_text_if_changed(objects.clock_bat_value, "--");
         }
     }
     if (objects.clock_bat_sub) {
         if (have_v) {
             char buf[32];
             snprintf(buf, sizeof(buf), "%.1f V, house bank", bat_v);
-            lv_label_set_text(objects.clock_bat_sub, buf);
+            label_set_text_if_changed(objects.clock_bat_sub, buf);
         } else if (have_data) {
-            lv_label_set_text(objects.clock_bat_sub, "house bank");
+            label_set_text_if_changed(objects.clock_bat_sub, "house bank");
         } else {
-            lv_label_set_text(objects.clock_bat_sub, "Waiting for data");
+            label_set_text_if_changed(objects.clock_bat_sub, "Waiting for data");
         }
     }
 
@@ -861,25 +861,25 @@ void spotter_clock_paint_stats(void)
         if (have_solar_w) {
             char buf[8];
             snprintf(buf, sizeof(buf), "%d", (int)sol_w);
-            lv_label_set_text(objects.clock_sol_value, buf);
+            label_set_text_if_changed(objects.clock_sol_value, buf);
         } else {
-            lv_label_set_text(objects.clock_sol_value, "--");
+            label_set_text_if_changed(objects.clock_sol_value, "--");
         }
     }
     if (objects.clock_sol_sub) {
         if (have_status) {
-            lv_label_set_text(objects.clock_sol_sub,
-                              solar_status_short(sol_status));
+            label_set_text_if_changed(objects.clock_sol_sub,
+                                      solar_status_short(sol_status));
         } else if (have_data) {
-            lv_label_set_text(objects.clock_sol_sub, "--");
+            label_set_text_if_changed(objects.clock_sol_sub, "--");
         } else {
-            lv_label_set_text(objects.clock_sol_sub, "Waiting for data");
+            label_set_text_if_changed(objects.clock_sol_sub, "Waiting for data");
         }
     }
 
     /* ---- Fresh card ---- placeholder until tank MQTT topics are wired ---- */
-    if (objects.clock_fresh_value) lv_label_set_text(objects.clock_fresh_value, "--");
-    if (objects.clock_fresh_sub)   lv_label_set_text(objects.clock_fresh_sub,   "No tank data");
+    label_set_text_if_changed(objects.clock_fresh_value, "--");
+    label_set_text_if_changed(objects.clock_fresh_sub, "No tank data");
 }
 
 /* Public hooks for actions.c — flip the 12/24 setting and force an immediate
@@ -893,6 +893,26 @@ void clock_set_format_24h(bool on)
 
 bool clock_get_format_24h(void) { return s_clock_format_24h; }
 
+/* Pure UTC epoch calculation — Howard Hinnant "days_from_civil" algorithm.
+ * Replaces the setenv("TZ","UTC0")+tzset()+mktime()+clock_apply_user_tz
+ * dance that used to run on every 1 Hz clock frame. That dance leaked
+ * ~26 B of PSRAM per setenv overwrite on newlib — ~52 B/s here — draining
+ * PSRAM in ~22 h and wedging LVGL's next arc-mask allocation. Symptom:
+ * tearing + dead touch + stale data after long uptime; only a power cycle
+ * clears it. Pure arithmetic: no allocation, no libc TZ machinery. */
+static int64_t utc_epoch_from_ymdhms(uint16_t y, uint8_t m, uint8_t d,
+                                     uint8_t H, uint8_t M, uint8_t S)
+{
+    int32_t ye = (m <= 2) ? (int32_t)y - 1 : (int32_t)y;
+    int32_t era = (ye >= 0 ? ye : ye - 399) / 400;
+    uint32_t yoe = (uint32_t)(ye - era * 400);
+    uint32_t doy = (153U * (m > 2 ? (uint32_t)m - 3U : (uint32_t)m + 9U) + 2U) / 5U
+                   + (uint32_t)d - 1U;
+    uint32_t doe = yoe * 365U + yoe / 4U - yoe / 100U + doy;
+    int64_t days = (int64_t)era * 146097 + (int64_t)doe - 719468;
+    return days * 86400LL + (int64_t)H * 3600 + (int64_t)M * 60 + (int64_t)S;
+}
+
 /* Called from vars.c whenever Bearing's UTC datetime lands. ISO format:
  * "YYYY-MM-DD HH:MM:SS". First call seeds the clock with settimeofday();
  * later calls re-sync only on drift > 2 s to avoid 1 Hz GNSS yank-back. */
@@ -900,38 +920,46 @@ void spotter_clock_set_from_iso_utc(const char *iso_utc)
 {
     if (!iso_utc || !*iso_utc) return;
 
-    struct tm tm_utc = {0};
-    if (strptime(iso_utc, "%Y-%m-%d %H:%M:%S", &tm_utc) == NULL) return;
+    /* Manual parse — strptime is fine, but avoiding libc time parsing keeps
+     * the whole hot path free of any call that could touch TZ state. */
+    unsigned int y, mo, d, H, M, S;
+    if (sscanf(iso_utc, "%u-%u-%u %u:%u:%u", &y, &mo, &d, &H, &M, &S) != 6) return;
+    if (y < 2025U || y > 2099U) return;
+    if (mo < 1U || mo > 12U) return;
+    if (d  < 1U || d  > 31U) return;
+    if (H > 23U || M > 59U || S > 60U) return;
 
-    /* Reject pre-fix garbage (GNSS pre-lock: 1970/2000/etc.) */
-    int year = tm_utc.tm_year + 1900;
-    if (year < 2025 || year > 2099) return;
-
-    setenv("TZ", "UTC0", 1);
-    tzset();
-    tm_utc.tm_isdst = 0;
-    time_t gnss_epoch = mktime(&tm_utc);
-    /* Restore the user's TZ regardless of what happens next */
-    clock_apply_user_tz();
+    int64_t gnss_epoch = utc_epoch_from_ymdhms(
+        (uint16_t)y, (uint8_t)mo, (uint8_t)d,
+        (uint8_t)H, (uint8_t)M, (uint8_t)S);
     if (gnss_epoch <= 0) return;
 
     if (s_system_time_set) {
         time_t now;
         time(&now);
-        time_t diff = gnss_epoch > now ? gnss_epoch - now : now - gnss_epoch;
+        int64_t diff = gnss_epoch > (int64_t)now
+                       ? gnss_epoch - (int64_t)now
+                       : (int64_t)now - gnss_epoch;
         if (diff <= 2) return;
     }
 
-    struct timeval tv = { .tv_sec = gnss_epoch, .tv_usec = 0 };
+    struct timeval tv = { .tv_sec = (time_t)gnss_epoch, .tv_usec = 0 };
     settimeofday(&tv, NULL);
     s_system_time_set = true;
     s_last_clock_min = -1;
     clock_update_toolbar(true);
 
-    /* Persist to the battery-backed RTC so the next power-on (even
-     * without TrailCurrent reachable) starts from this fresh sync.
-     * tm_utc was normalised by the earlier mktime() call — same UTC
-     * instant, broken-down fields valid. */
+    /* Persist to the battery-backed RTC so the next power-on (even without
+     * TrailCurrent reachable) starts from this fresh sync. rtc_pcf85063_write
+     * takes broken-down UTC fields — no TZ dependency. */
+    struct tm tm_utc = {
+        .tm_year = (int)y - 1900,
+        .tm_mon  = (int)mo - 1,
+        .tm_mday = (int)d,
+        .tm_hour = (int)H,
+        .tm_min  = (int)M,
+        .tm_sec  = (int)S,
+    };
     esp_err_t we = rtc_pcf85063_write(&tm_utc);
     if (we != ESP_OK) ESP_LOGW(TAG, "RTC write failed: %s", esp_err_to_name(we));
 }
@@ -982,6 +1010,11 @@ static void persist_user_settings(void)
  * ============================================================================ */
 static esp_lcd_panel_handle_t panel_handle = NULL;
 static SemaphoreHandle_t vsync_sem = NULL;
+/* Given only from on_frame_buf_complete — fires once per full-frame DMA
+ * completion, so a wait on this semaphore never picks up a "stale" token
+ * from a vsync that happened before the current draw_bitmap was queued.
+ * See lvgl_flush_cb below for the drain-then-wait pattern. */
+static SemaphoreHandle_t swap_done_sem = NULL;
 
 static IRAM_ATTR bool on_vsync(esp_lcd_panel_handle_t panel,
                                 const esp_lcd_rgb_panel_event_data_t *edata,
@@ -993,9 +1026,19 @@ static IRAM_ATTR bool on_vsync(esp_lcd_panel_handle_t panel,
     return woken == pdTRUE;
 }
 
+static IRAM_ATTR bool on_fb_complete(esp_lcd_panel_handle_t panel,
+                                      const esp_lcd_rgb_panel_event_data_t *edata,
+                                      void *user_ctx)
+{
+    BaseType_t woken = pdFALSE;
+    xSemaphoreGiveFromISR(swap_done_sem, &woken);
+    return woken == pdTRUE;
+}
+
 static void lcd_init(void)
 {
     vsync_sem = xSemaphoreCreateBinary();
+    swap_done_sem = xSemaphoreCreateBinary();
 
     /* Matches Waveshare ESP32-S3-Touch-LCD-4.3C reference, see
      * DOCS/.../examples/esp-idf/12_lvgl_transplant/components/rgb_lcd_port/
@@ -1043,7 +1086,15 @@ static void lcd_init(void)
     ESP_ERROR_CHECK(esp_lcd_panel_reset(panel_handle));
     ESP_ERROR_CHECK(esp_lcd_panel_init(panel_handle));
 
-    esp_lcd_rgb_panel_event_callbacks_t cbs = { .on_vsync = on_vsync };
+    /* on_vsync kept ONLY to feed the s_vsync_count diagnostic (it fires on
+     * every vsync unconditionally — you can't gate flush on it because
+     * nothing drains it and a stale token is always waiting). Flush is
+     * gated on on_frame_buf_complete instead, which fires exactly once
+     * per full framebuffer DMA — no stale-token race by construction. */
+    esp_lcd_rgb_panel_event_callbacks_t cbs = {
+        .on_vsync = on_vsync,
+        .on_frame_buf_complete = on_fb_complete,
+    };
     ESP_ERROR_CHECK(esp_lcd_rgb_panel_register_event_callbacks(panel_handle, &cbs, NULL));
 
     ESP_LOGI(TAG, "RGB LCD initialized (800x480, 14MHz, double-buffered)");
@@ -1149,18 +1200,21 @@ static void diag_log_cb(void *arg)
     static uint32_t last_vsync = 0;
     static uint32_t last_flush_to = 0;
     static uint32_t last_nvs = 0;
+    static uint32_t last_flush = 0;
     static size_t min_free_internal = SIZE_MAX;
 
     uint32_t v = s_vsync_count;
     uint32_t ft = s_flush_timeout_count;
     uint32_t nc = s_nvs_commit_count;
+    uint32_t fl = s_flush_count;
 
     size_t free_internal = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
     if (free_internal < min_free_internal) min_free_internal = free_internal;
 
     ESP_LOGI(TAG,
-        "[diag] vsync_d=%u flush_to_d=%u nvs_d=%u internal_free=%u min=%u mqtt=%d",
+        "[diag] vsync_d=%u flush_d=%u flush_to_d=%u nvs_d=%u internal_free=%u min=%u mqtt=%d",
         (unsigned)(v - last_vsync),
+        (unsigned)(fl - last_flush),
         (unsigned)(ft - last_flush_to),
         (unsigned)(nc - last_nvs),
         (unsigned)free_internal,
@@ -1170,6 +1224,7 @@ static void diag_log_cb(void *arg)
     last_vsync = v;
     last_flush_to = ft;
     last_nvs = nc;
+    last_flush = fl;
 }
 
 static void lvgl_tick_cb(void *arg)
@@ -1181,32 +1236,36 @@ static void lvgl_tick_cb(void *arg)
 static void lvgl_flush_cb(lv_disp_drv_t *drv, const lv_area_t *area,
                            lv_color_t *color_map)
 {
-    /* Direct mode + 2 framebuffers: panel_draw_bitmap with the just-rendered
-     * buffer queues a tear-free swap at the next vsync. Then wait on the
-     * vsync semaphore so we don't return to LVGL (which would immediately
-     * start rendering into the OTHER buffer) until the swap has been latched
-     * by the panel hardware. Order matters — calling draw_bitmap AFTER
-     * taking the sem queues against a stale vsync and the swap visibly
-     * lags by one frame, which shows up as flicker on rapidly-changing
-     * widgets like the battery arc. Pattern matches the Waveshare
-     * ESP32-S3-Touch-LCD-4.3C lvgl_port reference. */
+    /* Direct mode + 2 framebuffers: draw_bitmap queues a tear-free swap at
+     * the next vsync. Wait on swap_done_sem so we don't return to LVGL
+     * (which would immediately start rendering into the OTHER buffer)
+     * until the swap has latched and the newly-submitted framebuffer is
+     * fully in scan-out.
+     *
+     * ORDER MATTERS — and it's more subtle than it looks. The semaphore
+     * MUST be drained BEFORE draw_bitmap so we don't accept a token from
+     * a completion that happened before this submission. Without the
+     * drain, xSemaphoreTake returns instantly with a stale token, the
+     * "wait" is a no-op, and LVGL immediately starts rendering into the
+     * buffer the RGB peripheral is still scanning out — that's the
+     * tearing bug. on_frame_buf_complete only fires on full-frame DMA
+     * completion (not every vsync like on_vsync), so once drained it
+     * genuinely waits for THIS submission to reach the panel. */
     if (lv_disp_flush_is_last(drv)) {
+        s_flush_count++;
+        xSemaphoreTake(swap_done_sem, 0);
         esp_lcd_panel_draw_bitmap(panel_handle, 0, 0,
                                   SCREEN_WIDTH, SCREEN_HEIGHT, color_map);
-        /* Bounded wait replaces portMAX_DELAY: if the panel/GDMA ever wedges
-         * (vsync stream dies mid-run — the Milepost mechanism) we log, count,
-         * and let LVGL continue instead of freezing the whole UI thread. The
-         * swap has already been queued via draw_bitmap; skipping the sem just
-         * means the next frame can start rendering into the same buffer, which
-         * is a cosmetic glitch, not a hang. 100 ms is ~6 frames at 60 Hz — well
-         * past any normal jitter. Log is throttled so a persistent stall
-         * doesn't flood the console. */
-        if (xSemaphoreTake(vsync_sem, pdMS_TO_TICKS(100)) != pdTRUE) {
+        /* Bounded wait: if the panel/GDMA ever wedges (Milepost mechanism)
+         * we count, log (rate-limited), and let LVGL continue — swap has
+         * already been queued via draw_bitmap. 100 ms is ~4 frames at
+         * 39 Hz, well past any normal jitter. */
+        if (xSemaphoreTake(swap_done_sem, pdMS_TO_TICKS(100)) != pdTRUE) {
             s_flush_timeout_count++;
             static uint32_t last_log_ms = 0;
             uint32_t now_ms = (uint32_t)(esp_timer_get_time() / 1000);
             if (now_ms - last_log_ms >= 1000) {
-                ESP_LOGE(TAG, "vsync sem timeout (count=%u)",
+                ESP_LOGE(TAG, "swap_done sem timeout (count=%u)",
                          (unsigned)s_flush_timeout_count);
                 last_log_ms = now_ms;
             }

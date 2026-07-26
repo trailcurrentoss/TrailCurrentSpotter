@@ -6,6 +6,7 @@
 #include "ui/screens.h"
 #include "ui/vars.h"
 #include "ui/styles.h"
+#include "ui_dedup.h"
 
 /* Defined in main.c — seeds the system clock from a Bearing UTC string and
  * triggers the top-toolbar clock to repaint. */
@@ -35,7 +36,7 @@ void set_var_solar_wattage(int32_t value) {
     if (objects.drive_solar_value) {
         char buf[8];
         snprintf(buf, sizeof(buf), "%d", (int)value);
-        lv_label_set_text(objects.drive_solar_value, buf);
+        label_set_text_if_changed(objects.drive_solar_value, buf);
     }
     /* Drive arc: scale to a 600 W "capacity" reference so the ring fills as
      * the array approaches full output. If the actual array is smaller/larger
@@ -43,7 +44,7 @@ void set_var_solar_wattage(int32_t value) {
      * an array-spec. */
     if (objects.drive_solar_arc) {
         int pct = value < 0 ? 0 : (value > 600 ? 100 : (value * 100) / 600);
-        lv_arc_set_value(objects.drive_solar_arc, (int16_t)pct);
+        arc_set_value_if_changed(objects.drive_solar_arc, (int16_t)pct);
     }
 }
 
@@ -63,7 +64,7 @@ void set_var_solar_status(const char *value) {
         else if (strcmp(value, "absorption") == 0)    display = "Absorption";
         else if (strcmp(value, "bulk") == 0)          display = "Bulk charge";
         else                                          display = value;
-        lv_label_set_text(objects.drive_solar_pct, display);
+        label_set_text_if_changed(objects.drive_solar_pct, display);
     }
 }
 
@@ -86,7 +87,7 @@ void set_var_battery_voltage(float value) {
     if (objects.drive_bat_volts) {
         char buf[8];
         snprintf(buf, sizeof(buf), "%.1f", value);
-        lv_label_set_text(objects.drive_bat_volts, buf);
+        label_set_text_if_changed(objects.drive_bat_volts, buf);
     }
 }
 
@@ -98,10 +99,10 @@ void set_var_battery_soc_percentage(int32_t value) {
     if (objects.drive_bat_value) {
         char buf[8];
         snprintf(buf, sizeof(buf), "%d", (int)value);
-        lv_label_set_text(objects.drive_bat_value, buf);
+        label_set_text_if_changed(objects.drive_bat_value, buf);
     }
     if (objects.drive_bat_arc) {
-        lv_arc_set_value(objects.drive_bat_arc, (int16_t)value);
+        arc_set_value_if_changed(objects.drive_bat_arc, (int16_t)value);
     }
 }
 
@@ -130,7 +131,7 @@ void set_var_current_speed_value(int32_t value) {
         objects.setup_status_bar__status_speed_value,
     };
     for (size_t i = 0; i < sizeof(speed_widgets)/sizeof(*speed_widgets); i++) {
-        if (speed_widgets[i]) lv_label_set_text(speed_widgets[i], buf);
+        label_set_text_if_changed(speed_widgets[i], buf);
     }
 }
 
@@ -255,14 +256,14 @@ static int32_t selected_theme;
 int32_t get_var_selected_theme(void) { return selected_theme; }
 void set_var_selected_theme(int32_t value) {
     selected_theme = value;
-    lv_obj_clear_state(objects.setup_theme_dark, LV_STATE_CHECKED);
-    lv_obj_clear_state(objects.setup_theme_light, LV_STATE_CHECKED);
     if (selected_theme == 0) {
         change_color_theme(THEME_ID_DEFAULT);
-        lv_obj_add_state(objects.setup_theme_light, LV_STATE_CHECKED);
+        state_set_if_changed(objects.setup_theme_light, LV_STATE_CHECKED, true);
+        state_set_if_changed(objects.setup_theme_dark,  LV_STATE_CHECKED, false);
     } else if (selected_theme == 1) {
         change_color_theme(THEME_ID_DARK);
-        lv_obj_add_state(objects.setup_theme_dark, LV_STATE_CHECKED);
+        state_set_if_changed(objects.setup_theme_dark,  LV_STATE_CHECKED, true);
+        state_set_if_changed(objects.setup_theme_light, LV_STATE_CHECKED, false);
     }
 }
 
@@ -352,7 +353,7 @@ static void refresh_battery_remaining_label(void)
 {
     if (!objects.drive_bat_remain) return;
     if (power_time_to_go_measurement <= 0.0f) {
-        lv_label_set_text(objects.drive_bat_remain, "-- left");
+        label_set_text_if_changed(objects.drive_bat_remain, "-- left");
         return;
     }
     char buf[32];
@@ -367,5 +368,5 @@ static void refresh_battery_remaining_label(void)
     } else {
         snprintf(buf, sizeof(buf), "%dm left", mins);
     }
-    lv_label_set_text(objects.drive_bat_remain, buf);
+    label_set_text_if_changed(objects.drive_bat_remain, buf);
 }
