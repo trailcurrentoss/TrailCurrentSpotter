@@ -23,6 +23,12 @@ CONFIG_SPIRAM_MODE_OCT=y
 CONFIG_SPIRAM_SPEED_80M=y
 CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
 CONFIG_SPIRAM_RODATA=y
+# Route WiFi/lwIP buffers to PSRAM (2026-07-27) — matches Milepost's
+# tearing-fix commit set. Frees internal RAM for LVGL working set and
+# IRAM-safe ISRs. Small cost in PSRAM bandwidth but Milepost's
+# empirical result was less MSPI contention with the RGB DMA path,
+# not more.
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
 CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y
 
 
@@ -82,7 +88,14 @@ CONFIG_ESP_WIFI_RX_IRAM_OPT=y
 # fix; with these on, that oversizing can eventually be pared back if
 # soak testing shows zero flush timeouts.
 CONFIG_LCD_RGB_ISR_IRAM_SAFE=y
-CONFIG_LCD_RGB_RESTART_IN_VSYNC=y
+# LCD_RGB_RESTART_IN_VSYNC DISABLED (2026-07-27) — Milepost's tearing
+# investigation identified the per-vsync DMA restart as a phase-setting
+# event that CAUSES scan-position slips on the same-family panels
+# (see TrailCurrentMilepost commit 2eff8ae). Combined with
+# on_frame_buf_complete + swap_done_sem (already in lcd_init below),
+# the panel no longer needs this "self-heal" — and having it on was
+# actively contributing to the tearing we've been chasing.
+CONFIG_LCD_RGB_RESTART_IN_VSYNC=n
 CONFIG_GDMA_ISR_IRAM_SAFE=y
 
 # I2S must also be IRAM-safe or i2s_channel_init_std_mode fails at boot with
@@ -135,6 +148,12 @@ CONFIG_LV_MEM_CUSTOM=y
 CONFIG_LV_MEM_CUSTOM_INCLUDE="lv_mem_psram.h"
 CONFIG_LV_MEMCPY_MEMSET_STD=y
 CONFIG_LV_ATTRIBUTE_FAST_MEM=y
+# Route hot LVGL renderer functions (blend / span / mask) into IRAM
+# (2026-07-27). Milepost's commit note: "Without this they live in
+# flash/PSRAM and cache misses show up as sub-100us stalls that align
+# with visible scan-position slips." Costs a small amount of IRAM
+# (~few KB) — worth it to keep the renderer off the shared MSPI bus.
+CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM=y
 
 # LVGL HAL
 CONFIG_LV_DISP_DEF_REFR_PERIOD=33
